@@ -42,18 +42,26 @@ jobs:
 
       - name: Commit and push if changes
         # 提交并推送新生成的文章
-        id: commit_push
+        # 使用你自己的 PAT 来触发后续的部署 Action
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # 配置 Git 使用你的用户名和邮箱
+          # 请将 "your_username" 和 "your_email@example.com" 替换为你的 GitHub 用户名和邮箱
+          git config --global user.name "qmwneb"
+          git config --global user.email "qmwneb@gmail.com"
+          
           git pull
           git add -A
+          
           # 检查是否有文件变动，只有在生成了新文章时才提交
           if ! git diff-index --quiet HEAD; then
             # 从上一步获取文章标题用于 commit message
             title_from_output=$(grep '^title=' "$GITHUB_OUTPUT" | cut -d= -f2-)
             git commit -m "feat: AI 自动生成文章 - ${title_from_output}"
-            git push
+            
+            # 使用你的 PAT 来进行推送
+            # 这样可以触发你的 Hexo 部署工作流
+            git push https://${{ secrets.ACTION_PAT }}@github.com/${{ github.repository }}.git HEAD:main
+            echo "新文章已推送，并触发部署流程。"
           else
             echo "没有文件变动，无需提交。"
           fi
