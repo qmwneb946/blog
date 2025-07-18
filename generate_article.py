@@ -11,20 +11,34 @@ if not API_KEY:
     sys.exit(1)
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
-# --- 主题和提示词 ---
-TOPICS = [
-    "微积分的历史", "P vs NP 问题", "量子计算基础", "人工智能在软件开发中的作用",
-    "深入探讨神经网络", "理解区块链技术", "欧拉恒等式的优雅", "图论入门",
-    "探索斐波那契数列", "密码学基础", "可再生能源技术的未来", "使用 Docker 进行容器化的初学者指南",
-    "无服务器架构解析", "5G 技术的影响", "函数式编程原理", "机器学习算法概述",
-    "数据结构的重要性", "编译器是如何工作的", "探索曼德博集合"
-]
+def get_topic_from_file(filepath="TOPICS.txt"):
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        if not lines:
+            print(f"错误: 主题文件 '{filepath}' 为空。")
+            return None
+            
+        topic = lines[0].strip()
+        remaining_lines = lines[1:]
+        
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.writelines(remaining_lines)
+            
+        print(f"已使用主题: '{topic}'。并已从文件中移除。")
+        return topic
+        
+    except FileNotFoundError:
+        print(f"错误: 主题文件 '{filepath}' 未找到。")
+        return None
+    except Exception as e:
+        print(f"读取主题文件时发生错误: {e}")
+        return None
 
-def generate_prompt():
-    """选择一个随机主题并为 AI 创建详细的提示。"""
-    topic = random.choice(TOPICS)
+def generate_prompt_from_topic(topic):
     prompt = (
         f"你是一位知识渊博的技术和数学博主.你的任务是撰写一篇关于“{topic}”的高质量、有深度的中文博客文章。\n"
         "文章必须结构良好，对技术爱好者有吸引力。\n"
@@ -32,7 +46,7 @@ def generate_prompt():
         "**格式要求:**\n"
         "1.  **标题:** 输出的第一行必须是文章标题，并以 'Title: ' 开头。例如: 'Title: 深入理解神经网络'。\n"
         "2.  **内容:** 在标题行之后，提供完整的 Markdown 格式博客内容。\n"
-        "3.  **结构:** 文章应包含引言、包含多个逻辑部分的主体（使用 ## 和 ### 等 Markdown 标题）以及结论段落。注意在 ### 后面不要有 1.1 xxxx; 1.2 xxxxx\n"
+        "3.  **结构:** 文章应包含引言、包含多个逻辑部分的主体（使用 ## 和 ### 等 Markdown 标题）以及结论段落。注意在 ### 后面不要有 1.1 ; 1.2 只要文字就行了,例如 \"### 工作原理\"\n"
         "4.  **代码块:** 如果适用，请包含注释清晰的代码块。\n"
         "5.  **数学公式:** 对所有数学公式使用 KaTeX 格式，例如 $E = mc^2$。\n\n"
         "请现在开始生成这篇博客文章。"
@@ -40,9 +54,7 @@ def generate_prompt():
     return prompt
 
 def slugify(text):
-    """将标题文本转换为 URL 友好的文件名 (slug)。"""
-    # 对于包含中文的标题，使用日期作为文件名更安全，避免乱码问题
-    if not all(ord(c) < 128 for c in text):
+    if any(ord(c) > 128 for c in text):
         return datetime.now().strftime('%Y-%m-%d-%H%M%S')
     text = text.lower()
     text = re.sub(r'[\s_]+', '-', text)
@@ -52,12 +64,15 @@ def slugify(text):
     return text or datetime.now().strftime('%Y-%m-%d-%H%M%S')
 
 def create_post():
-    """生成文章并将其保存为 Markdown 文件。"""
+    topic = get_topic_from_file("TOPICS.txt")
+    if not topic:
+        sys.exit(1)
+
     try:
-        print("正在生成中文文章...")
-        prompt = generate_prompt()
-        response = model.generate_content(prompt)
+        print(f"正在为主题 '{topic}' 生成中文文章...")
+        prompt = generate_prompt_from_topic(topic)
         
+        response = model.generate_content(prompt)
         full_text = response.text
         lines = full_text.splitlines()
         
@@ -76,15 +91,12 @@ def create_post():
         filename_slug = slugify(title)
         filename = f"{filename_slug}.md"
         
-        # 随机选择分类和标签
-        categories = random.choice([["技术"], ["数学"], ["计算机科学"]])
-        tags = [categories[0], now.strftime('%Y')]
+        categories = random.choice([["技术"], ["数学"], ["计算机科学"], ["科技前沿"]])
+        tags = [topic, categories[0], now.strftime('%Y')]
 
-        # 将 tags 和 categories 格式化为字符串
         tags_str = "\n".join([f"  - {tag}" for tag in tags])
         categories_str = "\n".join([f"  - {cat}" for cat in categories])
 
-        # 创建 Hexo 的 front-matter
         front_matter = f'''---
 title: {title}
 date: {date_str}
@@ -97,18 +109,27 @@ categories:
 '''
         
         final_content = front_matter + content
-        filepath = os.path.join("source", "_posts", filename)
+        
+        output_dir = os.path.join("source", "_posts")
+        os.makedirs(output_dir, exist_ok=True)
+        filepath = os.path.join(output_dir, filename)
         
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(final_content)
             
         print(f"成功创建博客文章: {filepath}")
-        # 设置输出，以便在后续步骤中使用
-        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'title={title}', file=fh)
+
+        if 'GITHUB_OUTPUT' in os.environ:
+            with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+                print(f'title={title}', file=fh)
 
     except Exception as e:
-        print(f"发生错误: {e}")
+        print(f"创建文章过程中发生错误: {e}")
+        with open("TOPICS.txt", "r+", encoding="utf-8") as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(topic + '\n' + content)
+        print(f"已将主题 '{topic}' 写回 TOPICS.txt 文件。")
         sys.exit(1)
 
 if __name__ == "__main__":
