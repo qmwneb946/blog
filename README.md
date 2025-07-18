@@ -1,6 +1,6 @@
 # qmwneb946 的博客 - 源文件 🚀
 
-> 欢迎来到我的个人博客源文件仓库！这里存放着驱动 [blog.qmwneb946.dpdns.org](https://blog.qmwneb946.dpdns.org) 的所有代码和文章。
+> 欢迎来到我的个人博客源文件仓库！这里存放着驱动 [qmwneb946.dpdns.org](https://qmwneb946.dpdns.org) 的所有代码和文章。
 
 这个仓库通过 **Hexo** 生成静态页面，并利用 **GitHub Actions** 实现自动化部署。
 
@@ -16,7 +16,7 @@
 **点击下方按钮，访问我的博客：**
 
 <p align="center">
-  <a href="https://blog.qmwneb946.dpdns.org" target="_blank">
+  <a href="https://qmwneb946.dpdns.org" target="_blank">
     <img src="https://img.shields.io/badge/访问博客-→-blue?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLW1vdXNlLXBvaW50ZXIiPjxwYXRoIGQ9Im0zIDMgNS41IDEyLjUgNCAuNSAzLjUtNy41TDkgMy41WiIvPjxwYXRoIGQ9Im0xMy41IDEzLjUgNyA3Ii8+PC9zdmc+" alt="访问博客">
   </a>
 </p>
