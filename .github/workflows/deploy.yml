@@ -1,58 +1,39 @@
-# 工作流名称
 name: Deploy Hexo to GitHub Pages
 
-# 触发条件：当有代码 push 到 main 分支时触发
 on:
   workflow_dispatch:
   push:
     branches:
-      - main  # 你可以根据你的主分支名修改，可能是 master
+      - main
 
-# 工作流任务
 jobs:
   build-and-deploy:
-    # 运行环境
     runs-on: ubuntu-latest
 
-    # 为工作流任务授权，允许它向你的仓库写入内容（创建和更新 gh-pages 分支）
     permissions:
       contents: write
 
-    # 任务步骤
     steps:
-      # 步骤 1: 检出（Checkout）你的仓库代码
-      # actions/checkout@v4 是官方的检出 action
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 获取所有 git 提交历史，某些 hexo 插件可能需要
+          fetch-depth: 0
 
-      # 步骤 2: 设置 Node.js 环境
-      # actions/setup-node@v4 是官方的 Node.js 环境设置 action
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 建议使用 LTS (长期支持) 版本，请根据你的需要修改
-          cache: 'npm'       # 启用 npm 依赖缓存，加快后续构建速度
+          node-version: '20'
+          cache: 'npm'
 
-      # 步骤 3: 安装项目依赖
       - name: Install dependencies
         run: npm install
 
-      # 步骤 4: 生成静态文件
-      # 注意这里也使用了 npx，保证使用的是项目内的 hexo 版本
       - name: Generate static files
         run: npx hexo g
 
-      # 步骤 5: 部署到 gh-pages 分支
-      # peaceiris/actions-gh-pages 是一个流行的、专门用于部署到 gh-pages 的 action
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # GITHUB_TOKEN 是由 GitHub Actions 自动创建的，用于授权
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Hexo 生成的静态文件默认放在 public 目录
           publish_dir: ./public
-          # 【重要】如果你使用了自定义域名，请取消下面这行的注释，并替换成你的域名
-          # 这会在 gh-pages 分支的根目录创建一个 CNAME 文件
           cname: blog.qmwneb946.dpdns.org
