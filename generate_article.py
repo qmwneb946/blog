@@ -40,7 +40,7 @@ def get_topic_from_file(filepath="TOPICS.txt"):
 
 def generate_prompt_from_topic(topic):
     prompt = (
-        f"你是一位知识渊博的技术和数学博主.你的任务是撰写一篇关于“{topic}”的高质量、有深度的中文博客文章。\n"
+        f"你是一位知识渊博的技术和数学博主.你的任务是撰写一篇关于“{topic}”的高质量、有深度的中文博客文章。大约 1w 字。博主的名字是 qmwneb946\n"
         "文章必须结构良好，对技术爱好者有吸引力。\n"
         "输出必须是 Markdown 格式。\n\n"
         "**格式要求:**\n"
