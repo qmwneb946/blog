@@ -1,0 +1,594 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>驾驭数据洪流：深入解析列式存储数据库的优势 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="你好，数据世界的探险家们！我是 qmwneb946，你们的数字向导。 在信息爆炸的时代，我们每天都在生成、收集和分析海量数据。从社交媒体的每一个点赞，到物联网设备的每一次心跳，再到基因测序的每一个碱基对，数据以惊人的速度增长，成为了驱动商业决策、科学发现乃至社会进步的核心动力。然而，传统的数据存储和处理方式，在面对如此庞大且复杂的分析需求时，往往显得力不从心。 关系型数据库，作为过去几十年数据管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="驾驭数据洪流：深入解析列式存储数据库的优势">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/22/2025-07-22-175554/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="你好，数据世界的探险家们！我是 qmwneb946，你们的数字向导。 在信息爆炸的时代，我们每天都在生成、收集和分析海量数据。从社交媒体的每一个点赞，到物联网设备的每一次心跳，再到基因测序的每一个碱基对，数据以惊人的速度增长，成为了驱动商业决策、科学发现乃至社会进步的核心动力。然而，传统的数据存储和处理方式，在面对如此庞大且复杂的分析需求时，往往显得力不从心。 关系型数据库，作为过去几十年数据管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-22T09:55:54.000Z">
+<meta property="article:modified_time" content="2025-07-22T17:58:13.033Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="数学">
+<meta property="article:tag" content="列式存储数据库的优势">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "驾驭数据洪流：深入解析列式存储数据库的优势",
+  "url": "https://qmwneb946.dpdns.org/2025/07/22/2025-07-22-175554/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-22T09:55:54.000Z",
+  "dateModified": "2025-07-22T17:58:13.033Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/22/2025-07-22-175554/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '驾驭数据洪流：深入解析列式存储数据库的优势',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">驾驭数据洪流：深入解析列式存储数据库的优势</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">驾驭数据洪流：深入解析列式存储数据库的优势<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-22-175554.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-22T09:55:54.000Z" title="发表于 2025-07-22 17:55:54">2025-07-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-22T17:58:13.033Z" title="更新于 2025-07-23 01:58:13">2025-07-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>你好，数据世界的探险家们！我是 qmwneb946，你们的数字向导。</p>
+<p>在信息爆炸的时代，我们每天都在生成、收集和分析海量数据。从社交媒体的每一个点赞，到物联网设备的每一次心跳，再到基因测序的每一个碱基对，数据以惊人的速度增长，成为了驱动商业决策、科学发现乃至社会进步的核心动力。然而，传统的数据存储和处理方式，在面对如此庞大且复杂的分析需求时，往往显得力不从心。</p>
+<p>关系型数据库，作为过去几十年数据管理领域的基石，以其严谨的事务处理能力（ACID特性）和强大的数据一致性保障，在联机事务处理（OLTP）领域独领风骚。但当我们的重心从“记录每一笔交易”转向“从海量交易中发现模式和洞察”时，即进入联机分析处理（OLAP）的世界，传统行式存储数据库的局限性便日益凸显。</p>
+<p>正是为了应对这一挑战，一种颠覆性的数据存储范式应运而生——列式存储（Columnar Storage）。它并非简单地改变了数据在磁盘上的排列方式，而是在其深层逻辑和物理实现上，为大数据分析、商业智能（BI）以及数据仓库等场景带来了革命性的性能提升。</p>
+<p>今天，我将带你深入探索列式存储数据库的奥秘：它为何能成为数据分析领域的“性能怪兽”？它背后的数学与工程原理是什么？以及在哪些场景下，它能够大放异彩？让我们一起，踏上这场驾驭数据洪流的旅程。</p>
+<h2 id="关系型数据库的基石：行式存储">关系型数据库的基石：行式存储</h2>
+<p>在我们深入探讨列式存储之前，了解它的“前辈”——行式存储（Row-Oriented Storage）是至关重要的。毕竟，只有理解了传统模式的优点与局限，我们才能更好地欣赏新范式的创新之处。</p>
+<h3 id="行式存储的工作原理">行式存储的工作原理</h3>
+<p>在绝大多数传统关系型数据库管理系统（RDBMS）中，数据是以行（Row）为单位进行存储的。这意味着，一张表中的每一行数据，包括该行的所有列的值，都会被连续地存储在一起。</p>
+<p>考虑一个简单的客户订单表 <code>Orders</code>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">OrderID</th>
+<th style="text-align:left">CustomerID</th>
+<th style="text-align:left">OrderDate</th>
+<th style="text-align:left">TotalAmount</th>
+<th style="text-align:left">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1001</td>
+<td style="text-align:left">C001</td>
+<td style="text-align:left">2023-01-01</td>
+<td style="text-align:left">120.50</td>
+<td style="text-align:left">Completed</td>
+</tr>
+<tr>
+<td style="text-align:left">1002</td>
+<td style="text-align:left">C002</td>
+<td style="text-align:left">2023-01-02</td>
+<td style="text-align:left">250.00</td>
+<td style="text-align:left">Pending</td>
+</tr>
+<tr>
+<td style="text-align:left">1003</td>
+<td style="text-align:left">C001</td>
+<td style="text-align:left">2023-01-03</td>
+<td style="text-align:left">75.20</td>
+<td style="text-align:left">Completed</td>
+</tr>
+</tbody>
+</table>
+<p>在行式存储中，数据在物理磁盘上大致会按如下方式组织（简化示意）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[1001, C001, 2023-01-01, 120.50, Completed],</span><br><span class="line">[1002, C002, 2023-01-02, 250.00, Pending],</span><br><span class="line">[1003, C001, 2023-01-03, 75.20, Completed]</span><br></pre></td></tr></table></figure>
+<p>每一组方括号代表磁盘上的一个数据块，其中包含了一整行的数据。当数据库需要检索某一行数据时，例如通过<code>OrderID</code>查找特定订单，它只需要读取包含该行的单个或少数几个数据块，就能获取该行的所有信息。</p>
+<h3 id="行式存储的优势">行式存储的优势</h3>
+<p>这种存储方式在联机事务处理（OLTP）场景下表现出色，主要得益于以下几点：</p>
+<ol>
+<li><strong>快速的行级访问与修改：</strong> 当应用程序需要获取或修改某一行数据的全部字段时，行式存储能够一次性读取整行，效率很高。例如，更新一个订单的状态，所有相关字段都在同一个物理位置附近，I/O操作量小。</li>
+<li><strong>事务处理（ACID）支持良好：</strong> 事务操作（如插入、更新、删除）通常涉及对单行或少数几行的操作。行式存储便于实现锁定机制，保证事务的原子性、一致性、隔离性和持久性（ACID特性）。</li>
+<li><strong>易于插入新数据：</strong> 插入新行非常直接，只需找到一个空闲位置或在末尾追加即可。</li>
+<li><strong>数据完整性约束：</strong> 跨列的完整性约束（如外键、唯一约束）验证在行级操作时更直观和高效。</li>
+</ol>
+<h3 id="行式存储的局限性">行式存储的局限性</h3>
+<p>然而，当分析需求出现时，行式存储的缺点也变得明显：</p>
+<ol>
+<li><strong>OLAP查询效率低下：</strong> 在数据分析（OLAP）场景中，我们经常需要对某几列进行聚合操作，例如计算所有订单的总金额、或者统计每天的订单数量。
+<ul>
+<li><code>SELECT SUM(TotalAmount) FROM Orders;</code></li>
+<li><code>SELECT OrderDate, COUNT(OrderID) FROM Orders GROUP BY OrderDate;</code><br>
+在这种情况下，即使我们只需要<code>TotalAmount</code>或<code>OrderDate</code>列的数据，行式存储也必须读取整个数据块，这包含了<code>OrderID</code>、<code>CustomerID</code>、<code>Status</code>等我们当前查询不需要的数据。这意味着大量的无用I/O操作。</li>
+</ul>
+</li>
+<li><strong>数据压缩率低：</strong> 在一个行中，不同列的数据类型和值分布可能千差万别，这使得行内的数据压缩变得困难且效率不高。</li>
+<li><strong>缓存利用率低：</strong> 当读取一行中的部分列时，其余不必要的列也会被加载到CPU缓存中，降低了缓存的有效利用率。</li>
+</ol>
+<p>简而言之，行式存储就像一个把所有行李都塞进一个大箱子的旅行者。如果你只需要某件特定物品，你不得不把整个箱子打开，翻遍所有东西。对于频繁的行级操作，这很方便。但对于只关心少数几样物品，却要遍历所有箱子的场景，效率就会变得非常低下。</p>
+<h2 id="揭秘列式存储：一种范式革新">揭秘列式存储：一种范式革新</h2>
+<p>为了解决行式存储在分析型工作负载上的效率瓶颈，计算机科学家们提出了列式存储这一革新的数据组织方式。</p>
+<h3 id="列式存储的工作原理">列式存储的工作原理</h3>
+<p>与行式存储截然不同，列式存储数据库在物理上将一张表的数据按列（Column）而不是行进行存储。这意味着同一列的所有值被连续地存储在一起，而不同列的值则存储在不同的存储区域。</p>
+<p>让我们再次回到之前的 <code>Orders</code> 表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">OrderID</th>
+<th style="text-align:left">CustomerID</th>
+<th style="text-align:left">OrderDate</th>
+<th style="text-align:left">TotalAmount</th>
+<th style="text-align:left">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1001</td>
+<td style="text-align:left">C001</td>
+<td style="text-align:left">2023-01-01</td>
+<td style="text-align:left">120.50</td>
+<td style="text-align:left">Completed</td>
+</tr>
+<tr>
+<td style="text-align:left">1002</td>
+<td style="text-align:left">C002</td>
+<td style="text-align:left">2023-01-02</td>
+<td style="text-align:left">250.00</td>
+<td style="text-align:left">Pending</td>
+</tr>
+<tr>
+<td style="text-align:left">1003</td>
+<td style="text-align:left">C001</td>
+<td style="text-align:left">2023-01-03</td>
+<td style="text-align:left">75.20</td>
+<td style="text-align:left">Completed</td>
+</tr>
+</tbody>
+</table>
+<p>在列式存储中，数据在物理磁盘上会按如下方式组织（简化示意）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># OrderID 列</span><br><span class="line">[1001, 1002, 1003]</span><br><span class="line"></span><br><span class="line"># CustomerID 列</span><br><span class="line">[C001, C002, C001]</span><br><span class="line"></span><br><span class="line"># OrderDate 列</span><br><span class="line">[2023-01-01, 2023-01-02, 2023-01-03]</span><br><span class="line"></span><br><span class="line"># TotalAmount 列</span><br><span class="line">[120.50, 250.00, 75.20]</span><br><span class="line"></span><br><span class="line"># Status 列</span><br><span class="line">[Completed, Pending, Completed]</span><br></pre></td></tr></table></figure>
+<p>每一组方括号代表一个列的数据段。每一列的数据被独立存储，并且通常会在内部通过某种方式（如位置索引或稀疏索引）来重建行。例如，要重建第一行（OrderID 1001），系统会从每个列的第一个位置取值。</p>
+<h3 id="列式存储与行式存储的对比">列式存储与行式存储的对比</h3>
+<p>核心区别在于数据在磁盘上的布局。</p>
+<ul>
+<li><strong>行式存储：</strong> 将一条记录的所有属性值紧密存储在一起。当需要查询或更新某行时，可以高效获取。但如果只查询少数几列，则需要读取包含整行数据的块。</li>
+<li><strong>列式存储：</strong> 将同一属性的所有值紧密存储在一起。当需要查询或聚合某几列时，可以只读取这些列的数据，忽略其他不相关的列。但如果需要查询或更新整行数据，则需要从不同的列存储区域中分别读取或写入对应的值，这可能涉及更多的随机I/O。</li>
+</ul>
+<p>这种物理布局上的根本差异，正是列式存储在分析型场景中展现出强大优势的基石。在接下来的部分，我们将深入探讨这些优势。</p>
+<h2 id="列式存储的核心优势">列式存储的核心优势</h2>
+<p>列式存储之所以能在大数据分析领域大放异彩，绝非偶然。其独特的数据组织方式，从多个维度优化了数据处理的效率，带来了显著的性能提升。</p>
+<h3 id="数据压缩率极高">数据压缩率极高</h3>
+<p>这是列式存储最显著的优势之一。由于每一列存储的数据都是同质的（例如，某一列全是整数，另一列全是日期），并且往往具有高度重复性（例如，<code>Status</code>列可能只有“Completed”和“Pending”少数几个值，<code>Country</code>列可能只有几十个国家名称），这为高效的数据压缩提供了绝佳的机会。</p>
+<p><strong>为什么同质数据更容易压缩？</strong></p>
+<p>数据压缩算法通常依赖于发现数据中的模式和冗余。在行式存储中，一行数据包含不同数据类型和值范围的混合，使得通用压缩算法难以发挥最大效力。而在列式存储中：</p>
+<ol>
+<li><strong>数据类型统一：</strong> 同一列的所有值都具有相同的数据类型（如整型、字符串、日期），这允许使用针对特定数据类型优化的压缩算法。</li>
+<li><strong>值分布模式：</strong> 许多列的值分布是高度偏斜的，即少数几个值出现频率非常高。例如，<code>Gender</code>列只有’M’和’F’，<code>Region</code>列可能只有十几个地区名称。</li>
+</ol>
+<p><strong>常用的列式存储压缩技术：</strong></p>
+<ul>
+<li>
+<p><strong>行程编码（Run-Length Encoding, RLE）：</strong> 当一个值连续出现多次时，RLE将它替换为值本身和出现次数。<br>
+例如，<code>Status</code>列数据：<code>[Completed, Completed, Pending, Completed, Completed, Completed]</code><br>
+RLE压缩后：<code>[(Completed, 2), (Pending, 1), (Completed, 3)]</code><br>
+这在相同值连续出现时效果极佳。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 概念性RLE编码示例</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">rle_encode</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    encoded_data = []</span><br><span class="line">    current_val = data[<span class="number">0</span>]</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> val <span class="keyword">in</span> data:</span><br><span class="line">        <span class="keyword">if</span> val == current_val:</span><br><span class="line">            count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            encoded_data.append((current_val, count))</span><br><span class="line">            current_val = val</span><br><span class="line">            count = <span class="number">1</span></span><br><span class="line">    encoded_data.append((current_val, count)) <span class="comment"># Add the last run</span></span><br><span class="line">    <span class="keyword">return</span> encoded_data</span><br><span class="line"></span><br><span class="line">status_column = [<span class="string">&quot;Completed&quot;</span>, <span class="string">&quot;Completed&quot;</span>, <span class="string">&quot;Pending&quot;</span>, <span class="string">&quot;Completed&quot;</span>, <span class="string">&quot;Completed&quot;</span>, <span class="string">&quot;Completed&quot;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;原始数据: <span class="subst">&#123;status_column&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;RLE编码后: <span class="subst">&#123;rle_encode(status_column)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment"># 原始数据: [&#x27;Completed&#x27;, &#x27;Completed&#x27;, &#x27;Pending&#x27;, &#x27;Completed&#x27;, &#x27;Completed&#x27;, &#x27;Completed&#x27;]</span></span><br><span class="line"><span class="comment"># RLE编码后: [(&#x27;Completed&#x27;, 2), (&#x27;Pending&#x27;, 1), (&#x27;Completed&#x27;, 3)]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>字典编码（Dictionary Encoding）：</strong> 当一列中存在大量重复的字符串或枚举值时，字典编码将这些唯一值存储在一个字典中，然后将列中的每个值替换为字典中对应值的短整数索引。<br>
+例如，<code>Status</code>列数据：<code>[Completed, Pending, Completed]</code><br>
+字典：<code>&#123;0: &quot;Completed&quot;, 1: &quot;Pending&quot;&#125;</code><br>
+字典编码后：<code>[0, 1, 0]</code><br>
+这对于基数（唯一值数量）较低的列非常有效，显著减少了存储空间。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 概念性字典编码示例</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dictionary_encode</span>(<span class="params">data</span>):</span><br><span class="line">    unique_values = <span class="built_in">sorted</span>(<span class="built_in">list</span>(<span class="built_in">set</span>(data)))</span><br><span class="line">    value_to_index = &#123;val: i <span class="keyword">for</span> i, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(unique_values)&#125;</span><br><span class="line">    index_to_value = &#123;i: val <span class="keyword">for</span> i, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(unique_values)&#125;</span><br><span class="line">    encoded_data = [value_to_index[val] <span class="keyword">for</span> val <span class="keyword">in</span> data]</span><br><span class="line">    <span class="keyword">return</span> encoded_data, index_to_value</span><br><span class="line"></span><br><span class="line">status_column_dict = [<span class="string">&quot;Completed&quot;</span>, <span class="string">&quot;Pending&quot;</span>, <span class="string">&quot;Completed&quot;</span>, <span class="string">&quot;Cancelled&quot;</span>, <span class="string">&quot;Pending&quot;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;原始数据: <span class="subst">&#123;status_column_dict&#125;</span>&quot;</span>)</span><br><span class="line">encoded, dictionary = dictionary_encode(status_column_dict)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;字典编码后: <span class="subst">&#123;encoded&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;字典: <span class="subst">&#123;dictionary&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment"># 原始数据: [&#x27;Completed&#x27;, &#x27;Pending&#x27;, &#x27;Completed&#x27;, &#x27;Cancelled&#x27;, &#x27;Pending&#x27;]</span></span><br><span class="line"><span class="comment"># 字典编码后: [0, 2, 0, 1, 2]</span></span><br><span class="line"><span class="comment"># 字典: &#123;0: &#x27;Cancelled&#x27;, 1: &#x27;Completed&#x27;, 2: &#x27;Pending&#x27;&#125;</span></span><br><span class="line"><span class="comment"># 注意：字典的键排序取决于unique_values的排序</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>位图索引（Bitmap Index）：</strong> 对于低基数的列，可以为每个唯一值创建一个位图。位图中的每一位表示对应行是否包含该值。这不仅节省空间，还加速了<code>WHERE</code>子句的过滤。</p>
+</li>
+<li>
+<p><strong>位打包（Bit-Packing）：</strong> 对于整数列，如果所有值都落在某个较小的范围内（例如，所有值都小于256），则可以使用更少的位来存储每个值（例如，8位而不是标准的32位或64位）。</p>
+</li>
+<li>
+<p><strong>其他压缩算法：</strong> 如Snappy、LZ4、Zstd、Gzip等通用压缩算法也可以应用于整个列或列的段。</p>
+</li>
+</ul>
+<p><strong>压缩带来的效益：</strong></p>
+<p>高压缩率不仅仅意味着存储成本的降低。更重要的是：</p>
+<ul>
+<li><strong>减少磁盘I/O：</strong> 相同的数据量，压缩后占用的磁盘空间更小，读取时需要传输的数据量就更少。这意味着更快的查询响应时间。</li>
+<li><strong>提高CPU缓存利用率：</strong> 压缩数据加载到内存后，CPU可以在相同的缓存空间中存储更多有用的数据，减少缓存未命中的情况，从而加速计算。</li>
+<li><strong>减少网络传输：</strong> 在分布式系统中，数据在节点间传输时，传输的数据量越小，网络延迟和带宽压力就越小。</li>
+</ul>
+<p>从数学角度来看，如果原始数据量为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>r</mi><mi>a</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{raw}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，压缩率为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>（例如 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">C=0.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.1</span></span></span></span> 表示压缩到原始大小的10%），那么实际传输的数据量为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>c</mi><mi>o</mi><mi>m</mi><mi>p</mi><mi>r</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>d</mi></mrow></msub><mo>=</mo><msub><mi>D</mi><mrow><mi>r</mi><mi>a</mi><mi>w</mi></mrow></msub><mo>×</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">D_{compressed} = D_{raw} \times C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">co</span><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">resse</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>。查询时间 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>q</mi><mi>u</mi><mi>e</mi><mi>r</mi><mi>y</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{query}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">ery</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 与数据传输量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi><mi>f</mi><mi>e</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{transfer}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight">an</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 成正比（假设I/O是瓶颈），即 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>q</mi><mi>u</mi><mi>e</mi><mi>r</mi><mi>y</mi></mrow></msub><mo>∝</mo><msub><mi>D</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi><mi>f</mi><mi>e</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{query} \propto D_{transfer}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">ery</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight">an</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>。因此，压缩率的提升直接带来了查询性能的倍数提升。</p>
+<h3 id="查询性能显著提升">查询性能显著提升</h3>
+<p>这是列式存储的核心价值所在，尤其是在分析型查询（OLAP）中。性能提升主要体现在以下几个方面：</p>
+<h4 id="I-O-效率">I/O 效率</h4>
+<p>这是最直观的优势。当执行一个只涉及少数几列的分析查询时（例如，<code>SELECT SUM(TotalAmount) FROM Orders WHERE OrderDate &gt;= '2023-01-01'</code>），列式存储数据库只需要读取 <code>TotalAmount</code> 和 <code>OrderDate</code> 这两列的数据。而行式存储则必须读取所有行，每行包含了所有列的数据，即使其他列（如<code>CustomerID</code>, <code>Status</code>）当前查询用不到。</p>
+<p>假设一张表有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 列，查询只涉及到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 列，且 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>≪</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">K \ll N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≪</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span>。<br>
+对于行式存储，需要读取 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mrow><mi>b</mi><mi>y</mi><mi>t</mi><mi>e</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{bytes}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">b</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">es</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 的数据。<br>
+对于列式存储，理论上只需读取 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mrow><mi>b</mi><mi>y</mi><mi>t</mi><mi>e</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">K_{bytes}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">b</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">es</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 的数据，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mrow><mi>b</mi><mi>y</mi><mi>t</mi><mi>e</mi><mi>s</mi></mrow></msub><mo>≪</mo><msub><mi>N</mi><mrow><mi>b</mi><mi>y</mi><mi>t</mi><mi>e</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">K_{bytes} \ll N_{bytes}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">b</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">es</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≪</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">b</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">es</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>（因为只读取了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 列，并且这些列可能还被高度压缩）。<br>
+因此，列式存储在I/O上的优势比为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo><mo>:</mo><mi>O</mi><mo stretchy="false">(</mo><mi>K</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N) : O(K)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mclose">)</span></span></span></span>。</p>
+<p>这种差异在数据量庞大时尤为明显。如果你的数据库有上百列，但一次查询通常只用到其中几列，那么列式存储的I/O效率可以提升数十倍甚至上百倍。这种优化减少了磁盘寻道时间，最大化了顺序读的优势。</p>
+<h4 id="CPU-效率">CPU 效率</h4>
+<p>除了I/O效率，列式存储还能显著提高CPU的计算效率。</p>
+<ol>
+<li>
+<p><strong>向量化处理（Vectorized Processing）：</strong> 现代CPU擅长对连续的、同类型的数据执行批量操作，这通常通过SIMD（Single Instruction, Multiple Data）指令集实现。列式存储将同一列的数据紧密排列，完美契合了向量化处理的需求。数据库引擎可以一次性加载一整个向量（例如，1024个整数）到CPU寄存器或缓存中，然后对这批数据执行相同的操作（如加法、比较），而无需循环处理每个独立的行和列。这大大减少了指令开销和分支预测错误。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 伪代码：向量化处理示例</span><br><span class="line">function sum_column_vectorized(column_data):</span><br><span class="line">    total_sum = 0</span><br><span class="line">    vector_size = get_cpu_simd_register_size() // element_size</span><br><span class="line">    for i from 0 to len(column_data) step vector_size:</span><br><span class="line">        vector_chunk = column_data[i : i + vector_size]</span><br><span class="line">        # 使用SIMD指令对vector_chunk进行并行求和</span><br><span class="line">        total_sum += sum_simd(vector_chunk)</span><br><span class="line">    return total_sum</span><br><span class="line"></span><br><span class="line"># 对比行式存储</span><br><span class="line">function sum_column_row_by_row(table_data, column_index):</span><br><span class="line">    total_sum = 0</span><br><span class="line">    for row in table_data:</span><br><span class="line">        total_sum += row[column_index] # 每次循环都需要访问不同的内存地址，且需要跳过无关列</span><br><span class="line">    return total_sum</span><br></pre></td></tr></table></figure>
+<p>相比于行式存储中需要针对每行数据反复进行内存跳转和指令解码，列式存储的向量化处理能够充分利用CPU的并行计算能力，就像工厂的流水线一样，效率极高。</p>
+</li>
+<li>
+<p><strong>缓存局部性（Cache Locality）：</strong> CPU在处理数据时，会尽可能地将数据从内存加载到速度更快的CPU缓存中。如果所需数据在内存中是连续存放的，那么CPU一次加载的数据块（Cache Line）中包含的有效数据就会更多。列式存储正是如此，同一列的数据是连续的，因此当CPU读取一个数据块时，它所包含的几乎都是当前查询所需的数据。这显著提高了缓存命中率，减少了从主内存加载数据的次数，从而加速了计算。</p>
+<p>例如，一个<code>Cache Line</code>可能包含64字节。如果存储的是整型（4字节），那么可以一次性加载16个整数。在列式存储中，这16个整数都属于同一列，可能都会用于计算。而在行式存储中，这64字节可能包含来自不同列的16个不同数据类型的值，其中大部分在当前查询中可能都无用。</p>
+</li>
+</ol>
+<h4 id="谓词下推（Predicate-Pushdown）">谓词下推（Predicate Pushdown）</h4>
+<p>谓词下推是指将查询中的过滤条件（<code>WHERE</code>子句）尽可能地下推到数据读取阶段，甚至存储层。在列式存储中，由于每列数据是独立的，可以直接对列数据进行过滤。</p>
+<p>例如，<code>SELECT TotalAmount FROM Orders WHERE OrderDate = '2023-01-01';</code><br>
+在列式存储中，数据库可以先读取<code>OrderDate</code>列，对该列数据进行过滤，生成一个符合条件的行号列表（或位图）。然后，仅根据这个行号列表去读取<code>TotalAmount</code>列中对应的数据。这避免了读取并处理<code>OrderDate</code>列不符合条件但<code>TotalAmount</code>列却在同一行的数据。</p>
+<h4 id="聚合操作优化">聚合操作优化</h4>
+<p>分析型查询的核心往往是聚合操作，如<code>SUM()</code>, <code>AVG()</code>, <code>COUNT()</code>, <code>MIN()</code>, <code>MAX()</code>。列式存储对这些操作有天然的优势。</p>
+<ul>
+<li><strong>单列聚合：</strong> 当对单列进行聚合时，例如<code>SUM(TotalAmount)</code>，数据库只需要扫描<code>TotalAmount</code>这一列的数据。结合向量化处理，CPU可以高效地对这些连续的数值进行求和。</li>
+<li><strong>多列聚合：</strong> 即使是涉及多列的聚合（如<code>GROUP BY CustomerID, OrderDate</code>），列式存储也能通过高效地读取相关列并利用其压缩特性来加速处理。</li>
+</ul>
+<p>总结查询性能的提升，可以认为列式存储将I/O和CPU资源的利用率提升到了一个新的高度，使得大规模数据集上的复杂分析查询变得可行且高效。</p>
+<h3 id="数据加载与分析效率">数据加载与分析效率</h3>
+<p>列式存储的设计哲学与数据仓库和大数据分析的需求高度契合。</p>
+<ol>
+<li><strong>批量加载效率高：</strong> 虽然单个行的插入和更新可能不如行式存储高效（因为需要分散写入到不同的列文件），但对于批量数据加载（如ETL/ELT过程中的全量或增量导入），列式存储则表现出色。数据可以按列进行组织和压缩，然后一次性写入，形成新的列段。许多列式数据库为了分析性能，会将数据定期合并和优化存储（类似LSM树）。</li>
+<li><strong>追加写入友好：</strong> 许多列式数据库以追加（append-only）的方式处理数据，即旧数据不会被修改，新的数据总是追加到列的末尾，并形成新的数据块或版本。这简化了数据一致性管理和并发控制，并且非常适合日志、时序数据等持续增长的数据流。</li>
+<li><strong>天然适合OLAP：</strong> 前面讨论的所有优势——高压缩、低I/O、高CPU效率——都指向一个结果：列式存储是为OLAP工作负载量身定制的。商业智能报表、Ad-hoc查询、数据挖掘、数据探索等场景都将受益于其卓越的分析性能。</li>
+</ol>
+<h3 id="高度适应于大数据与数据仓库">高度适应于大数据与数据仓库</h3>
+<p>列式存储是现代数据仓库和大数据平台的核心技术之一。</p>
+<ol>
+<li><strong>大规模并行处理（MPP）架构：</strong> 许多列式数据库是基于MPP架构构建的。数据被水平分区并分散存储在集群中的多个节点上。每个节点独立处理其本地存储的列数据片段，然后将结果汇总。列式存储的特性（如只读所需列，高效压缩）使得MPP架构能够更有效地扩展，处理PB级甚至EB级的数据。</li>
+<li><strong>与分布式文件系统集成：</strong> 列式存储格式（如Apache Parquet, ORC）已经成为Hadoop生态系统中事实上的标准，它们可以高效地存储在HDFS上，并被Spark、Hive、Presto等工具直接读取和处理。这使得数据仓库和数据湖的构建变得更加灵活和强大。</li>
+<li><strong>云原生数据仓库的基石：</strong> 像Amazon Redshift、Google BigQuery、Snowflake这样的云数据仓库服务，都或多或少地采用了列式存储或其变种作为其底层存储引擎。它们利用列式存储的压缩和查询效率，结合云的弹性伸缩能力，提供了按需付费、高性能的大数据分析服务。</li>
+</ol>
+<h3 id="灵活的模式演进">灵活的模式演进</h3>
+<p>在面对不断变化的数据需求时，数据模式（Schema）的演进是一个常见的挑战。列式存储在这方面也展现出一定的优势。</p>
+<ol>
+<li><strong>添加新列成本低：</strong> 在行式存储中，向现有表添加新列可能需要重写整个表，因为它改变了每行的物理布局。但在列式存储中，添加新列通常只是在存储中为新列创建一块新的存储区域。对于现有数据，新列的值可以被视为NULL或默认值，不影响原有列的存储。这种操作通常是元数据操作，速度很快。</li>
+<li><strong>高效处理稀疏数据：</strong> 如果一张表有很多列，但很多行的某些列值是空的（稀疏数据），列式存储可以非常高效地处理这种情况。它只存储实际存在的值，并通过某种方式（如位置索引、位图）来标记空值。这避免了为NULL值分配存储空间，从而节省了大量存储并提高了处理效率。行式存储在面对稀疏数据时，仍然会为NULL值预留空间或需要额外的逻辑来管理，效率相对较低。</li>
+</ol>
+<p>例如，在 IoT 传感器数据中，不同的传感器可能报告不同的测量指标，导致大量空值。列式存储能自然地只存储那些实际有数据的列，显著节省空间。</p>
+<h2 id="列式存储的适用场景与挑战">列式存储的适用场景与挑战</h2>
+<p>任何技术都有其最适合的舞台，列式存储也不例外。理解其优势的同时，也要清楚其局限性，才能做出明智的技术选型。</p>
+<h3 id="适用场景">适用场景</h3>
+<p>列式存储的特性使其在以下场景中具有无可比拟的优势：</p>
+<ol>
+<li><strong>OLAP工作负载：</strong>
+<ul>
+<li><strong>商业智能（BI）和报表：</strong> 对大量历史数据进行聚合、切片、钻取，生成各类分析报告和仪表盘。</li>
+<li><strong>数据仓库：</strong> 存储和管理企业所有业务数据，为分析提供统一的数据源。</li>
+<li><strong>Ad-hoc查询：</strong> 用户或数据科学家进行即席查询，探索数据中的模式和洞察。</li>
+<li><strong>数据挖掘和机器学习：</strong> 通常需要对大规模数据集进行特征提取和聚合。</li>
+</ul>
+</li>
+<li><strong>时序数据（Time-series Data）：</strong> 如传感器数据、日志数据、金融交易数据等。这些数据通常以追加方式写入，查询时往往只关心特定时间范围内的少数几个指标。列式存储的追加写入特性和按列查询的优势使其非常适合。</li>
+<li><strong>日志分析：</strong> 收集和分析应用程序、系统和网络日志，进行故障排查、性能监控和安全审计。日志通常是半结构化的，并且查询主要集中在时间、事件类型、特定字段等少数列上。</li>
+<li><strong>欺诈检测与风险管理：</strong> 需要快速扫描大量历史交易数据，识别异常模式或匹配特定条件。</li>
+<li><strong>科学数据和基因组数据分析：</strong> 这些领域的数据集通常非常庞大，且查询通常集中在特定的测量值或基因位点上。</li>
+</ol>
+<h3 id="挑战与局限性">挑战与局限性</h3>
+<p>尽管列式存储在分析领域表现卓越，但它并非万能药，也存在一些固有的挑战和局限性：</p>
+<ol>
+<li><strong>写入性能（Write Performance）：</strong>
+<ul>
+<li><strong>行更新/删除复杂：</strong> 如果需要修改或删除单行数据，列式数据库必须找到该行在所有相关列中的对应位置，并分别修改这些列段。这通常意味着需要读取、修改、然后重写整个列段。由于数据的物理连续性被打破，这种操作效率低下。许多列式数据库通过“标记删除”或“追加新版本”的方式来处理更新和删除，定期进行后台数据合并和清理，但这会增加延迟和复杂性。</li>
+<li><strong>不适合高并发事务：</strong> 写入操作的复杂性使得列式存储难以高效地支持高并发的联机事务处理（OLTP）工作负载。例如，一个电商网站的实时订单处理系统，每秒可能有成千上万的插入、更新和删除操作，使用列式数据库会带来严重的性能瓶颈。</li>
+</ul>
+</li>
+<li><strong>事务处理（Transaction Processing）：</strong>
+<ul>
+<li><strong>ACID合规性实现复杂：</strong> 列式存储为了追求查询性能，往往牺牲了部分OLTP场景下对严格ACID事务的要求。虽然现代列式数据库通过多版本并发控制（MVCC）等技术努力提供事务支持，但与传统行式数据库相比，其在复杂事务、强一致性保证和高并发写入方面的表现仍有差距。</li>
+</ul>
+</li>
+<li><strong>复杂查询的代价：</strong>
+<ul>
+<li><strong>多列连接（Join）性能：</strong> 如果查询需要连接大量列或涉及多张宽表之间的复杂连接，列式数据库可能需要从多个不连续的列存储区域中读取数据，并在内存中重建行。这可能导致更多的随机I/O和CPU开销，有时会比行式数据库的性能更差，尤其是当连接键的基数很高时。</li>
+</ul>
+</li>
+<li><strong>数据建模考量：</strong>
+<ul>
+<li><strong>需要不同的思维模式：</strong> 在列式数据库中，数据建模需要更多地考虑查询模式。例如，对查询不频繁的列进行压缩，或者将经常一起查询的列进行物理上的分组（Column Grouping），以优化I/O。这与传统关系型数据库的规范化（Normalization）设计原则有所不同，可能需要针对分析场景进行反规范化（Denormalization）。</li>
+</ul>
+</li>
+<li><strong>索引限制：</strong>
+<ul>
+<li><strong>传统索引效率不高：</strong> 传统行式数据库的B-树索引对单行随机访问非常有效。但在列式存储中，由于数据是按列存储的，构建跨列的行级索引效率不高。列式数据库通常采用不同的索引机制，如稀疏索引、Min/Max索引、Bloom过滤器、位图索引等，这些索引更侧重于加速列级过滤和聚合。</li>
+</ul>
+</li>
+</ol>
+<p>因此，选择列式数据库并非简单的技术追逐，而是一场关于“权衡”的艺术。在分析型场景中，它无疑是强大的利器；但在高并发、实时写入和复杂事务处理的场景中，行式存储或混合型数据库可能仍然是更优解。</p>
+<h2 id="市场上的列式数据库">市场上的列式数据库</h2>
+<p>随着大数据和分析需求的爆发式增长，越来越多的数据库系统开始采用列式存储技术，或将其作为其核心特性。以下是一些在市场上广为人知的列式存储相关技术和产品：</p>
+<ol>
+<li>
+<p><strong>Apache Parquet / ORC：</strong></p>
+<ul>
+<li><strong>类型：</strong> 并非完整的数据库系统，而是大数据生态系统中广泛使用的<strong>列式存储文件格式</strong>。它们被设计用于在Hadoop、Spark、Presto等分布式计算框架中高效存储和处理数据。</li>
+<li><strong>特点：</strong> 支持复杂的嵌套数据结构，具有高效的压缩和编码机制，支持谓词下推，是构建数据湖和数据仓库的基石。</li>
+</ul>
+</li>
+<li>
+<p><strong>ClickHouse：</strong></p>
+<ul>
+<li><strong>类型：</strong> 开源的、为在线分析处理（OLAP）而设计的<strong>列式数据库管理系统</strong>。由Yandex开发。</li>
+<li><strong>特点：</strong> 以其惊人的查询性能、高吞吐量和强大的SQL支持而闻名。非常适合实时分析、日志分析、时序数据等。它在单节点和分布式集群模式下都表现出色。</li>
+</ul>
+</li>
+<li>
+<p><strong>MonetDB：</strong></p>
+<ul>
+<li><strong>类型：</strong> 开源的<strong>列式关系型数据库系统</strong>，由荷兰国家数学和计算机科学研究中心（CWI）开发。</li>
+<li><strong>特点：</strong> 历史悠久，专注于列式存储和向量化执行，非常适合数据挖掘和科学计算等领域的分析工作负载。</li>
+</ul>
+</li>
+<li>
+<p><strong>Vertica：</strong></p>
+<ul>
+<li><strong>类型：</strong> 商业化的、为大数据分析和数据仓库设计的<strong>列式数据库系统</strong>。</li>
+<li><strong>特点：</strong> 业界领先的分析数据库之一，拥有强大的查询优化器、高压缩率和卓越的并行处理能力。常用于金融、电信、零售等行业的大规模数据分析。</li>
+</ul>
+</li>
+<li>
+<p><strong>Amazon Redshift：</strong></p>
+<ul>
+<li><strong>类型：</strong> 亚马逊云科技（AWS）提供的一个完全托管的<strong>PB级数据仓库服务</strong>。</li>
+<li><strong>特点：</strong> 底层基于PostgreSQL和Vertica技术，采用了列式存储、MPP架构和高效压缩。与AWS生态系统深度集成，提供弹性扩展和按需付费模式。</li>
+</ul>
+</li>
+<li>
+<p><strong>Google BigQuery：</strong></p>
+<ul>
+<li><strong>类型：</strong> 谷歌云（GCP）提供的一个完全托管的<strong>无服务器、PB级数据仓库服务</strong>。</li>
+<li><strong>特点：</strong> 虽然具体实现细节是专有的，但它广泛使用了列式存储、大规模并行处理和分布式文件系统。其“无服务器”特性意味着用户无需管理基础设施，只需为查询的数据量和存储付费。</li>
+</ul>
+</li>
+<li>
+<p><strong>Snowflake：</strong></p>
+<ul>
+<li><strong>类型：</strong> 一个基于云的<strong>数据仓库即服务（DWaaS）</strong>。</li>
+<li><strong>特点：</strong> 采用独特的“多集群、共享数据”架构。虽然其底层存储被描述为“混合列式存储”（hybrid columnar storage），它在逻辑上呈现为行式，但在物理上优化为列式，以兼顾事务和分析性能。其计算和存储分离的架构提供了极高的灵活性和可伸缩性。</li>
+</ul>
+</li>
+<li>
+<p><strong>Apache Druid：</strong></p>
+<ul>
+<li><strong>类型：</strong> 一个为实时分析设计的高性能<strong>分布式数据存储</strong>。</li>
+<li><strong>特点：</strong> 采用混合列式存储和时间索引。它在时间序列数据、事件数据等场景下，提供了亚秒级的查询能力，同时支持高吞吐量的摄取。</li>
+</ul>
+</li>
+</ol>
+<p>这些产品和技术各有侧重，但都共同印证了列式存储在现代数据分析领域的关键地位。它们为企业提供了从海量数据中快速提取价值的能力，推动了商业智能和数据驱动决策的普及。</p>
+<h2 id="结论">结论</h2>
+<p>在数字化的浪潮中，数据量以指数级增长，数据分析的需求也变得前所未有的紧迫和复杂。传统行式存储数据库，在处理高并发、强事务的OLTP场景中依然是不可或缺的基石，但在面对动辄TB、PB甚至EB级的历史数据分析、商业智能和数据仓库时，其效率瓶颈日益凸显。</p>
+<p>正是为了应对这一挑战，列式存储数据库应运而生，并以其独特的物理数据组织方式，带来了革命性的性能飞跃。我们深入探讨了列式存储的核心优势：</p>
+<ul>
+<li><strong>极高的数据压缩率：</strong> 借助同质列的特性和多种编码技术，显著减少存储空间和I/O开销。</li>
+<li><strong>显著提升的查询性能：</strong> 通过I/O效率的提升（只读所需列）、CPU效率的优化（向量化处理、缓存局部性）以及谓词下推，极大加速了分析型查询。</li>
+<li><strong>高效的数据加载与分析能力：</strong> 尤其适合批量数据导入和追加写入的场景，是OLAP工作负载的理想选择。</li>
+<li><strong>高度适应大数据与数据仓库：</strong> 与MPP架构、分布式文件系统以及云原生数据仓库的完美结合，使其成为构建现代分析平台的核心组件。</li>
+<li><strong>灵活的模式演进与稀疏数据处理：</strong> 降低了模式变更的成本，并能高效管理包含大量空值的宽表。</li>
+</ul>
+<p>当然，列式存储并非银弹。它在单行写入/更新、复杂事务处理以及某些特定类型的连接查询上存在局限。因此，在实际应用中，选择合适的数据库技术，是理解业务需求、数据特性与技术原理后的权衡艺术。我们既要懂得行式存储的严谨与高效，也要掌握列式存储的敏捷与洞察力。</p>
+<p>未来，我们可能会看到更多混合型数据库的出现，它们试图融合行式和列式存储的优势，为不同类型的工作负载提供统一且优化的解决方案。无论技术如何演进，理解数据存储的底层原理，都是我们驾驭数据洪流、从混沌中发现价值的关键。</p>
+<p>希望这篇深度解析能为你点亮一盏明灯，让你在数据世界的航行中更加从容不迫。我们下次再见！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/22/2025-07-22-175554/">https://qmwneb946.dpdns.org/2025/07/22/2025-07-22-175554/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E5%AD%A6/">数学</a><a class="post-meta__tags" href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%BC%98%E5%8A%BF/">列式存储数据库的优势</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/22/hello-world/" title="Hello World"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Hello World</div></div><div class="info-2"><div class="info-item-1">欢迎使用 Hexo！这是您的第一篇博文。更多信息，请参阅 文档。如果您在使用 Hexo 时遇到任何问题，可以在 故障排除 中找到答案，也可以在 GitHub 上向我提问。 快速入门 创建新帖子 1$ hexo new &quot;我的新帖子&quot; 更多信息：写作 运行服务器 1$ hexo server 更多信息：服务器 生成静态文件 1$ hexo generate 更多信息：生成 部署到远程站点 1$ hexo deploy 更多信息：部署 </div></div></div></a><a class="pagination-related" href="/2025/07/22/2025-07-22-175453/" title="代码即基础设施（IaC）：软件定义世界的基石"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">代码即基础设施（IaC）：软件定义世界的基石</div></div><div class="info-2"><div class="info-item-1">博主：qmwneb946  引言 在当今瞬息万变的数字化时代，软件的力量已经渗透到我们生活的方方面面。从手机应用到企业级服务，从人工智能到物联网，一切皆可程序化。然而，软件的运行离不开基础设施的支撑——服务器、网络、存储、数据库等等。传统上，这些基础设施的配置和管理是高度手动化、耗时且容易出错的过程。每一次环境部署、服务扩容，都可能成为运维人员的噩梦。 想象一下：您需要为新的开发项目快速搭建一套与生产环境高度一致的开发测试环境；或者，您的核心业务流量激增，需要在一小时内扩容数百台服务器；再或者，您需要确保所有生产服务器都遵循严格的安全配置标准，并且这些标准需要随时可审计和追踪。在没有一套系统化方法的情况下，这些任务几乎是不可能以高效、可靠且可重复的方式完成的。 正是为了应对这些挑战，“代码即基础设施”（Infrastructure as Code，简称 IaC）这一革命性的理念应运而生。IaC 不仅仅是一种技术趋势，它更是一种文化转型和方法论，它将软件开发的最佳实践（如版本控制、自动化测试、模块化）引入到基础设施管理中。它将基础设施的配置和部署过程通过代码来描述和管理，使得基础设...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082519/" title="增强现实与工业维修：一场效率革命"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">增强现实与工业维修：一场效率革命</div></div><div class="info-2"><div class="info-item-1">增强现实 (AR) 技术正以前所未有的速度改变着我们的生活，而其在工业维修领域的应用更是展现出了巨大的潜力。不再局限于科幻电影中的场景，AR 如今已成为提升维修效率、降低维护成本、提高安全性的强大工具。本文将深入探讨 AR 如何与工业维修相结合，并分析其背后的技术和未来发展趋势。 引言：传统工业维修的挑战 传统的工业维修往往面临着诸多挑战：  信息获取困难: 维修人员需要查阅大量的纸质文档、图纸和视频，耗时费力，容易出错。 培训成本高昂:  熟练技工的培养需要漫长的学习过程和大量的实践经验，成本高昂。 安全风险较高:  一些复杂的设备维修存在高风险，例如高压电、高温部件等，容易发生意外事故。 维修效率低下:  由于缺乏实时信息和有效的指导，维修时间往往较长，导致生产停机时间增加，损失巨大。  AR 如何改变工业维修的游戏规则 AR 技术通过将数字信息叠加到现实世界中，为工业维修提供了全新的解决方案： 远程专家指导 通过 AR 眼镜或平板电脑，现场维修人员可以与远程专家实时互动。专家可以通过 AR 系统看到现场设备的实时图像，并利用虚拟标注、3D 模型等工具进行远程指导，大大缩短了...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082652/" title="纳米材料在靶向药物中的革命性应用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">纳米材料在靶向药物中的革命性应用</div></div><div class="info-2"><div class="info-item-1">近年来，癌症等重大疾病的治疗面临着巨大的挑战，传统的化疗药物往往毒性大、副作用强，难以实现精准治疗。而纳米技术的兴起为解决这一难题提供了新的思路，特别是纳米材料在靶向药物递送系统中的应用，正引发一场医学革命。本文将深入探讨纳米材料如何提升靶向药物的疗效，降低其毒副作用。 纳米材料的特性及其在药物递送中的优势 纳米材料，是指至少在一个维度上尺寸小于100纳米的材料。这种极小的尺寸赋予了它们许多独特的物理和化学性质，使其在药物递送领域具有显著优势： 增强的药物溶解度和稳定性 许多药物具有较低的溶解度，限制了其在体内的吸收和生物利用度。纳米载体，例如脂质体、聚合物纳米颗粒和无机纳米颗粒（如金纳米颗粒、氧化铁纳米颗粒），可以显著提高药物的溶解度和稳定性，延长其在体内的循环时间。例如，将抗癌药物负载在聚合物纳米颗粒中，可以保护药物免受降解，并提高其在肿瘤组织中的积累。 靶向药物递送 纳米材料可以通过表面修饰，例如结合特异性配体（如抗体、肽或小分子），实现对特定细胞或组织的靶向递送。这种靶向递送可以最大限度地减少药物对健康组织的毒性，并提高药物在靶标部位的浓度，从而增强治疗效果。例如，修饰有...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082925/" title="生物化学中的蛋白质折叠问题：一个复杂而迷人的计算挑战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">生物化学中的蛋白质折叠问题：一个复杂而迷人的计算挑战</div></div><div class="info-2"><div class="info-item-1">生命，这奇妙的现象，其本质很大程度上取决于蛋白质的精确三维结构。蛋白质是由氨基酸链组成的长链分子，但仅仅是氨基酸序列并不能完全决定其功能。蛋白质必须折叠成特定的三维结构（构象），才能发挥其生物学功能，例如催化酶促反应、运输分子或构建细胞结构。  而这个折叠过程，就是著名的“蛋白质折叠问题”。 蛋白质折叠：从线性序列到三维结构 蛋白质的氨基酸序列由基因编码决定，这是一个线性的一维结构。然而，这些氨基酸链并非随机地盘踞在一起，而是会遵循特定的物理和化学原理，自发地折叠成独特的、功能性的三维结构。这个折叠过程涉及到多种相互作用，包括： 疏水相互作用 蛋白质内部的疏水氨基酸残基倾向于聚集在一起，远离水性环境，形成蛋白质的核心区域。而亲水性氨基酸残基则倾向于暴露在蛋白质的表面，与水分子相互作用。 静电相互作用 带电荷的氨基酸残基之间会发生静电吸引或排斥作用，影响蛋白质的折叠。 氢键 氢键在维持蛋白质二级结构（例如α螺旋和β折叠）中起着关键作用。 二硫键 某些氨基酸残基（例如半胱氨酸）之间可以形成二硫键，进一步稳定蛋白质的三维结构。 这些相互作用共同决定了蛋白质的最终构象，这是一个极其复杂的...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-092536/" title="CRISPR基因编辑：技术的奇迹与伦理的挑战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CRISPR基因编辑：技术的奇迹与伦理的挑战</div></div><div class="info-2"><div class="info-item-1">大家好！我是你们的技术和数学博主，今天我们要深入探讨一个既令人兴奋又充满争议的话题：CRISPR-Cas9基因编辑技术及其伦理挑战。CRISPR技术以其精准性和效率，为治疗遗传疾病、改良作物等领域带来了革命性的变革，但与此同时，它也引发了诸多伦理难题，需要我们认真思考和谨慎应对。 CRISPR技术：一把双刃剑 CRISPR-Cas9系统，简单来说，就是一种可以精确地“剪切和粘贴”DNA的工具。它源自细菌的天然防御机制，利用向导RNA（gRNA）引导Cas9酶到基因组中的特定位置，从而进行基因的敲除、插入或替换。其操作简便、成本低廉、效率高，使其成为基因编辑领域的“明星”技术。 CRISPR的工作原理 CRISPR系统的工作机制可以概括为以下几个步骤：  设计gRNA:  根据目标基因序列设计相应的gRNA，使其能够特异性地结合目标DNA序列。 Cas9酶的结合: gRNA引导Cas9酶到目标DNA序列。 DNA双链断裂: Cas9酶在目标位点切割DNA双链，形成双链断裂（DSB）。 DNA修复: 细胞利用非同源末端连接（NHEJ）或同源定向修复（HDR）机制修复DSB。NHEJ修...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-094115/" title="免疫学与癌症免疫疗法：一场人体内部的战争与和平"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">免疫学与癌症免疫疗法：一场人体内部的战争与和平</div></div><div class="info-2"><div class="info-item-1">免疫系统，人体精妙的防御机制，日夜不停地抵御着病毒、细菌和其他有害物质的入侵。然而，当这套系统出现故障，对自身细胞发起攻击，或者无法有效清除癌细胞时，疾病便会发生，其中最可怕的莫过于癌症。近年来，癌症免疫疗法异军突起，为癌症治疗带来了新的希望，让我们深入探索这场人体内部的战争与和平。 免疫系统：人体精妙的防御网络 我们的免疫系统由先天免疫和适应性免疫两大支柱组成。 先天免疫：第一道防线 先天免疫是人体抵御病原体的第一道防线，它包含物理屏障（例如皮肤和黏膜）、化学屏障（例如胃酸和酶）以及细胞介导的免疫反应，例如巨噬细胞和自然杀伤细胞（NK细胞）的吞噬和杀伤作用。这些细胞能够识别并清除被感染的细胞或癌细胞，但其特异性较低。 适应性免疫：精准打击 适应性免疫系统则更为精细，它具有特异性和记忆性。T细胞和B细胞是适应性免疫的主角。T细胞负责细胞介导的免疫，其中细胞毒性T细胞（CTL）能够特异性识别并杀死靶细胞，例如被病毒感染的细胞或癌细胞。B细胞则负责体液免疫，产生抗体，中和病原体或标记癌细胞以便清除。  抗原呈递细胞（APC），例如树突状细胞，在将抗原信息呈递给T细胞，启动适应性免疫反...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-094141/" title="生态学中的生物多样性保护：一个复杂系统工程的视角"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">生态学中的生物多样性保护：一个复杂系统工程的视角</div></div><div class="info-2"><div class="info-item-1">大家好！今天我们要深入探讨一个既充满挑战又至关重要的话题：生态学中的生物多样性保护。  这不仅是环境保护的基石，也与我们人类的福祉息息相关。对技术爱好者来说，这更像是一个巨大的、复杂的系统工程，充满了需要解决的优化问题和值得探索的算法。 生物多样性的价值：超越简单的物种数量 我们通常将生物多样性理解为物种数量的多样性。但实际上，它是一个多层次的概念，包括：  遗传多样性 (Genetic Diversity):  同一物种内基因组的差异性，这决定了物种的适应性和进化潜力。  想象一下，一个抗旱基因的缺失可能导致整个小麦品种在干旱年份面临灭绝的风险。 物种多样性 (Species Diversity):  不同物种的数量及其相对丰度。 这通常用Shannon多样性指数 (H=−∑i=1Spilog⁡2piH = -\sum_{i=1}^{S} p_i \log_2 p_iH=−∑i=1S​pi​log2​pi​) 来衡量，其中 pip_ipi​ 是第 iii 个物种的比例，SSS 是物种总数。  更高的Shannon指数表示更高的物种多样性。 生态系统多样性 (Ecosystem ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">528</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">532</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%9F%BA%E7%9F%B3%EF%BC%9A%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8"><span class="toc-number">1.</span> <span class="toc-text">关系型数据库的基石：行式存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">行式存储的工作原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.2.</span> <span class="toc-text">行式存储的优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">1.3.</span> <span class="toc-text">行式存储的局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%AD%E7%A7%98%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%EF%BC%9A%E4%B8%80%E7%A7%8D%E8%8C%83%E5%BC%8F%E9%9D%A9%E6%96%B0"><span class="toc-number">2.</span> <span class="toc-text">揭秘列式存储：一种范式革新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">列式存储的工作原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E4%B8%8E%E8%A1%8C%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">2.2.</span> <span class="toc-text">列式存储与行式存储的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BC%98%E5%8A%BF"><span class="toc-number">3.</span> <span class="toc-text">列式存储的核心优势</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9%E7%8E%87%E6%9E%81%E9%AB%98"><span class="toc-number">3.1.</span> <span class="toc-text">数据压缩率极高</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E6%98%BE%E8%91%97%E6%8F%90%E5%8D%87"><span class="toc-number">3.2.</span> <span class="toc-text">查询性能显著提升</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#I-O-%E6%95%88%E7%8E%87"><span class="toc-number">3.2.1.</span> <span class="toc-text">I&#x2F;O 效率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CPU-%E6%95%88%E7%8E%87"><span class="toc-number">3.2.2.</span> <span class="toc-text">CPU 效率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%93%E8%AF%8D%E4%B8%8B%E6%8E%A8%EF%BC%88Predicate-Pushdown%EF%BC%89"><span class="toc-number">3.2.3.</span> <span class="toc-text">谓词下推（Predicate Pushdown）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%81%9A%E5%90%88%E6%93%8D%E4%BD%9C%E4%BC%98%E5%8C%96"><span class="toc-number">3.2.4.</span> <span class="toc-text">聚合操作优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%88%86%E6%9E%90%E6%95%88%E7%8E%87"><span class="toc-number">3.3.</span> <span class="toc-text">数据加载与分析效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%BA%A6%E9%80%82%E5%BA%94%E4%BA%8E%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%B8%8E%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93"><span class="toc-number">3.4.</span> <span class="toc-text">高度适应于大数据与数据仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%81%B5%E6%B4%BB%E7%9A%84%E6%A8%A1%E5%BC%8F%E6%BC%94%E8%BF%9B"><span class="toc-number">3.5.</span> <span class="toc-text">灵活的模式演进</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E7%9A%84%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%8E%E6%8C%91%E6%88%98"><span class="toc-number">4.</span> <span class="toc-text">列式存储的适用场景与挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.1.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%91%E6%88%98%E4%B8%8E%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">4.2.</span> <span class="toc-text">挑战与局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%82%E5%9C%BA%E4%B8%8A%E7%9A%84%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">市场上的列式数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-22T17:58:08.783Z" title="发表于 2025-07-23 01:58:08">2025-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-22T17:58:08.783Z" title="发表于 2025-07-23 01:58:08">2025-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/2025-07-22-175554/" title="驾驭数据洪流：深入解析列式存储数据库的优势">驾驭数据洪流：深入解析列式存储数据库的优势</a><time datetime="2025-07-22T09:55:54.000Z" title="发表于 2025-07-22 17:55:54">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/2025-07-22-175453/" title="代码即基础设施（IaC）：软件定义世界的基石">代码即基础设施（IaC）：软件定义世界的基石</a><time datetime="2025-07-22T09:54:53.000Z" title="发表于 2025-07-22 17:54:53">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/2025-07-22-175357/" title="双向搜索算法的效率：一场指数级的胜利">双向搜索算法的效率：一场指数级的胜利</a><time datetime="2025-07-22T09:53:57.000Z" title="发表于 2025-07-22 17:53:57">2025-07-22</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
