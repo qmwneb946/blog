@@ -1,0 +1,532 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>随机的艺术：深入探索密码学中的随机数生成 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="嘿，各位数字世界的探索者们！我是你们的老朋友 qmwneb946。今天，我们要聊一个在数字安全领域中，常常被视为理所当然，但其重要性却怎么强调都不为过的基石——随机数。在密码学这门艺术与科学的交汇点上，随机性不仅仅是锦上添花，更是构建信任、保障安全的生命线。 想象一下，你正在铸造一把数字世界的钥匙，它能保护你最珍贵的秘密。如果这把钥匙的铸造过程是可预测的，那么它还有何用？敌人可以轻易复制它，闯入你">
+<meta property="og:type" content="article">
+<meta property="og:title" content="随机的艺术：深入探索密码学中的随机数生成">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/23/2025-07-23-204736/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="嘿，各位数字世界的探索者们！我是你们的老朋友 qmwneb946。今天，我们要聊一个在数字安全领域中，常常被视为理所当然，但其重要性却怎么强调都不为过的基石——随机数。在密码学这门艺术与科学的交汇点上，随机性不仅仅是锦上添花，更是构建信任、保障安全的生命线。 想象一下，你正在铸造一把数字世界的钥匙，它能保护你最珍贵的秘密。如果这把钥匙的铸造过程是可预测的，那么它还有何用？敌人可以轻易复制它，闯入你">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-23T12:47:36.000Z">
+<meta property="article:modified_time" content="2025-07-26T06:50:50.174Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="数学">
+<meta property="article:tag" content="密码学中的随机数生成">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "随机的艺术：深入探索密码学中的随机数生成",
+  "url": "https://qmwneb946.dpdns.org/2025/07/23/2025-07-23-204736/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-23T12:47:36.000Z",
+  "dateModified": "2025-07-26T06:50:50.174Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/23/2025-07-23-204736/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '随机的艺术：深入探索密码学中的随机数生成',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">随机的艺术：深入探索密码学中的随机数生成</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">随机的艺术：深入探索密码学中的随机数生成<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-23-204736.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-23T12:47:36.000Z" title="发表于 2025-07-23 20:47:36">2025-07-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-26T06:50:50.174Z" title="更新于 2025-07-26 14:50:50">2025-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E5%AD%A6/">数学</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>嘿，各位数字世界的探索者们！我是你们的老朋友 qmwneb946。今天，我们要聊一个在数字安全领域中，常常被视为理所当然，但其重要性却怎么强调都不为过的基石——随机数。在密码学这门艺术与科学的交汇点上，随机性不仅仅是锦上添花，更是构建信任、保障安全的生命线。</p>
+<p>想象一下，你正在铸造一把数字世界的钥匙，它能保护你最珍贵的秘密。如果这把钥匙的铸造过程是可预测的，那么它还有何用？敌人可以轻易复制它，闯入你的城堡。这就是随机数在密码学中扮演的至关重要的角色：它确保了密钥的独一无二性、协议的不可预测性以及挑战的不可重放性。从数字签名到加密通信，从零知识证明到区块链技术，高质量的随机数无处不在，默默守护着我们的数字生活。</p>
+<p>但“随机”这个词本身就充满了哲学意味。我们真的能生成真正的随机数吗？伪随机数又是什么？它们在密码学中如何发挥作用，又有哪些陷阱？今天，我们将拨开随机性的迷雾，深入探讨密码学中随机数生成（RNG）的奥秘，从其理论基础到工程实践，从真随机数到加密安全伪随机数，直至标准与最佳实践。准备好了吗？让我们一起踏上这场充满不确定性的确定之旅！</p>
+<h2 id="随机性的本质：真与伪的界限">随机性的本质：真与伪的界限</h2>
+<p>在深入探讨随机数生成技术之前，我们首先需要理解“随机性”的含义，以及它在计算科学中的两种基本表现形式：真随机性（True Randomness）和伪随机性（Pseudo-Randomness）。</p>
+<h3 id="什么是真随机性？">什么是真随机性？</h3>
+<p>真随机性，顾名思义，是源于自然界中本质上不可预测的物理过程。这些过程的输出无法通过任何已知的算法或模型来预测，即使我们拥有关于生成过程的所有信息。它们的不可预测性是内禀的，基于量子力学的不确定性原理，例如电子噪声、放射性衰变、大气噪声、鼠标移动或键盘敲击的时间间隔、甚至是混沌系统的行为。</p>
+<p>一个理想的真随机数发生器（TRNG, True Random Number Generator）将这些物理现象转化为数字序列。它的核心挑战在于如何可靠地捕捉这些微观层面的随机性，并将其“提纯”为统计学上均匀分布的、无偏的随机比特流。TRNGs的优点在于其输出的不可预测性，是密码学密钥、Nonce（一次性随机数）和盐值（Salt）等高度敏感信息的理想来源。然而，它们的缺点也显而易见：生成速度相对较慢，对环境变化敏感，且通常需要专门的硬件支持。</p>
+<h3 id="什么是伪随机性？">什么是伪随机性？</h3>
+<p>与真随机性不同，伪随机性是由确定性算法生成的。一个伪随机数生成器（PRNG, Pseudo-Random Number Generator）从一个初始的“种子”（Seed）开始，通过一系列数学运算，生成一个看起来随机的序列。这个序列虽然在统计学上可能表现出良好的随机性特征（如均匀分布、长周期等），但只要知道初始种子和生成算法，整个序列都是完全可预测的。</p>
+<p>对于大多数非密码学应用（如模拟、游戏、统计抽样）而言，PRNGs已经足够。它们的主要优势在于生成速度快，且可以重复生成相同的序列（如果使用相同的种子），这对于调试和重现实验结果非常有用。然而，它们的确定性本质使得它们不适合直接用于密码学，因为攻击者一旦获取到种子，就可以预测或重构所有生成的“随机”数，从而破解加密系统。</p>
+<h3 id="密码学中的随机性需求">密码学中的随机性需求</h3>
+<p>在密码学中，我们对随机数的要求是极其严格的。一个用于密码学的随机数，不仅要满足统计学上的随机性（如均匀性、独立性），更重要的是其<strong>不可预测性</strong>。这意味着即使攻击者掌握了生成器输出的一部分，也无法推断出未来的输出，甚至无法回溯过去的输出。这种特殊的PRNG被称为<strong>加密安全伪随机数生成器</strong>（CSPRNG, Cryptographically Secure Pseudo-Random Number Generator）。</p>
+<p>CSPRNGs的目标是结合TRNG的不可预测性和PRNG的生成速度。它们通过利用少量来自TRNG的高质量随机熵（作为种子），然后使用复杂的加密算法来“扩展”这些熵，生成大量的看起来随机且难以预测的比特流。可以说，CSPRNG是现代密码学系统中随机数生成的主力军。</p>
+<h2 id="伪随机数生成器（PRNGs）：从简单到复杂">伪随机数生成器（PRNGs）：从简单到复杂</h2>
+<p>PRNGs的核心思想是使用一个确定性的算法，根据一个初始种子生成一个看似随机的序列。了解一些非密码学安全的PRNGs有助于我们理解为什么需要CSPRNGs，以及CSPRNGs的特殊要求。</p>
+<h3 id="线性同余生成器（LCG）">线性同余生成器（LCG）</h3>
+<p>线性同余生成器是最简单也是最古老的PRNG之一，广泛应用于各种非安全场景。其生成公式如下：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>X</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mo stretchy="false">(</mo><mi>a</mi><msub><mi>X</mi><mi>n</mi></msub><mo>+</mo><mi>c</mi><mo stretchy="false">)</mo><mspace></mspace><mspace width="1em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mi>m</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X_{n+1} = (aX_n + c) \pmod m
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">c</span><span class="mclose">)</span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:1em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">X_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是当前生成的随机数。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">X_{n+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> 是下一个随机数。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> 是乘数（multiplier）。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> 是增量（increment）。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 是模数（modulus）。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">X_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是初始种子。</li>
+</ul>
+<p><strong>优点：</strong> 实现简单，计算效率高。<br>
+<strong>缺点：</strong> 周期有限（最大为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span>），且<strong>高度可预测</strong>。如果知道几个连续的输出值，很容易就能推导出 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>c</mi><mo separator="true">,</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">a, c, m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">c</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span></span></span></span> 和种子 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">X_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，从而预测未来的所有输出。因此，LCG<strong>绝不能用于密码学目的</strong>。</p>
+<h3 id="Mersenne-Twister（MT）">Mersenne Twister（MT）</h3>
+<p>Mersenne Twister（MT19937）是一种非常流行的PRNG，尤其在科学模拟和统计领域。它以其超长的周期（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>19937</mn></msup><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2^{19937}-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19937</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>）和优异的统计随机性而闻名，通过了多项严格的随机性测试（如Diehard测试）。</p>
+<p><strong>优点：</strong> 周期极长，统计性能优异，生成速度快。<br>
+<strong>缺点：</strong> 尽管统计性能好，但Mersenne Twister并非加密安全的。其内部状态（通常是数百个32位或64位整数）可以通过观察几十个输出值来完全恢复。一旦状态被恢复，所有的未来输出都可以被预测。因此，Mersenne Twister也<strong>不适合密码学应用</strong>。</p>
+<h3 id="CSPRNG的要求">CSPRNG的要求</h3>
+<p>与普通的PRNGs相比，CSPRNGs必须满足以下额外的，也是最为关键的要求：</p>
+<ol>
+<li><strong>不可预测性（Unpredictability）</strong>：
+<ul>
+<li><strong>前向不可预测性 (Forward Secrecy/Unpredictability)</strong>：即使已知生成器的当前状态，也无法预测未来的输出。这是通过在每次生成随机数后更新内部状态来实现的，使得旧状态无法推导出新状态。</li>
+<li><strong>后向不可预测性 (Backward Secrecy/Unpredictability)</strong>：即使已知生成器的当前或未来输出，也无法推导出之前的内部状态或随机数。这通常通过定期重播（reseeding）来确保，即用新的高熵随机数更新生成器的内部状态。</li>
+</ul>
+</li>
+<li><strong>均匀分布性（Uniformity）</strong>：生成的随机数在整个可能范围内应是均匀分布的，即每个可能的输出值被生成的概率大致相等。</li>
+<li><strong>长周期（Long Period）</strong>：生成的序列应足够长，以至于在实际应用中不会重复。虽然CSPRNG的周期通常远超普通PRNG，但由于是确定性算法，理论上仍有周期。</li>
+<li><strong>高熵输出（High Entropy Output）</strong>：每个生成的比特都应该具有接近0.5的概率，且与之前的比特相互独立。</li>
+</ol>
+<p>满足这些要求的CSPRNGs通常基于成熟的密码学原语（如块密码、哈希函数或数论难题）构建。</p>
+<h2 id="加密安全伪随机数生成器（CSPRNGs）：构建安全基石">加密安全伪随机数生成器（CSPRNGs）：构建安全基石</h2>
+<p>CSPRNGs是现代密码学系统的核心组成部分。它们利用少量的真随机熵（来自TRNGs或操作系统熵池）作为种子，并通过精心设计的密码学算法将这些熵扩展为大量的、高质量的、不可预测的随机比特流。</p>
+<h3 id="CSPRNG的构建方法">CSPRNG的构建方法</h3>
+<p>CSPRNGs的构建通常依赖于以下几种密码学原语：</p>
+<h4 id="基于块密码的CSPRNG">基于块密码的CSPRNG</h4>
+<p>块密码（Block Cipher）是一种将固定大小的明文块加密为相同大小密文块的算法。在CSPRNG中，块密码可以用来作为伪随机函数（PRF）。</p>
+<ul>
+<li>
+<p><strong>计数器模式（CTR Mode）</strong><br>
+这是最常见的基于块密码的CSPRNG构造方法之一。<br>
+原理：选择一个初始种子作为密钥 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 和一个初始计数器值 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mi>e</mi><msub><mi>r</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">Counter_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal">o</span><span class="mord mathnormal">u</span><span class="mord mathnormal">n</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。每次需要生成随机数时，递增计数器，然后用密钥 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 对当前计数器值进行块加密。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><msub><mtext>BlockCipher</mtext><mi>K</mi></msub><mo stretchy="false">(</mo><mi>C</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mi>e</mi><msub><mi>r</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R_i = \text{BlockCipher}_K(Counter_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord text"><span class="mord">BlockCipher</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal">o</span><span class="mord mathnormal">u</span><span class="mord mathnormal">n</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">R_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是生成的随机数块。<br>
+例如，AES-CTR DRBG就是基于AES块密码在CTR模式下运行的CSPRNG。<br>
+<strong>优点：</strong> 效率高，可以并行生成多个随机数块。<br>
+<strong>缺点：</strong> 密钥 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 的安全性至关重要，且计数器不能重复使用。</p>
+</li>
+<li>
+<p><strong>输出反馈模式（OFB Mode）</strong><br>
+与CTR模式类似，OFB模式也通过对一个内部状态进行加密来生成随机流。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>I</mi><mn>0</mn></msub><mo>=</mo><mtext>Initial Seed</mtext></mrow><annotation encoding="application/x-tex">I_0 = \text{Initial Seed}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Initial Seed</span></span></span></span></span></span></p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>I</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mtext>BlockCipher</mtext><mi>K</mi></msub><mo stretchy="false">(</mo><msub><mi>I</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{i+1} = \text{BlockCipher}_K(I_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord text"><span class="mord">BlockCipher</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><msub><mi>I</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">R_i = I_{i+1}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">I_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是内部状态， <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">R_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是输出的随机数块。</p>
+</li>
+</ul>
+<h4 id="基于哈希函数的CSPRNG">基于哈希函数的CSPRNG</h4>
+<p>哈希函数是一种将任意长度的输入映射为固定长度输出的单向函数。它们在CSPRNG中被用作伪随机函数。</p>
+<ul>
+<li>
+<p><strong>HMAC-DRBG</strong><br>
+NIST SP 800-90A 推荐的一种CSPRNG，基于HMAC（基于哈希的消息认证码）构造。它通过重复应用HMAC来更新内部状态并生成随机输出。<br>
+<strong>工作原理：</strong> 维护一个密钥 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 和一个值 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 作为内部状态。在生成随机数或重播时，通过HMAC计算新的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>，确保前向和后向安全性。<br>
+<strong>优点：</strong> 广泛采纳，安全性基于HMAC的安全性，且有严格的规范。<br>
+<strong>缺点：</strong> 相对于基于块密码的CSPRNG，可能略慢。</p>
+</li>
+<li>
+<p><strong>Hash-DRBG</strong><br>
+也是NIST SP 800-90A 推荐的一种CSPRNG，直接基于哈希函数构造。<br>
+<strong>工作原理：</strong> 维护一个种子值 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>。每次生成随机数时，将 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 和一个计数器（或其他上下文信息）连接起来进行哈希，然后更新 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mtext>Hash</mtext><mo stretchy="false">(</mo><mi>V</mi><mi mathvariant="normal">∣</mi><msub><mtext>counter</mtext><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R_i = \text{Hash}(V | \text{counter}_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Hash</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">∣</span><span class="mord"><span class="mord text"><span class="mord">counter</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>V_{new} = \text{Hash}(V + 1)$$ (这里+1表示一种状态更新机制，实际实现更复杂)
+**优点：** 简单，安全性依赖于底层哈希函数的抗碰撞和抗原像攻击能力。
+
+</p>
+</li>
+</ul>
+<p>这类CSPRNG的安全性依赖于某些数学难题的计算困难性。</p>
+<ul>
+<li>
+<p><strong>Blum Blum Shub (BBS)</strong><br>
+BBS是一种安全性可证明的CSPRNG，其安全性基于大整数分解的困难性。<br>
+<strong>生成公式：</strong></p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>X</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msubsup><mi>X</mi><mi>n</mi><mn>2</mn></msubsup><mspace></mspace><mspace width="1em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mi>N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X_{n+1} = X_n^2 \pmod N
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1111em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-2.453em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:1em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mi>p</mi><mo>⋅</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">N = p \cdot q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span>，且 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo separator="true">,</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">p, q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span> 是两个大素数，满足 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>≡</mo><mn>3</mn><mspace></mspace><mspace width="0.4444em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mn>4</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p \equiv 3 \pmod 4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6582em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:0.4444em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord">4</span><span class="mclose">)</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace></mspace><mspace width="0.4444em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mn>4</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q \equiv 3 \pmod 4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6582em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:0.4444em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord">4</span><span class="mclose">)</span></span></span></span>。每次迭代从 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">X_{n+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> 的低位比特中提取一个或多个比特作为输出。<br>
+<strong>优点：</strong> 理论上安全性最高，其安全性与二次剩余问题的困难性等价。<br>
+<strong>缺点：</strong> <strong>极其慢</strong>，不适合生成大量随机数；需要大素数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo separator="true">,</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">p, q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span>。由于其效率低下，现代密码学中很少直接使用。</p>
+</li>
+<li>
+<p><strong>Dual_EC_DRBG（臭名昭著的案例）</strong><br>
+Dual_EC_DRBG（Dual Elliptic Curve Deterministic Random Bit Generator）曾是NIST SP 800-90A推荐的CSPRNG之一，但后来被揭露可能包含<strong>后门</strong>。其生成过程基于椭圆曲线离散对数问题。<br>
+<strong>争议：</strong> 2013年，爱德华·斯诺登披露的NSA文件暗示Dual_EC_DRBG可能被故意设计了后门，允许拥有特定私钥的实体预测其输出。这使得它成为一个重要的警示案例，提醒我们在选择和使用加密算法时，不仅要考虑数学安全性，还要考虑其设计者和实现者的信任问题。因此，Dual_EC_DRBG现在已被普遍弃用。</p>
+</li>
+</ul>
+<h3 id="种子管理（Seed-Management）">种子管理（Seed Management）</h3>
+<p>CSPRNGs的核心是<strong>种子</strong>。一个CSPRNG的安全性在很大程度上取决于其初始种子的质量和后续的重播机制。</p>
+<ul>
+<li><strong>初始播种（Initial Seeding）</strong>：CSPRNG的初始种子必须是<strong>高熵</strong>的，即从真随机源（TRNG）获取。操作系统通常会维护一个“熵池”（Entropy Pool），收集各种不确定性事件（如鼠标移动、键盘输入、磁盘I/O、网络活动、硬件中断定时等）产生的随机性，供CSPRNG播种。</li>
+<li><strong>重播（Reseeding）</strong>：即使是最高质量的CSPRNG，其内部状态也可能因为各种原因（如系统状态泄露、攻击者耗尽熵池）而变得可预测。因此，CSPRNG需要定期或在内部状态熵值下降到一定阈值时，从熵池中获取新的真随机熵进行重播，以更新其内部状态，从而恢复或增强其不可预测性，抵抗前向和后向攻击。</li>
+</ul>
+<p>在Linux系统中，<code>/dev/random</code> 和 <code>/dev/urandom</code> 是两个重要的设备文件，它们提供了操作系统维护的熵池接口：</p>
+<ul>
+<li><code>/dev/random</code>：只有当熵池中有足够的真随机熵时才会返回数据。如果熵不足，它会阻塞，等待新的熵积累。这使得它在需要最高安全性（如生成长期密钥）时非常可靠，但可能导致程序长时间等待。</li>
+<li><code>/dev/urandom</code>：无论熵池中是否有足够的真随机熵，都会立即返回数据。当熵池不足时，它会使用一个内部的CSPRNG来“扩展”已有的熵。虽然其输出在统计上仍是随机的，但在极端情况下（如系统刚启动熵池未满时），如果攻击者能够推测出初始种子，理论上其安全性可能受到威胁。然而，对于大多数加密应用（如TLS会话密钥），<code>/dev/urandom</code> 提供的数据已经足够安全且效率更高。<strong>现代操作系统（如Linux）的 <code>/dev/urandom</code> 已经非常健壮，即使在启动初期也会通过各种策略（如采集启动时的硬件信息）来保障初始熵的质量。在绝大多数情况下，使用 <code>/dev/urandom</code> 是安全且推荐的。</strong></li>
+</ul>
+<h2 id="真随机数生成器（TRNGs）：熵的源泉">真随机数生成器（TRNGs）：熵的源泉</h2>
+<p>真随机数生成器（TRNGs）是CSPRNG的生命线，它们负责从物理世界中捕获不可预测的随机性，并将其转化为数字熵。</p>
+<h3 id="熵的来源">熵的来源</h3>
+<p>TRNGs利用物理现象中固有的随机性作为熵源。常见的物理熵源包括：</p>
+<ol>
+<li><strong>电子噪声：</strong> 热噪声（Johnson-Nyquist noise）是电阻中电子随机热运动产生的电压波动，是广泛使用的熵源。肖特基噪声（Shot Noise）是电流中离散电荷通过势垒时产生的随机波动，也常用于半导体设备。</li>
+<li><strong>量子现象：</strong> 某些TRNGs利用量子效应，如量子隧道效应、光子通过半透镜的选择性。这些现象本质上是不可预测的，为生成高质量真随机数提供了理论基础。</li>
+<li><strong>大气噪声：</strong> 大气中的无线电波背景噪声。</li>
+<li><strong>放射性衰变：</strong> 放射性同位素衰变的时间是随机的。</li>
+<li><strong>混沌系统：</strong> 如双摆、逻辑斯蒂映射等，它们的行为对初始条件极其敏感，微小的变化都会导致结果的巨大差异。</li>
+<li><strong>环境噪声：</strong> 计算机系统中的各种环境事件，例如：
+<ul>
+<li><strong>用户行为：</strong> 键盘敲击间隔、鼠标移动轨迹、硬盘读写时间等。这些事件的时间和频率都具有一定程度的不可预测性。</li>
+<li><strong>硬件事件：</strong> CPU温度、风扇转速、网络包到达时间、中断定时等。这些都为操作系统提供了宝贵的熵源。</li>
+<li><strong>摄像头/麦克风噪声：</strong> 传感器采集到的模拟信号在数字化过程中会引入一定的噪声，可以作为熵源。</li>
+</ul>
+</li>
+</ol>
+<h3 id="TRNG的架构">TRNG的架构</h3>
+<p>一个典型的TRNG通常包含以下几个模块：</p>
+<ol>
+<li><strong>物理熵源（Physical Entropy Source）:</strong> 捕捉物理随机现象，例如专门的噪声电路。</li>
+<li><strong>模拟-数字转换器（ADC）：</strong> 将物理熵源产生的模拟信号转换为数字信号。</li>
+<li><strong>白化/调节函数（Whitening/Conditioning Function）：</strong> 原始的数字信号可能存在偏差（如0比1多）或相关性。白化函数通过哈希函数、异或（XOR）折叠、Von Neumann纠偏器等方法消除这些偏差和相关性，使输出更接近均匀分布且统计独立。例如，Von Neumann纠偏器的工作原理是：连续读取两个比特，如果读取到00或11则丢弃；如果读取到01则输出0；如果读取到10则输出1。这样可以有效消除单个比特流的偏差，但会损失大量的熵。</li>
+<li><strong>后处理（Post-processing）：</strong> 进一步提高随机数的统计质量和不可预测性。这通常涉及到密码学哈希函数或HMAC的应用，将经过白化处理的原始熵输入到一个CSPRNG中，以“提纯”并“扩展”熵，生成最终的随机比特流。这一步至关重要，因为它能确保即使原始熵源质量不完美，最终输出也具备密码学安全所需的特性。</li>
+</ol>
+<h3 id="TRNG的挑战">TRNG的挑战</h3>
+<ul>
+<li><strong>速度：</strong> 物理熵源生成随机比特的速度通常比CSPRNG慢得多，这限制了TRNG在需要大量随机数的场景中的直接应用。</li>
+<li><strong>质量控制：</strong> 确保物理熵源的质量稳定且不受外部干扰是一项挑战。</li>
+<li><strong>硬件依赖：</strong> 大多数高质量的TRNG需要专门的硬件电路，增加了成本和复杂性。</li>
+<li><strong>熵耗尽：</strong> 尽管TRNG理论上提供真随机数，但在某些设计不佳或持续高负载的情况下，如果其输出直接用于密码学，也可能存在熵耗尽的风险。因此，通常将其输出馈送给CSPRNG进行扩展和管理。</li>
+</ul>
+<h2 id="标准与建议：行业规范与最佳实践">标准与建议：行业规范与最佳实践</h2>
+<p>为了确保随机数生成器的质量和安全性，国际上出台了多项标准和指南。这些标准为CSPRNG的设计、实现和测试提供了框架。</p>
+<h3 id="NIST-SP-800-90-系列">NIST SP 800-90 系列</h3>
+<p>美国国家标准与技术研究院（NIST）发布了一系列关于随机数生成的特殊出版物（SP 800-90系列），它们是目前全球范围内最受认可的随机数生成标准之一。</p>
+<ul>
+<li>
+<p><strong>NIST SP 800-90A: Recommendation for Random Number Generation Using Deterministic Random Bit Generators</strong><br>
+该标准定义了三种推荐的DRBG（Deterministic Random Bit Generator，等同于CSPRNG）构造方法：</p>
+<ul>
+<li>基于哈希函数的DRBG (Hash_DRBG)</li>
+<li>基于HMAC的DRBG (HMAC_DRBG)</li>
+<li>基于块密码的DRBG (CTR_DRBG)<br>
+该文档详细描述了每种构造的算法、安全参数以及实现细节。它是CSPRNG实现和审计的主要参考。</li>
+</ul>
+</li>
+<li>
+<p><strong>NIST SP 800-90B: Recommendation for the Entropy Sources Used for Random Bit Generation</strong><br>
+该标准专注于熵源。它定义了熵源的质量要求、评估方法以及熵提取过程。它为如何从物理熵源获取高质量的随机性提供了指导，是TRNG设计的重要参考。</p>
+</li>
+<li>
+<p><strong>NIST SP 800-90C: Recommendation for Random Bit Generation Using an Approved Security Function and a Deterministic Random Bit Generator</strong><br>
+该标准是NIST SP 800-90A和800-90B的补充，它描述了如何将熵源（800-90B）和DRBG（800-90A）结合起来，构建一个完整的随机数生成系统。</p>
+</li>
+</ul>
+<h3 id="FIPS-140-2-3">FIPS 140-2/3</h3>
+<p>联邦信息处理标准（FIPS）140-2（及其更新的FIPS 140-3）是美国和加拿大政府机构用于加密模块的安全要求。任何用于敏感数据的加密模块都必须经过FIPS 140认证。该标准对加密模块中的随机数生成器提出了严格的要求，包括使用批准的DRBG，并确保其熵源符合特定标准。</p>
+<h3 id="ISO-IEC-18031">ISO/IEC 18031</h3>
+<p>国际标准化组织（ISO）和国际电工委员会（IEC）发布的ISO/IEC 18031: Information technology — Security techniques — Random bit generation，为生成高质量随机比特流提供了指导。它涵盖了物理随机数生成器（PRNGs，在ISO中指TRNGs）和确定性随机数生成器（DRBGs，即CSPRNGs）。</p>
+<p>这些标准旨在确保随机数生成器的设计和实现能够抵抗各种已知的攻击，从而保障基于这些随机数的密码学系统的安全性。在实际开发中，强烈建议使用符合这些标准的库和系统API，而不是尝试自行实现随机数生成器。</p>
+<h2 id="常见陷阱与最佳实践：避开雷区，保障安全">常见陷阱与最佳实践：避开雷区，保障安全</h2>
+<p>即使有了强大的CSPRNG和严格的标准，在实际应用中，随机数生成依然是容易出错的环节。以下是一些常见的陷阱以及保障随机数安全性的最佳实践。</p>
+<h3 id="常见陷阱">常见陷阱</h3>
+<ol>
+<li>
+<p><strong>熵不足或种子质量差：</strong> 这是最常见的也是最危险的错误。如果CSPRNG的初始种子是从低熵源（如系统启动时间、进程ID等可预测信息）获取的，那么即使算法本身是加密安全的，其输出也可能被预测。</p>
+<ul>
+<li><strong>示例：</strong> 在一个嵌入式设备上，由于缺乏足够的物理熵源，系统启动时使用的时间戳作为初始种子。如果攻击者能大致猜测启动时间，就能推测出种子。</li>
+</ul>
+</li>
+<li>
+<p><strong>不正确的重播机制：</strong> CSPRNG需要定期重播以更新内部状态，抵抗状态泄露或前向/后向攻击。如果缺乏有效的重播机制，或者重播时没有引入新的高质量熵，安全性会逐步下降。</p>
+</li>
+<li>
+<p><strong>使用非加密安全的PRNG：</strong> 误以为非密码学PRNG（如<code>rand()</code>或<code>Math.random()</code>）的统计随机性足以满足密码学需求。这是极其危险的，因为这些PRNG的内部状态很容易被推断，从而预测所有输出。</p>
+<ul>
+<li><strong>示例：</strong> 使用C语言的<code>rand()</code>函数生成SSL/TLS会话密钥，导致密钥可预测。</li>
+</ul>
+</li>
+<li>
+<p><strong>随机数重用：</strong> 在某些密码学协议中（如一次性签名、Nonce），特定的随机数（或Nonce）必须是独一无二的。重用它们会导致严重的安全漏洞。</p>
+<ul>
+<li><strong>示例：</strong> 在TLS/SSL握手过程中重用Nonce，可能导致重放攻击。</li>
+</ul>
+</li>
+<li>
+<p><strong>不正确的随机数长度：</strong> 生成的随机数长度不足以抵抗暴力破解攻击。例如，一个只有40比特的密钥在计算上很容易被破解。</p>
+</li>
+<li>
+<p><strong>侧信道攻击：</strong> RNG的实现可能存在侧信道漏洞，攻击者可以通过测量功耗、电磁辐射或执行时间等信息来推断内部状态或输出。</p>
+</li>
+<li>
+<p><strong>环境对TRNG的影响：</strong> 物理熵源可能受到环境因素（如温度、电压波动、外部电磁干扰）的影响，导致熵源质量下降。</p>
+</li>
+</ol>
+<h3 id="最佳实践">最佳实践</h3>
+<ol>
+<li>
+<p><strong>始终使用操作系统或语言提供的CSPRNG：</strong> 几乎所有主流操作系统和编程语言都提供了经过安全审查和优化过的CSPRNG实现。</p>
+<ul>
+<li><strong>Python:</strong> 使用 <code>os.urandom()</code> 或 <code>secrets</code> 模块。<code>secrets</code> 模块专门用于生成密码学安全的随机数，推荐用于生成密码、API令牌、安全盐等。</li>
+<li><strong>Java:</strong> 使用 <code>java.security.SecureRandom</code>。</li>
+<li><strong>C#/.NET:</strong> 使用 <code>System.Security.Cryptography.RandomNumberGenerator</code>。</li>
+<li><strong>Node.js:</strong> 使用 <code>crypto.randomBytes()</code>。</li>
+<li><strong>Linux/Unix:</strong> 优先使用 <code>/dev/urandom</code>。</li>
+<li><strong>Windows:</strong> 使用 <code>CryptGenRandom()</code> 或 <code>BCryptGenRandom()</code>。<br>
+<strong>绝不</strong>尝试自己实现CSPRNG，除非你是密码学专家且经过严格的同行评审。</li>
+</ul>
+</li>
+<li>
+<p><strong>确保初始播种的熵质量：</strong> 操作系统通常会自动处理这一点，通过收集各种硬件和环境事件来填充熵池。但对于新启动的系统或缺乏物理熵源的嵌入式设备，需要特别注意初始熵的来源和质量。</p>
+</li>
+<li>
+<p><strong>利用操作系统提供的熵池：</strong> 操作系统维护的熵池是最好的熵源，它们通过混合多种物理熵源并定期进行哈希处理来保证熵的质量。</p>
+</li>
+<li>
+<p><strong>理解 <code>/dev/random</code> 与 <code>/dev/urandom</code> 的区别：</strong> 对于大多数应用，特别是Web服务器、网络通信等需要大量随机数的场景，<code>/dev/urandom</code> 是更合适的选择，因为它不会阻塞。只有在极度敏感的场景（如生成根密钥或离线环境中的长期密钥）才考虑 <code>/dev/random</code> 可能带来的阻塞影响。</p>
+</li>
+<li>
+<p><strong>定期重播（Reseeding）：</strong> 即使你使用的是操作系统的CSPRNG，了解其重播策略也很重要。一般来说，操作系统会负责CSPRNG的自动重播。对于自定义CSPRNG，必须实现健壮的重播机制。</p>
+</li>
+<li>
+<p><strong>正确使用随机数：</strong></p>
+<ul>
+<li><strong>密钥生成：</strong> 确保密钥长度足够，并使用CSPRNG生成。</li>
+<li><strong>Nonce/IV生成：</strong> 必须保证唯一性，每次使用都生成新的随机值。</li>
+<li><strong>盐值（Salt）生成：</strong> 确保每个用户或每个密码哈希都有一个唯一的、随机生成的盐值。</li>
+</ul>
+</li>
+<li>
+<p><strong>避免使用时间作为随机种子：</strong> <code>time(NULL)</code>或<code>System.currentTimeMillis()</code>等基于时间的种子是高度可预测的，不能用于密码学。</p>
+</li>
+<li>
+<p><strong>考虑硬件TRNG：</strong> 在对随机性质量有最高要求的场景（如硬件安全模块HSM、智能卡），使用专用的硬件TRNG可以提供更强的安全保障。</p>
+</li>
+</ol>
+<h3 id="代码示例：Python-中使用加密安全的随机数">代码示例：Python 中使用加密安全的随机数</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> secrets <span class="comment"># Python 3.6+ 推荐用于密码学随机数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_random_bytes</span>(<span class="params">length</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 os.urandom 生成指定长度的随机字节序列。</span></span><br><span class="line"><span class="string">    os.urandom 内部使用操作系统提供的加密安全随机数生成器（如 Linux 的 /dev/urandom）。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> os.urandom(length)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_secure_token</span>(<span class="params">length_bytes=<span class="number">32</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 secrets 模块生成安全的随机URL安全文本字符串，</span></span><br><span class="line"><span class="string">    适用于密码重置令牌、API密钥等。</span></span><br><span class="line"><span class="string">    默认生成32字节的随机数，编码为URL安全字符串。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> secrets.token_urlsafe(length_bytes)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_secure_hex</span>(<span class="params">length_bytes=<span class="number">32</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 secrets 模块生成安全的随机十六进制字符串。</span></span><br><span class="line"><span class="string">    适用于生成盐值、会话ID等。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> secrets.token_hex(length_bytes)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_secure_int</span>(<span class="params">min_val, max_val</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用 secrets 模块生成指定范围内的加密安全随机整数。</span></span><br><span class="line"><span class="string">    包括 min_val, 不包括 max_val。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> secrets.randbelow(max_val - min_val) + min_val</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--- 加密安全随机数生成示例 ---&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 生成16字节的随机字节（例如用于对称加密密钥）</span></span><br><span class="line">key_bytes = generate_random_bytes(<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;生成的对称密钥 (16字节): <span class="subst">&#123;key_bytes.<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 生成一个32字节的URL安全令牌 (例如用于密码重置链接)</span></span><br><span class="line">reset_token = generate_secure_token(<span class="number">32</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;生成的URL安全令牌: <span class="subst">&#123;reset_token&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;令牌长度: <span class="subst">&#123;<span class="built_in">len</span>(reset_token)&#125;</span> 字符 (约 <span class="subst">&#123;<span class="built_in">len</span>(reset_token) / <span class="number">4</span> * <span class="number">3</span>&#125;</span> 字节熵)&quot;</span>) <span class="comment"># Base64编码，每4字符代表3字节</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 生成一个20字节的十六进制盐值 (例如用于密码哈希)</span></span><br><span class="line">password_salt = generate_secure_hex(<span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;生成的密码盐值: <span class="subst">&#123;password_salt&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 生成一个介于 1000 到 9999 (不含) 之间的随机整数 (例如用于OTP)</span></span><br><span class="line">otp_code = generate_secure_int(<span class="number">1000</span>, <span class="number">10000</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;生成的OTP验证码: <span class="subst">&#123;otp_code&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 比较: 不推荐用于密码学的随机数生成 (仅作演示，实际应用中切勿使用)</span></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n--- 不推荐用于密码学的随机数生成示例 (切勿用于安全敏感场景) ---&quot;</span>)</span><br><span class="line"><span class="comment"># random.seed(42) # 可以通过设置种子使其可预测</span></span><br><span class="line">insecure_float = random.random()</span><br><span class="line">insecure_int = random.randint(<span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;不安全的随机浮点数: <span class="subst">&#123;insecure_float&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;不安全的随机整数: <span class="subst">&#123;insecure_int&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># os.urandom 是推荐底层接口，secrets 是高层语义化接口</span></span><br><span class="line"><span class="comment"># secrets 模块在内部会调用 os.urandom 或其他可靠的系统级随机源。</span></span><br></pre></td></tr></table></figure>
+<h2 id="结语">结语</h2>
+<p>随机性，作为密码学的隐形基石，其重要性无论如何强调都不为过。从生成安全的密钥，到构建不可预测的协议，再到抵御各种恶意攻击，高质量的随机数无处不在，默默守护着我们的数字世界。我们看到了真随机数与伪随机数的区别，了解了CSPRNG如何巧妙地利用少量真随机熵来扩展出大量安全随机数，并深入探讨了其背后的构造原理。</p>
+<p>现代密码学系统之所以能够信任，很大程度上依赖于其底层CSPRNG的健壮性。从NIST等标准机构的严格规范，到操作系统内置的熵池管理，再到我们开发者遵循的最佳实践，每一步都旨在确保我们所使用的随机数是真正不可预测的。</p>
+<p>正如历史上的Dual_EC_DRBG事件所昭示的，即使是看似权威的标准，也可能存在被滥用的风险。这提醒我们，在数字安全的战场上，始终保持警惕、持续学习、质疑和验证，是每一个技术爱好者和安全从业者应有的素养。</p>
+<p>下一次当你点击“生成新密码”或你的浏览器建立一个安全的HTTPS连接时，请记住，在那些看似随机的字符背后，是复杂而精密的随机数生成技术在默默工作，为你编织起一道坚不可摧的安全防线。希望今天的探讨，能让你对“随机”的艺术，有了更深层次的理解和敬畏。</p>
+<p>谢谢阅读，我们下次再见！</p>
+<hr>
+<p>博主: qmwneb946</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/23/2025-07-23-204736/">https://qmwneb946.dpdns.org/2025/07/23/2025-07-23-204736/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E5%AD%A6/">数学</a><a class="post-meta__tags" href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6%E4%B8%AD%E7%9A%84%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90/">密码学中的随机数生成</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/23/2025-07-23-204930/" title="穿越时空之窗：混沌吸引子的重构之旅"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">穿越时空之窗：混沌吸引子的重构之旅</div></div><div class="info-2"><div class="info-item-1">你好，我是 qmwneb946，你们的老朋友。今天，我们将一同踏上一段奇妙的旅程，深入探索一个既神秘又迷人的领域：混沌动力学，特别是如何从看似无序的观测数据中，重构出隐藏其后的混沌吸引子。这不仅是一项深刻的理论成就，更是一把理解复杂系统、洞察未来行为的钥匙。 在我们的日常生活中，我们常常将“混沌”与“混乱”、“随机”划上等号。然而，在数学和物理的语境中，“混沌”却有着更为精确和深刻的内涵。它描述的是一种确定性的、非线性的动力学系统，其行为对初始条件表现出极端敏感的依赖性——也就是著名的“蝴蝶效应”。一只亚马逊雨林中的蝴蝶扇动翅膀，可能在数周后引发北美的一场飓风。这种敏感性使得长期预测变得异常困难，但请注意，它并非随机，而是由严格的确定性规则所支配。 当我们面对一个复杂系统时，比如气候、大脑活动、心跳节律甚至是股市波动，我们通常无法直接观测到其完整的内部状态，而只能得到某一个或几个变量随时间变化的时间序列。那么问题来了：我们能否仅仅凭借这些有限的、一维的观测数据，逆向推导出系统背后真正的多维动力学结构——那个被称为“吸引子”的几何形态呢？ 答案是肯定的，而这正是“混沌吸引子重构”的...</div></div></div></a><a class="pagination-related" href="/2025/07/23/2025-07-23-202903/" title="深入剖析图论中的匹配问题：从理论到应用的全景图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">深入剖析图论中的匹配问题：从理论到应用的全景图</div></div><div class="info-2"><div class="info-item-1">你好，技术爱好者们！我是 qmwneb946，今天我们将一同踏上一段奇妙的旅程，深入探索图论中一个既基础又深奥，同时应用极其广泛的概念——匹配问题。 图论，作为离散数学领域的一颗璀璨明珠，以其简洁而强大的抽象能力，为我们理解和解决现实世界中的复杂问题提供了独特的视角。从互联网的路由、社交网络的连接，到生物分子的结构、物流配送的优化，图无处不在。而在这些错综复杂的连接中，&quot;匹配&quot;扮演着至关重要的角色，它关乎着如何从纷繁的连接中，找出那些互不冲突、可以完美结合的“对”。 想象一下，你是一家大型招聘会的组织者，手头有一堆岗位和一堆求职者，你需要尽可能多地为求职者找到合适的岗位，每个岗位只能有一个人，每个人也只能占据一个岗位。这，就是一个典型的匹配问题。再比如，当你使用共享单车时，系统如何高效地将附近的单车与需求用户进行配对？或者，在复杂的化学反应中，原子如何形成稳定的分子键？这些看似不同的场景，其背后都隐藏着匹配问题的身影。 本文将带领你从最基础的定义开始，逐步深入到匹配问题的各种类型、核心算法，直至其在真实世界中的广泛应用。无论你是图论新手，还是希望深入理解其高级...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082519/" title="增强现实与工业维修：一场效率革命"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">增强现实与工业维修：一场效率革命</div></div><div class="info-2"><div class="info-item-1">增强现实 (AR) 技术正以前所未有的速度改变着我们的生活，而其在工业维修领域的应用更是展现出了巨大的潜力。不再局限于科幻电影中的场景，AR 如今已成为提升维修效率、降低维护成本、提高安全性的强大工具。本文将深入探讨 AR 如何与工业维修相结合，并分析其背后的技术和未来发展趋势。 引言：传统工业维修的挑战 传统的工业维修往往面临着诸多挑战：  信息获取困难: 维修人员需要查阅大量的纸质文档、图纸和视频，耗时费力，容易出错。 培训成本高昂:  熟练技工的培养需要漫长的学习过程和大量的实践经验，成本高昂。 安全风险较高:  一些复杂的设备维修存在高风险，例如高压电、高温部件等，容易发生意外事故。 维修效率低下:  由于缺乏实时信息和有效的指导，维修时间往往较长，导致生产停机时间增加，损失巨大。  AR 如何改变工业维修的游戏规则 AR 技术通过将数字信息叠加到现实世界中，为工业维修提供了全新的解决方案： 远程专家指导 通过 AR 眼镜或平板电脑，现场维修人员可以与远程专家实时互动。专家可以通过 AR 系统看到现场设备的实时图像，并利用虚拟标注、3D 模型等工具进行远程指导，大大缩短了...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082652/" title="纳米材料在靶向药物中的革命性应用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">纳米材料在靶向药物中的革命性应用</div></div><div class="info-2"><div class="info-item-1">近年来，癌症等重大疾病的治疗面临着巨大的挑战，传统的化疗药物往往毒性大、副作用强，难以实现精准治疗。而纳米技术的兴起为解决这一难题提供了新的思路，特别是纳米材料在靶向药物递送系统中的应用，正引发一场医学革命。本文将深入探讨纳米材料如何提升靶向药物的疗效，降低其毒副作用。 纳米材料的特性及其在药物递送中的优势 纳米材料，是指至少在一个维度上尺寸小于100纳米的材料。这种极小的尺寸赋予了它们许多独特的物理和化学性质，使其在药物递送领域具有显著优势： 增强的药物溶解度和稳定性 许多药物具有较低的溶解度，限制了其在体内的吸收和生物利用度。纳米载体，例如脂质体、聚合物纳米颗粒和无机纳米颗粒（如金纳米颗粒、氧化铁纳米颗粒），可以显著提高药物的溶解度和稳定性，延长其在体内的循环时间。例如，将抗癌药物负载在聚合物纳米颗粒中，可以保护药物免受降解，并提高其在肿瘤组织中的积累。 靶向药物递送 纳米材料可以通过表面修饰，例如结合特异性配体（如抗体、肽或小分子），实现对特定细胞或组织的靶向递送。这种靶向递送可以最大限度地减少药物对健康组织的毒性，并提高药物在靶标部位的浓度，从而增强治疗效果。例如，修饰有...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082925/" title="生物化学中的蛋白质折叠问题：一个复杂而迷人的计算挑战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">生物化学中的蛋白质折叠问题：一个复杂而迷人的计算挑战</div></div><div class="info-2"><div class="info-item-1">生命，这奇妙的现象，其本质很大程度上取决于蛋白质的精确三维结构。蛋白质是由氨基酸链组成的长链分子，但仅仅是氨基酸序列并不能完全决定其功能。蛋白质必须折叠成特定的三维结构（构象），才能发挥其生物学功能，例如催化酶促反应、运输分子或构建细胞结构。  而这个折叠过程，就是著名的“蛋白质折叠问题”。 蛋白质折叠：从线性序列到三维结构 蛋白质的氨基酸序列由基因编码决定，这是一个线性的一维结构。然而，这些氨基酸链并非随机地盘踞在一起，而是会遵循特定的物理和化学原理，自发地折叠成独特的、功能性的三维结构。这个折叠过程涉及到多种相互作用，包括： 疏水相互作用 蛋白质内部的疏水氨基酸残基倾向于聚集在一起，远离水性环境，形成蛋白质的核心区域。而亲水性氨基酸残基则倾向于暴露在蛋白质的表面，与水分子相互作用。 静电相互作用 带电荷的氨基酸残基之间会发生静电吸引或排斥作用，影响蛋白质的折叠。 氢键 氢键在维持蛋白质二级结构（例如α螺旋和β折叠）中起着关键作用。 二硫键 某些氨基酸残基（例如半胱氨酸）之间可以形成二硫键，进一步稳定蛋白质的三维结构。 这些相互作用共同决定了蛋白质的最终构象，这是一个极其复杂的...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-092536/" title="CRISPR基因编辑：技术的奇迹与伦理的挑战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">CRISPR基因编辑：技术的奇迹与伦理的挑战</div></div><div class="info-2"><div class="info-item-1">大家好！我是你们的技术和数学博主，今天我们要深入探讨一个既令人兴奋又充满争议的话题：CRISPR-Cas9基因编辑技术及其伦理挑战。CRISPR技术以其精准性和效率，为治疗遗传疾病、改良作物等领域带来了革命性的变革，但与此同时，它也引发了诸多伦理难题，需要我们认真思考和谨慎应对。 CRISPR技术：一把双刃剑 CRISPR-Cas9系统，简单来说，就是一种可以精确地“剪切和粘贴”DNA的工具。它源自细菌的天然防御机制，利用向导RNA（gRNA）引导Cas9酶到基因组中的特定位置，从而进行基因的敲除、插入或替换。其操作简便、成本低廉、效率高，使其成为基因编辑领域的“明星”技术。 CRISPR的工作原理 CRISPR系统的工作机制可以概括为以下几个步骤：  设计gRNA:  根据目标基因序列设计相应的gRNA，使其能够特异性地结合目标DNA序列。 Cas9酶的结合: gRNA引导Cas9酶到目标DNA序列。 DNA双链断裂: Cas9酶在目标位点切割DNA双链，形成双链断裂（DSB）。 DNA修复: 细胞利用非同源末端连接（NHEJ）或同源定向修复（HDR）机制修复DSB。NHEJ修...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-094115/" title="免疫学与癌症免疫疗法：一场人体内部的战争与和平"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">免疫学与癌症免疫疗法：一场人体内部的战争与和平</div></div><div class="info-2"><div class="info-item-1">免疫系统，人体精妙的防御机制，日夜不停地抵御着病毒、细菌和其他有害物质的入侵。然而，当这套系统出现故障，对自身细胞发起攻击，或者无法有效清除癌细胞时，疾病便会发生，其中最可怕的莫过于癌症。近年来，癌症免疫疗法异军突起，为癌症治疗带来了新的希望，让我们深入探索这场人体内部的战争与和平。 免疫系统：人体精妙的防御网络 我们的免疫系统由先天免疫和适应性免疫两大支柱组成。 先天免疫：第一道防线 先天免疫是人体抵御病原体的第一道防线，它包含物理屏障（例如皮肤和黏膜）、化学屏障（例如胃酸和酶）以及细胞介导的免疫反应，例如巨噬细胞和自然杀伤细胞（NK细胞）的吞噬和杀伤作用。这些细胞能够识别并清除被感染的细胞或癌细胞，但其特异性较低。 适应性免疫：精准打击 适应性免疫系统则更为精细，它具有特异性和记忆性。T细胞和B细胞是适应性免疫的主角。T细胞负责细胞介导的免疫，其中细胞毒性T细胞（CTL）能够特异性识别并杀死靶细胞，例如被病毒感染的细胞或癌细胞。B细胞则负责体液免疫，产生抗体，中和病原体或标记癌细胞以便清除。  抗原呈递细胞（APC），例如树突状细胞，在将抗原信息呈递给T细胞，启动适应性免疫反...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-094141/" title="生态学中的生物多样性保护：一个复杂系统工程的视角"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">生态学中的生物多样性保护：一个复杂系统工程的视角</div></div><div class="info-2"><div class="info-item-1">大家好！今天我们要深入探讨一个既充满挑战又至关重要的话题：生态学中的生物多样性保护。  这不仅是环境保护的基石，也与我们人类的福祉息息相关。对技术爱好者来说，这更像是一个巨大的、复杂的系统工程，充满了需要解决的优化问题和值得探索的算法。 生物多样性的价值：超越简单的物种数量 我们通常将生物多样性理解为物种数量的多样性。但实际上，它是一个多层次的概念，包括：  遗传多样性 (Genetic Diversity):  同一物种内基因组的差异性，这决定了物种的适应性和进化潜力。  想象一下，一个抗旱基因的缺失可能导致整个小麦品种在干旱年份面临灭绝的风险。 物种多样性 (Species Diversity):  不同物种的数量及其相对丰度。 这通常用Shannon多样性指数 (H=−∑i=1Spilog⁡2piH = -\sum_{i=1}^{S} p_i \log_2 p_iH=−∑i=1S​pi​log2​pi​) 来衡量，其中 pip_ipi​ 是第 iii 个物种的比例，SSS 是物种总数。  更高的Shannon指数表示更高的物种多样性。 生态系统多样性 (Ecosystem ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">1332</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1336</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E6%80%A7%E7%9A%84%E6%9C%AC%E8%B4%A8%EF%BC%9A%E7%9C%9F%E4%B8%8E%E4%BC%AA%E7%9A%84%E7%95%8C%E9%99%90"><span class="toc-number">1.</span> <span class="toc-text">随机性的本质：真与伪的界限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%9C%9F%E9%9A%8F%E6%9C%BA%E6%80%A7%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是真随机性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%80%A7%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">什么是伪随机性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E5%AD%A6%E4%B8%AD%E7%9A%84%E9%9A%8F%E6%9C%BA%E6%80%A7%E9%9C%80%E6%B1%82"><span class="toc-number">1.3.</span> <span class="toc-text">密码学中的随机性需求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88PRNGs%EF%BC%89%EF%BC%9A%E4%BB%8E%E7%AE%80%E5%8D%95%E5%88%B0%E5%A4%8D%E6%9D%82"><span class="toc-number">2.</span> <span class="toc-text">伪随机数生成器（PRNGs）：从简单到复杂</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7%E5%90%8C%E4%BD%99%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88LCG%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">线性同余生成器（LCG）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mersenne-Twister%EF%BC%88MT%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">Mersenne Twister（MT）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSPRNG%E7%9A%84%E8%A6%81%E6%B1%82"><span class="toc-number">2.3.</span> <span class="toc-text">CSPRNG的要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86%E5%AE%89%E5%85%A8%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88CSPRNGs%EF%BC%89%EF%BC%9A%E6%9E%84%E5%BB%BA%E5%AE%89%E5%85%A8%E5%9F%BA%E7%9F%B3"><span class="toc-number">3.</span> <span class="toc-text">加密安全伪随机数生成器（CSPRNGs）：构建安全基石</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CSPRNG%E7%9A%84%E6%9E%84%E5%BB%BA%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">CSPRNG的构建方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%9D%97%E5%AF%86%E7%A0%81%E7%9A%84CSPRNG"><span class="toc-number">3.1.1.</span> <span class="toc-text">基于块密码的CSPRNG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0%E7%9A%84CSPRNG"><span class="toc-number">3.1.2.</span> <span class="toc-text">基于哈希函数的CSPRNG</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%8D%E5%AD%90%E7%AE%A1%E7%90%86%EF%BC%88Seed-Management%EF%BC%89"><span class="toc-number">3.2.</span> <span class="toc-text">种子管理（Seed Management）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88TRNGs%EF%BC%89%EF%BC%9A%E7%86%B5%E7%9A%84%E6%BA%90%E6%B3%89"><span class="toc-number">4.</span> <span class="toc-text">真随机数生成器（TRNGs）：熵的源泉</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%86%B5%E7%9A%84%E6%9D%A5%E6%BA%90"><span class="toc-number">4.1.</span> <span class="toc-text">熵的来源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TRNG%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="toc-number">4.2.</span> <span class="toc-text">TRNG的架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TRNG%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-number">4.3.</span> <span class="toc-text">TRNG的挑战</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E4%B8%8E%E5%BB%BA%E8%AE%AE%EF%BC%9A%E8%A1%8C%E4%B8%9A%E8%A7%84%E8%8C%83%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">5.</span> <span class="toc-text">标准与建议：行业规范与最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NIST-SP-800-90-%E7%B3%BB%E5%88%97"><span class="toc-number">5.1.</span> <span class="toc-text">NIST SP 800-90 系列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIPS-140-2-3"><span class="toc-number">5.2.</span> <span class="toc-text">FIPS 140-2&#x2F;3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ISO-IEC-18031"><span class="toc-number">5.3.</span> <span class="toc-text">ISO&#x2F;IEC 18031</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%99%B7%E9%98%B1%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%9A%E9%81%BF%E5%BC%80%E9%9B%B7%E5%8C%BA%EF%BC%8C%E4%BF%9D%E9%9A%9C%E5%AE%89%E5%85%A8"><span class="toc-number">6.</span> <span class="toc-text">常见陷阱与最佳实践：避开雷区，保障安全</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%99%B7%E9%98%B1"><span class="toc-number">6.1.</span> <span class="toc-text">常见陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">6.2.</span> <span class="toc-text">最佳实践</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B%EF%BC%9APython-%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%8A%A0%E5%AF%86%E5%AE%89%E5%85%A8%E7%9A%84%E9%9A%8F%E6%9C%BA%E6%95%B0"><span class="toc-number">6.3.</span> <span class="toc-text">代码示例：Python 中使用加密安全的随机数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">7.</span> <span class="toc-text">结语</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062627/" title="蛋白质组学的翻译后修饰组学：解码生命复杂性的密码">蛋白质组学的翻译后修饰组学：解码生命复杂性的密码</a><time datetime="2025-07-25T22:26:27.000Z" title="发表于 2025-07-26 06:26:27">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062521/" title="钠离子电池的负极材料：开启储能新纪元的核心密码">钠离子电池的负极材料：开启储能新纪元的核心密码</a><time datetime="2025-07-25T22:25:21.000Z" title="发表于 2025-07-26 06:25:21">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062424/" title="基于人工智能的靶点识别：重塑药物发现的未来">基于人工智能的靶点识别：重塑药物发现的未来</a><time datetime="2025-07-25T22:24:24.000Z" title="发表于 2025-07-26 06:24:24">2025-07-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

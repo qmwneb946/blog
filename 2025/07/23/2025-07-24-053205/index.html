@@ -1,0 +1,552 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>A* 算法的内存优化：在内存的迷宫中找到出路 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="你好，各位技术爱好者！我是 qmwneb946，今天我们来深入探讨一个在算法领域既迷人又令人头疼的话题：A* 算法的内存优化。A* 算法以其高效和最优的特性，在路径规划、游戏AI、机器人导航等诸多领域大放异彩。然而，它也有一个众所周知的“阿喀琉斯之踵”——对内存的巨大需求。当面对广阔无垠的状态空间时，A* 算法可能会迅速耗尽可用内存，成为一个名副其实的“内存大户”。 想象一下，你正在为一款开放世界">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A* 算法的内存优化：在内存的迷宫中找到出路">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/23/2025-07-24-053205/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="你好，各位技术爱好者！我是 qmwneb946，今天我们来深入探讨一个在算法领域既迷人又令人头疼的话题：A* 算法的内存优化。A* 算法以其高效和最优的特性，在路径规划、游戏AI、机器人导航等诸多领域大放异彩。然而，它也有一个众所周知的“阿喀琉斯之踵”——对内存的巨大需求。当面对广阔无垠的状态空间时，A* 算法可能会迅速耗尽可用内存，成为一个名副其实的“内存大户”。 想象一下，你正在为一款开放世界">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-23T21:32:05.000Z">
+<meta property="article:modified_time" content="2025-07-26T06:50:50.189Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="A算法的内存优化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "A* 算法的内存优化：在内存的迷宫中找到出路",
+  "url": "https://qmwneb946.dpdns.org/2025/07/23/2025-07-24-053205/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-23T21:32:05.000Z",
+  "dateModified": "2025-07-26T06:50:50.189Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/23/2025-07-24-053205/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'A* 算法的内存优化：在内存的迷宫中找到出路',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">A* 算法的内存优化：在内存的迷宫中找到出路</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">A* 算法的内存优化：在内存的迷宫中找到出路<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-24-053205.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-23T21:32:05.000Z" title="发表于 2025-07-24 05:32:05">2025-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-26T06:50:50.189Z" title="更新于 2025-07-26 14:50:50">2025-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>你好，各位技术爱好者！我是 qmwneb946，今天我们来深入探讨一个在算法领域既迷人又令人头疼的话题：A* 算法的内存优化。A* 算法以其高效和最优的特性，在路径规划、游戏AI、机器人导航等诸多领域大放异彩。然而，它也有一个众所周知的“阿喀琉斯之踵”——对内存的巨大需求。当面对广阔无垠的状态空间时，A* 算法可能会迅速耗尽可用内存，成为一个名副其实的“内存大户”。</p>
+<p>想象一下，你正在为一款开放世界游戏设计寻路系统，地图比地球还要大；或者你正在开发一个程序来解决拥有万亿种状态的魔方问题。这时，A* 算法的内存瓶颈就会凸显出来。今天，我们将一起探索A*算法内存消耗的根源，并剖析一系列精妙的内存优化策略，帮助它在内存的迷宫中找到出路，即便在最严苛的限制下也能高效工作。</p>
+<h2 id="A-算法的核心魅力：一个简要回顾">A* 算法的核心魅力：一个简要回顾</h2>
+<p>在深入内存优化之前，我们先快速回顾一下A<em>算法的核心概念。A</em>算法是一种启发式搜索算法，它通过结合 Dijkstra 算法的完备性和贪婪最佳优先搜索的效率，来找到从起点到目标的最短路径。</p>
+<p>A*算法的核心是它的评估函数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>+</mo><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n) = g(n) + h(n) 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 是从起始节点到当前节点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 的实际代价。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 是从当前节点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 到目标节点估计的启发式代价。这是一个估价函数，用于指导搜索方向。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 则是从起始节点经过节点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 再到达目标节点的估计总代价。</li>
+</ul>
+<p>A* 算法通过维护两个关键数据结构来工作：</p>
+<ol>
+<li><strong>开放集 (Open Set)</strong>：一个优先队列，存储所有已被发现但尚未扩展的节点。节点按 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值进行排序，最低 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值的节点优先扩展。</li>
+<li><strong>封闭集 (Closed Set)</strong>：一个哈希表或集合，存储所有已经扩展过的节点。其目的是避免重复扩展相同的节点，并检测环路。</li>
+</ol>
+<p>A<em>算法的优越性在于：如果启发式函数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 是“可接受的”（即它从不高估到达目标的实际代价），A</em> 算法将保证找到最短路径（最优性）。同时，它也是完备的，只要有路径存在，它就能找到。</p>
+<p>然而，这种强大功能的代价就是内存。</p>
+<h2 id="为什么A-是内存大户？深层剖析">为什么A*是内存大户？深层剖析</h2>
+<p>A* 算法的内存消耗主要来源于其需要存储大量节点信息。以下是几个关键的内存消耗点：</p>
+<h3 id="1-开放集-Open-Set-的膨胀">1. 开放集 (Open Set) 的膨胀</h3>
+<p>当搜索空间广阔且分支因子（一个节点平均的邻居数量）较大时，开放集会迅速积累大量待探索的节点。每个节点都需要存储其状态、父节点指针、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值。在某些问题中，即使目标很近，搜索也可能向多个方向“扇形”展开，导致开放集在达到目标之前就存储了天文数字般的节点。</p>
+<h3 id="2-封闭集-Closed-Set-的累积">2. 封闭集 (Closed Set) 的累积</h3>
+<p>封闭集用于记录所有已经扩展过的节点，防止重复计算和无限循环。这意味着搜索过程中所有被访问过的独特节点都会被存储在封闭集中。在大型问题中，封闭集的规模可能会变得异常庞大，甚至超过开放集。例如，在一个2D网格地图上寻路，如果地图非常大，你可能需要访问数百万个网格单元。</p>
+<h3 id="3-节点表示的开销">3. 节点表示的开销</h3>
+<p>每个节点都需要存储其必要的信息。一个典型的节点结构可能包括：</p>
+<ul>
+<li><strong>状态 (State)</strong>：表示问题中的一个具体配置，例如在网格图中是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span> 坐标，在魔方问题中是魔方的排列。状态的复杂度直接影响内存。</li>
+<li><strong>父节点指针 (Parent Pointer)</strong>：用于重建路径。这是指向其前一个节点的引用或索引。</li>
+<li><strong>g 值 (g-value)</strong>：从起点到当前节点的实际代价。</li>
+<li><strong>f 值 (f-value)</strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>+</mo><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g(n) + h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>。</li>
+<li><strong>其他辅助信息</strong>：如节点ID、哈希值等。</li>
+</ul>
+<p>即使一个节点只占用几十个字节，当节点数量达到数亿甚至数十亿时，总内存占用将达到数GB甚至数TB，这对于普通计算机来说是无法承受的。</p>
+<h3 id="4-隐式图-vs-显式图">4. 隐式图 vs. 显式图</h3>
+<p>A* 通常应用于隐式图（Implicit Graph）问题，即图的节点和边不是预先存储的，而是在搜索过程中根据规则动态生成的。这意味着我们不需要存储整个图，但我们仍然需要存储搜索过程中“发现”的节点，这些节点构成了搜索树的一部分。</p>
+<p>因此，A* 的内存挑战在于：如何在不牺牲其核心优势（最优性、完备性）或尽量少牺牲的情况下，大幅减少对内存的需求？接下来的章节将详细探讨各种优化策略。</p>
+<h2 id="内存优化策略：多维度的攻坚战">内存优化策略：多维度的攻坚战</h2>
+<p>A* 算法的内存优化是一个多维度的挑战，需要从节点结构、数据结构、算法变体乃至系统层面进行综合考虑。</p>
+<h3 id="I-节点表示优化：精打细算每个字节">I. 节点表示优化：精打细算每个字节</h3>
+<p>最直接的优化方式就是减少单个节点占用的内存。</p>
+<h4 id="1-紧凑的节点结构">1. 紧凑的节点结构</h4>
+<ul>
+<li>
+<p><strong>状态压缩 (State Compression)</strong><br>
+这是最关键的优化之一。一个节点的状态可能是一个复杂的对象。</p>
+<ul>
+<li><strong>位操作 (Bit Packing)</strong>：如果状态由多个小整数组成，可以将它们打包到一个或几个整数中。例如，在2D网格中，如果地图大小为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>16</mn></msup><mo>×</mo><msup><mn>2</mn><mn>16</mn></msup></mrow><annotation encoding="application/x-tex">2^{16} \times 2^{16}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">16</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">16</span></span></span></span></span></span></span></span></span></span></span></span>，一个坐标 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span> 可以用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>≪</mo><mn>16</mn><mi mathvariant="normal">∣</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">x \ll 16 | y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≪</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">16∣</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> 的方式存储在一个32位整数中。</li>
+<li><strong>枚举和短整型 (Enums and Short Integers)</strong>：使用 <code>byte</code>, <code>short</code>, <code>char</code> 等更小的整数类型，或者使用 <code>enum</code> 类型而不是字符串来表示离散状态。</li>
+<li><strong>状态哈希 (State Hashing)</strong>：如果状态过于复杂，无法直接存储，可以将其哈希值作为主键，而将完整状态按需存储在外部结构中（例如，一个独立的状态表），或在需要时重建。这种方法可能需要解决哈希冲突，并增加查找时间。</li>
+</ul>
+</li>
+<li>
+<p><strong>减少冗余字段</strong></p>
+<ul>
+<li><strong>不存储 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span></strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 可以通过 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 实时计算。如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 也很容易计算（例如曼哈顿距离），那么它也可以不存储。</li>
+<li><strong>成本类型优化</strong>：如果路径成本总是整数，使用 <code>int</code> 或 <code>long</code> 代替 <code>float</code> 或 <code>double</code>。浮点数通常占用更多内存，且可能引入精度问题。如果需要小数精度，可以考虑使用定点数（Fixed-point arithmetic）。例如，将所有成本乘以一个大整数，然后只处理整数。</li>
+</ul>
+</li>
+<li>
+<p><strong>父节点指针优化 (Parent Pointer Optimization)</strong><br>
+这是内存消耗大户之一。每个节点都需要一个指针指向其父节点来重建路径。</p>
+<ul>
+<li><strong>索引代替指针</strong>：如果所有节点都存储在一个大数组中，父节点可以存储其父节点在数组中的索引，而不是一个完整的内存地址指针。这对于统一内存块的分配非常有效。</li>
+<li><strong>差值编码 (Difference Encoding)</strong>：如果父节点和子节点在内存中的位置通常是接近的，可以存储它们之间的偏移量，而不是完整的地址。这通常需要自定义的内存分配器。</li>
+<li><strong>状态反向重建 (State-based Reconstruction)</strong>：对于某些问题，可以不存储父节点指针，而是通过从目标节点向后搜索（逆向应用操作）来重建路径。这要求操作是可逆的，并且逆向操作的代价是已知的。例如，在滑动拼图问题中，给定一个状态，你可以通过逆向移动来找到其父状态。</li>
+<li><strong>“父节点”哈希表 (Parent Hash Map)</strong>：如果节点本身不存储父节点指针，可以使用一个单独的哈希表 <code>std::map&lt;State, State&gt; parent_map;</code> 来存储 <code>(子节点状态 -&gt; 父节点状态)</code> 的映射。这可能比在每个节点中存储指针更节省内存，特别是当节点结构非常紧凑时。</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例：紧凑的节点结构 (C++)</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设2D网格地图，最大尺寸 65535x65535</span></span><br><span class="line"><span class="comment">// 未优化前的节点</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">UnoptimizedNode</span> &#123;</span><br><span class="line">    <span class="type">int</span> x, y;          <span class="comment">// 坐标 (8 bytes)</span></span><br><span class="line">    <span class="type">double</span> g_cost;     <span class="comment">// g值 (8 bytes)</span></span><br><span class="line">    <span class="type">double</span> f_cost;     <span class="comment">// f值 (8 bytes)</span></span><br><span class="line">    UnoptimizedNode* parent; <span class="comment">// 父节点指针 (8 bytes on 64-bit)</span></span><br><span class="line">    <span class="comment">// 其他可能的数据...</span></span><br><span class="line">&#125;; <span class="comment">// 总计 ~32 bytes + padding</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 优化后的节点</span></span><br><span class="line"><span class="comment">// 假设g_cost是整数，且最大值在int范围内</span></span><br><span class="line"><span class="comment">// 父节点索引可以存储在一个大的节点数组中</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">OptimizedNode</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> coords; <span class="comment">// x:16位, y:16位 (4 bytes)</span></span><br><span class="line">    <span class="type">int</span> g_cost;          <span class="comment">// g值 (4 bytes)</span></span><br><span class="line">    <span class="comment">// f_cost和h_cost可以在需要时计算</span></span><br><span class="line">    <span class="type">int</span> parent_idx;      <span class="comment">// 父节点在全局节点数组中的索引 (4 bytes)</span></span><br><span class="line">    <span class="comment">// 其他状态信息可以进一步压缩，例如用位字段</span></span><br><span class="line">    <span class="type">bool</span> visited : <span class="number">1</span>;    <span class="comment">// 1位用于标记是否已访问，减少closed set内存</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 可以考虑用 std::array&lt;char, N&gt; 或 unsigned char[] 存储复杂状态，按位填充</span></span><br><span class="line">&#125;; <span class="comment">// 总计 ~12 bytes + padding</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-对象池-内存池-Object-Pooling-Memory-Pool">2. 对象池/内存池 (Object Pooling/Memory Pool)</h4>
+<p>A* 算法在运行时会频繁地创建和销毁节点对象。标准的 <code>new</code>/<code>delete</code> 操作（或 <code>malloc</code>/<code>free</code>）会导致内存碎片，并且有较大的开销。使用对象池可以：</p>
+<ul>
+<li><strong>减少内存碎片</strong>：预先分配一大块连续内存，并从中分配节点，避免操作系统级别的频繁小块内存分配。</li>
+<li><strong>提高性能</strong>：自定义分配器通常比通用分配器更快。</li>
+<li><strong>内存重用</strong>：当节点不再需要时，将其放回池中，而不是立即释放给操作系统。</li>
+</ul>
+<p><strong>示例：简单节点对象池 (C++)</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;deque&gt;</span> <span class="comment">// 用deque或list管理空闲节点更灵活</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NodePool</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">NodePool</span>(<span class="type">size_t</span> initial_capacity = <span class="number">100000</span>) &#123;</span><br><span class="line">        pool.<span class="built_in">reserve</span>(initial_capacity);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; initial_capacity; ++i) &#123;</span><br><span class="line">            pool.<span class="built_in">emplace_back</span>(); <span class="comment">// 预构造对象</span></span><br><span class="line">            free_nodes.<span class="built_in">push_back</span>(&amp;pool.<span class="built_in">back</span>());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">T* <span class="title">allocate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (free_nodes.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            <span class="comment">// 需要扩展池，或者直接抛出内存不足错误</span></span><br><span class="line">            <span class="comment">// 这里为了简单，我们每次扩展一部分</span></span><br><span class="line">            <span class="type">size_t</span> old_size = pool.<span class="built_in">size</span>();</span><br><span class="line">            pool.<span class="built_in">reserve</span>(old_size * <span class="number">2</span>); <span class="comment">// 预留更多内存</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="type">size_t</span> i = old_size; i &lt; pool.<span class="built_in">capacity</span>(); ++i) &#123;</span><br><span class="line">                pool.<span class="built_in">emplace_back</span>(); <span class="comment">// 构造新对象</span></span><br><span class="line">                free_nodes.<span class="built_in">push_back</span>(&amp;pool.<span class="built_in">back</span>());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 或者直接从pool中分配，然后手动构造</span></span><br><span class="line">            <span class="comment">// std::cout &lt;&lt; &quot;NodePool expanded to &quot; &lt;&lt; pool.capacity() &lt;&lt; std::endl;</span></span><br><span class="line">        &#125;</span><br><span class="line">        T* node = free_nodes.<span class="built_in">back</span>();</span><br><span class="line">        free_nodes.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">deallocate</span><span class="params">(T* node)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 简单地将节点放回空闲列表</span></span><br><span class="line">        free_nodes.<span class="built_in">push_back</span>(node);</span><br><span class="line">        <span class="comment">// 注意：这里没有调用析构函数，需要确保T是POD类型或手动管理</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::vector&lt;T&gt; pool; <span class="comment">// 存储所有节点对象</span></span><br><span class="line">    std::deque&lt;T*&gt; free_nodes; <span class="comment">// 存储空闲节点的指针</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在A*实现中，使用<code>NodePool&lt;OptimizedNode&gt; node_pool;</code>来代替<code>new OptimizedNode()</code>。</p>
+<h3 id="II-开放集和封闭集优化：核心数据结构的瘦身">II. 开放集和封闭集优化：核心数据结构的瘦身</h3>
+<p>开放集和封闭集是A*内存消耗的罪魁祸首。对它们进行优化至关重要。</p>
+<h4 id="1-开放集-Open-Set-优化">1. 开放集 (Open Set) 优化</h4>
+<p>开放集通常是一个优先队列。</p>
+<ul>
+<li>
+<p><strong>选择合适的优先队列实现</strong>：</p>
+<ul>
+<li><code>std::priority_queue</code> (基于 <code>std::vector</code> 和 <code>std::make_heap</code>)：通常是默认选择，效率较高，但可能因为底层 <code>vector</code> 的重新分配而导致内存波动。</li>
+<li><strong>斐波那契堆 (Fibonacci Heap)</strong>：理论上在<code>decrease-key</code>操作上具有更好的渐近复杂度（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> 均摊），这在某些A<em>问题（如动态权重）中很有用。但在实际中，其常数因子较大，且内存开销可能高于二叉堆。对于一般的A</em>问题，二叉堆（如<code>std::priority_queue</code>）通常表现更好。</li>
+<li><strong>桶队列 (Bucket Queue) / Radix Heap</strong>：如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 总是整数，且 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 的范围有限，可以考虑使用桶队列。它将节点根据其 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值放入不同的“桶”中。这可以提供 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> 的插入和删除最小元素操作，并且内存开销较低，因为不需要存储复杂的堆结构。</li>
+</ul>
+</li>
+<li>
+<p><strong>限制开放集大小 (Limited-size Open Set)</strong>：这是一种激进的优化，通常会导致算法失去最优性甚至完备性，但在内存极度受限且允许次优解的情况下可以使用。例如，当开放集达到最大容量时，删除 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值最大的节点（最不具有前景的节点）。这种方法需要谨慎使用，因为它可能导致算法在找到最优路径之前就“丢弃”了通往最优路径的关键节点。</p>
+</li>
+</ul>
+<h4 id="2-封闭集-Closed-Set-优化">2. 封闭集 (Closed Set) 优化</h4>
+<p>封闭集通常是一个哈希表 (<code>std::unordered_map</code> 或 <code>std::unordered_set</code>)。</p>
+<ul>
+<li>
+<p><strong>哈希表优化</strong>：</p>
+<ul>
+<li><strong>好的哈希函数</strong>：为节点状态设计一个高效且冲突少的哈希函数至关重要。一个糟糕的哈希函数会导致大量冲突，从而降低哈希表的性能并增加内存开销（因为需要存储链表或探测序列）。</li>
+<li><strong>开放寻址 (Open Addressing) vs. 链表法 (Chaining)</strong>：开放寻址通常比链表法在内存方面更紧凑，因为它不需要为每个冲突项分配额外的指针。但它在删除和负载因子管理上更复杂。</li>
+<li><strong>负载因子 (Load Factor)</strong>：哈希表的负载因子过高会增加冲突，降低性能；过低则浪费内存。根据实际应用场景，调整哈希表的初始容量和负载因子阈值。</li>
+<li><strong>自定义哈希表</strong>：对于特殊状态，可以考虑实现一个专门的哈希表，例如使用完美哈希或布谷鸟哈希，以达到极致的内存效率和性能。</li>
+</ul>
+</li>
+<li>
+<p><strong>存储最小信息</strong>：<br>
+封闭集中的每个条目只需要足够的信息来判断一个状态是否已被访问过，以及其历史g值（如果需要更新）。</p>
+<ul>
+<li><strong>仅存储状态和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi></mrow><annotation encoding="application/x-tex">g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span> 值</strong>：如果父节点可以通过其他方式重建，封闭集可以只存储 <code>(State, g_value)</code> 对。</li>
+<li><strong>仅存储状态</strong>：对于某些问题，如果只需要知道一个状态是否被访问过（例如，在不关心更新g值的情况下），封闭集可以只存储状态本身。然而，这会失去 A* 的最优性保证，因为它无法检测到发现更优路径的情况。</li>
+</ul>
+</li>
+<li>
+<p><strong>布隆过滤器 (Bloom Filter)</strong>：<br>
+布隆过滤器是一种空间效率极高的概率型数据结构，用于测试一个元素是否是集合的成员。</p>
+<ul>
+<li><strong>优点</strong>：占用内存极少。</li>
+<li><strong>缺点</strong>：存在假阳性 (false positives)，即它可能误报一个元素存在于集合中（但绝不会误报一个不存在的元素不存在）。</li>
+<li><strong>应用</strong>：可以作为封闭集的第一层快速检查。如果布隆过滤器说一个节点<strong>可能</strong>被访问过，再进行昂贵的哈希表查找。如果布隆过滤器说一个节点<strong>肯定没有</strong>被访问过，那么可以直接跳过哈希表查找。这并不能完全取代封闭集，但可以减少哈希表的查询次数。</li>
+<li><strong>限制</strong>：由于假阳性，布隆过滤器不能用于A*的主封闭集，因为它可能导致算法在更优路径被发现时却错误地认为该节点已处理，从而失去最优性。它更适用于辅助性的、允许少量错误的应用，例如缓存过滤。</li>
+</ul>
+</li>
+<li>
+<p><strong>基于磁盘的封闭集 (Disk-based Closed Set)</strong>：<br>
+对于内存完全无法容纳的巨大问题，可以将封闭集存储在磁盘上。</p>
+<ul>
+<li><strong>方法</strong>：使用数据库（如 SQLite, LevelDB）或专门的键值存储（如 RocksDB）来存储节点。</li>
+<li><strong>缺点</strong>：磁盘I/O操作比内存操作慢几个数量级，会显著增加搜索时间。需要仔细设计读写策略（例如，批量写入，缓存最常访问的部分）来缓解性能问题。</li>
+</ul>
+</li>
+</ul>
+<h3 id="III-搜索算法变体和策略：从算法层面进行优化">III. 搜索算法变体和策略：从算法层面进行优化</h3>
+<p>与其尝试挤压单个节点，不如从根本上改变A*的搜索方式，使其无需存储所有节点。</p>
+<h4 id="1-迭代加深A-IDA-Iterative-Deepening-A">1. 迭代加深A* (IDA* - Iterative Deepening A*)</h4>
+<p>IDA* 是一种结合了迭代加深深度优先搜索 (IDDFS) 和 A* 算法思想的内存效率极高的算法。</p>
+<ul>
+<li><strong>核心思想</strong>：它不使用开放集和封闭集，而是执行一系列深度优先搜索 (DFS)，每次搜索的深度限制是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值。
+<ol>
+<li>从起始节点的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值作为初始阈值开始。</li>
+<li>执行一次深度优先搜索，只扩展 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>≤</mo><mtext>阈值</mtext></mrow><annotation encoding="application/x-tex">f(n) \le \text{阈值}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">阈值</span></span></span></span></span> 的节点。</li>
+<li>如果目标未找到，将阈值增加到当前搜索中遇到的所有未扩展节点中的最小 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值。</li>
+<li>重复步骤2-3，直到找到目标。</li>
+</ol>
+</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>极高的内存效率</strong>：内存复杂度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>b</mi><mo>⋅</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(b \cdot d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> 是路径深度，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> 是分支因子。它基本上只需要存储当前路径上的节点，而无需开放集和封闭集。</li>
+<li><strong>最优性</strong>：如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 是可接受的，IDA* 也能保证找到最优路径。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：
+<ul>
+<li><strong>重复计算</strong>：在每次迭代中，IDA* 会重复探索很多相同的节点。这可能导致时间性能下降，尤其是在浅层路径问题中。</li>
+</ul>
+</li>
+<li><strong>适用场景</strong>：路径深度相对较浅，但状态空间极其庞大以至于常规A*无法承受内存压力的场景，例如15拼图、魔方等。</li>
+</ul>
+<p><em><em>IDA</em> 伪代码：</em>*</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">function IDA_STAR(start_node, goal_node)</span><br><span class="line">    threshold = H(start_node) // 初始阈值为起点的启发式值</span><br><span class="line">    loop</span><br><span class="line">        min_f_in_this_iteration = INFINITY</span><br><span class="line">        result, new_threshold = DFS_WITH_LIMIT(start_node, threshold, min_f_in_this_iteration)</span><br><span class="line">        if result == FOUND_GOAL</span><br><span class="line">            return path</span><br><span class="line">        if result == THRESHOLD_EXCEEDED</span><br><span class="line">            threshold = new_threshold</span><br><span class="line">        else // No path found within current threshold, and no nodes exceeded it.</span><br><span class="line">            return NO_PATH_EXISTS // Or handle appropriately</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">function DFS_WITH_LIMIT(node, current_g, threshold, min_f_in_this_iteration)</span><br><span class="line">    f_val = current_g + H(node)</span><br><span class="line">    if f_val &gt; threshold</span><br><span class="line">        min_f_in_this_iteration = min(min_f_in_this_iteration, f_val)</span><br><span class="line">        return THRESHOLD_EXCEEDED, min_f_in_this_iteration</span><br><span class="line"></span><br><span class="line">    if node == goal_node</span><br><span class="line">        return FOUND_GOAL, 0 // Path found</span><br><span class="line"></span><br><span class="line">    // For loop over neighbors</span><br><span class="line">    for each neighbor in GET_NEIGHBORS(node)</span><br><span class="line">        // Check for cycles in the current path if needed (small closed set for current path)</span><br><span class="line">        if neighbor not in current_path_closed_set</span><br><span class="line">            add neighbor to current_path_closed_set</span><br><span class="line">            result, new_threshold = DFS_WITH_LIMIT(neighbor, current_g + COST(node, neighbor), threshold, min_f_in_this_iteration)</span><br><span class="line">            if result == FOUND_GOAL</span><br><span class="line">                return FOUND_GOAL, 0</span><br><span class="line">            if result == THRESHOLD_EXCEEDED</span><br><span class="line">                min_f_in_this_iteration = min(min_f_in_this_iteration, new_threshold)</span><br><span class="line">            remove neighbor from current_path_closed_set // Backtrack</span><br><span class="line">    return NOT_FOUND, min_f_in_this_iteration</span><br></pre></td></tr></table></figure>
+<h4 id="2-内存有限A-MA-Memory-bounded-A-与-简化内存A-SMA-Simplified-Memory-bounded-A">2. 内存有限A* (MA* - Memory-bounded A*) 与 简化内存A* (SMA* - Simplified Memory-bounded A*)</h4>
+<p>这些算法旨在严格控制A*算法的内存使用。</p>
+<ul>
+<li><strong>MA</strong>*：当开放集达到预设的内存限制时，MA* 会从开放集中删除 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值最高的节点（即最不具有前景的节点），以释放内存。被删除的节点及其子树可能需要重新发现。</li>
+<li><strong>SMA</strong>*：MA* 的改进版。当内存满时，SMA* 删除开放集中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值最高的节点，但它会记住该节点的父节点以及其被删除时的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值。如果未来再次遇到其父节点，并且发现通往该节点的更优路径，算法可以重新探索被删除的子树。
+<ul>
+<li><strong>优点</strong>：严格控制内存使用，且相比MA*，它更有可能找到最优解，甚至在某些情况下能够保证最优解（如果内存限制不太严格）。</li>
+<li><strong>缺点</strong>：可能导致一些重复计算。如果内存限制非常严格，SMA* 仍然可能无法找到最优解，甚至无法找到任何解。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-递归最佳优先搜索-RBFS-Recursive-Best-First-Search">3. 递归最佳优先搜索 (RBFS - Recursive Best-First Search)</h4>
+<p>RBFS 结合了递归深度优先搜索和A*的启发式。</p>
+<ul>
+<li><strong>核心思想</strong>：RBFS 像一个深度优先搜索，但它跟踪当前路径上所有节点的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值，并记住最佳替代路径的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值。如果当前路径的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 值超过了最佳替代路径，它会回溯到最佳替代路径，继续探索。</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>内存效率高</strong>：内存复杂度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>b</mi><mi>d</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(bd)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span>，只需要存储当前路径上的节点。</li>
+<li><strong>最优性</strong>：如果启发式函数可接受，RBFS 是最优的。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：
+<ul>
+<li><strong>重复访问</strong>：尽管比IDA*少，但在某些情况下仍可能重复访问节点。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-双向A-Bidirectional-A">4. 双向A* (Bidirectional A*)</h4>
+<p>双向A*同时从起点和目标点进行搜索。</p>
+<ul>
+<li><strong>核心思想</strong>：从起点开始向前搜索，从目标点开始向后搜索。当两个搜索前沿在某个节点相遇时，就找到了路径。</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>搜索空间大幅减少</strong>：如果分支因子为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>，路径长度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>，单向A<em>需要探索 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>b</mi><mi>d</mi></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(b^d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0991em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 节点，而双向A</em>通常只需要探索 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>b</mi><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup><mo>+</mo><msup><mi>b</mi><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup><mo stretchy="false">)</mo><mo>=</mo><mi>O</mi><mo stretchy="false">(</mo><msup><mi>b</mi><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(b^{d/2} + b^{d/2}) = O(b^{d/2})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mtight">/2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mtight">/2</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mtight">/2</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 节点。搜索空间的指数级减小直接导致所需内存的显著降低。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：
+<ul>
+<li><strong>需要反向操作</strong>：从目标节点进行反向搜索需要问题是可逆的，并且能够定义反向操作和反向启发式函数。</li>
+<li><strong>启发式对称性</strong>：向前和向后的启发函数需要保持一致性或对称性。</li>
+<li><strong>停止条件复杂</strong>：需要复杂的逻辑来确定两个搜索何时“相遇”，并组合找到的路径。通常，它需要在相遇时检查所有相遇点的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>g</mi><mi>f</mi></msub><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>+</mo><msub><mi>g</mi><mi>b</mi></msub><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g_f(n) + g_b(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 最小的路径。</li>
+</ul>
+</li>
+<li><strong>内存使用</strong>：两个A<em>算法实例各自维护开放集和封闭集。总内存是两个A</em>实例的内存之和，但由于搜索空间的缩小，总和通常远小于单个A*。</li>
+</ul>
+<h4 id="5-启发式函数的改进-Heuristic-Function-Improvement">5. 启发式函数的改进 (Heuristic Function Improvement)</h4>
+<p>这不是直接的内存优化，但一个“更强”或“更精确”的启发式函数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 可以显著减少A*需要探索的节点数量，从而间接减少开放集和封闭集的大小。</p>
+<ul>
+<li><strong>模式数据库 (Pattern Databases, PDBs)</strong>：预先计算特定子问题的解（作为启发值），并将它们存储在数据库中。
+<ul>
+<li><strong>优点</strong>：提供非常精确的启发值，大幅剪枝搜索空间。</li>
+<li><strong>缺点</strong>：PDB本身需要内存来存储，对于非常大的模式，PDB可能也会消耗大量内存。需要权衡PDB的内存和A*搜索时的内存。通常，PDB的内存可以通过巧妙的压缩技术来优化。</li>
+</ul>
+</li>
+<li><strong>地标 (Landmarks)</strong>：选择一些关键的“地标”节点，预计算到这些地标或从这些地标的距离，然后使用这些距离来估计 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>。</li>
+</ul>
+<h4 id="6-状态空间简化和抽象-State-Space-Simplification-Abstraction">6. 状态空间简化和抽象 (State Space Simplification &amp; Abstraction)</h4>
+<ul>
+<li><strong>抽象层 (Abstraction Hierarchies) / 多层次搜索</strong>：<br>
+对于非常大的问题，可以构建一个抽象的、粗粒度的状态空间。首先在抽象层找到一个近似路径，然后沿着这条近似路径在更细粒度的层面上进行搜索。
+<ul>
+<li><strong>优点</strong>：将一个巨大的问题分解为几个较小的问题，每个子问题的内存需求都较低。</li>
+<li><strong>缺点</strong>：需要设计合适的抽象层次，且可能失去最优性。</li>
+</ul>
+</li>
+<li><strong>预处理 (Precomputation)</strong>：<br>
+在搜索之前，对问题的一些不变部分进行预处理，例如计算所有节点到某些“中心”或“地标”的距离。这些预计算的结果可以作为启发式的一部分，或者用于限制搜索范围。虽然预处理本身可能需要内存，但如果可以被多个查询共享，则长期来看是值得的。</li>
+</ul>
+<h3 id="IV-系统级优化：利用底层特性">IV. 系统级优化：利用底层特性</h3>
+<p>除了算法和数据结构层面的优化，还可以考虑系统层面的内存管理。</p>
+<h4 id="1-自定义内存分配器-Custom-Allocators">1. 自定义内存分配器 (Custom Allocators)</h4>
+<p>如前所述，对象池是自定义内存分配器的一种。更通用的自定义分配器（如 Arena Allocator, Free List Allocator, Buddy Allocator）可以更好地控制内存布局，减少碎片，提高分配/释放速度。它们通常分配一大块内存，然后在这个大块内存中管理小块内存的分配。这对于A*这种内存使用模式（大量小对象生命周期不一致）尤其有用。</p>
+<h4 id="2-数据本地性-Data-Locality">2. 数据本地性 (Data Locality)</h4>
+<p>CPU缓存利用率对性能至关重要。将频繁访问的数据（如节点状态、g值、f值、父节点索引）放在连续的内存区域，可以提高CPU缓存命中率，减少内存访问延迟。</p>
+<ul>
+<li><strong>结构数组 (Array of Structs, AOS) vs. 数组结构 (Struct of Arrays, SOA)</strong>：
+<ul>
+<li><code>struct Node &#123; State s; int g; Node* parent; &#125;; Node nodes[N];</code> (AOS)</li>
+<li><code>State states[N]; int g_values[N]; Node* parents[N];</code> (SOA)<br>
+对于A*，我们通常需要同时访问一个节点的多个字段。AOS在单个节点内部的数据是局部性的。然而，如果我们需要遍历大量节点并只访问其中一两个字段，SOA会更好。在A*中，由于我们通常需要完整节点信息，并且通过指针或索引跳转，AOS通常更自然。但可以考虑将<code>g</code>和<code>f</code>值存储在独立的数组中，以便优先队列操作可以更紧凑地访问它们。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-并行化-Parallelization">3. 并行化 (Parallelization)</h4>
+<p>虽然并行化主要是为了时间性能，但在某些情况下，它也可以间接影响内存使用。例如：</p>
+<ul>
+<li><strong>分布式A</strong>*：将开放集和封闭集分布到多个机器或多个核心上。这需要复杂的同步机制，但可以突破单机内存限制。</li>
+<li><strong>并行扩展</strong>：多个线程同时从开放集中取出节点进行扩展。这可能需要对开放集和封闭集进行线程安全改造，可能引入锁开销，但理论上可以更快地耗尽开放集，从而限制其峰值大小。</li>
+</ul>
+<h2 id="案例分析与实践考量">案例分析与实践考量</h2>
+<p>选择哪种内存优化策略，取决于具体的问题、可用的资源和对性能、最优性、完备性的要求。</p>
+<ul>
+<li><strong>15拼图、24拼图、魔方问题</strong>：
+<ul>
+<li><strong>特点</strong>：状态空间巨大，分支因子小，路径深度通常较浅（数十步），启发函数（如曼哈顿距离、模式数据库）非常有效。</li>
+<li><strong>推荐策略</strong>：IDA* 或 RBFS 是首选，因为它们的内存效率极高。模式数据库作为启发函数可以大幅减少搜索时间。</li>
+</ul>
+</li>
+<li><strong>大型游戏地图寻路</strong>：
+<ul>
+<li><strong>特点</strong>：地图可能是二维网格或导航网格，状态空间大但不是天文数字级，通常允许次优解，路径深度中等。</li>
+<li><strong>推荐策略</strong>：
+<ul>
+<li><strong>节点结构优化</strong>：紧凑的坐标表示、整型成本。</li>
+<li><strong>内存池</strong>：避免频繁的内存分配和碎片。</li>
+<li><strong>封闭集优化</strong>：高效的哈希函数，如果允许，可以考虑布隆过滤器作为辅助。</li>
+<li><strong>分层寻路</strong> (Hierarchical Pathfinding)：在不同粒度级别上进行搜索，显著减少需要探索的节点。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>需要严格最优解且内存极度受限</strong>：
+<ul>
+<li><strong>推荐策略</strong>：SMA* 是一个折衷方案，它试图在内存限制下保持最优性。如果IDA<em>或RBFS不可行（例如，启发函数不够精确导致大量重复计算），SMA</em>可能是个选择。</li>
+</ul>
+</li>
+<li><strong>超大规模图搜索</strong> (例如，社交网络、Web图)：
+<ul>
+<li><strong>特点</strong>：节点和边数量可能达到数十亿，单机内存无法容纳整个图或搜索状态。</li>
+<li><strong>推荐策略</strong>：双向A*（如果适用），分布式A*，基于磁盘的封闭集。这些是极端情况下的解决方案，通常伴随着显著的性能下降。</li>
+</ul>
+</li>
+</ul>
+<p><strong>何时不需过度优化？</strong></p>
+<p>如果你的A*应用场景中，状态空间不大（例如，几万或几十万个节点），或者可用内存非常充足，那么过度追求极致的内存优化可能是没有必要的。过度复杂的内存管理（如自定义分配器、位操作）会增加代码的复杂性和维护成本。在这种情况下，优先关注代码的可读性、调试便利性和整体性能（CPU时间而非内存）。</p>
+<p>在优化之前，务必进行<strong>性能分析 (Profiling)</strong>，找出内存消耗的真正瓶颈。是开放集过大？还是封闭集过大？抑或是单个节点太大？针对瓶颈进行优化才能事半功倍。</p>
+<h2 id="结语：在权衡中求索最优解">结语：在权衡中求索最优解</h2>
+<p>A* 算法作为搜索领域的“明星”，其强大的能力背后是对内存的巨大饥渴。然而，正如我们所见，这并非一个无解的难题。从精打细算每个字节的<strong>节点表示优化</strong>，到高效利用数据结构的<strong>开放集与封闭集优化</strong>，再到从根本上改变搜索行为的<strong>算法变体与策略</strong>（如 IDA*、SMA*、双向A*），以及利用底层系统特性的<strong>系统级优化</strong>，我们拥有一整套强大的工具箱来应对内存挑战。</p>
+<p>内存优化是一个永恒的话题，它总是在时间、空间、代码复杂度和结果质量之间寻找最佳平衡点。没有一劳永逸的解决方案，最有效的策略往往是多种技术的组合应用。理解每种方法的优缺点和适用场景，并通过细致的性能分析指导你的选择，才是走向成功的关键。</p>
+<p>希望这篇深入的探讨能帮助你更好地理解A*算法的内存瓶颈，并为你未来的项目提供宝贵的优化思路。在内存的迷宫中，我们总能找到出路！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/23/2025-07-24-053205/">https://qmwneb946.dpdns.org/2025/07/23/2025-07-24-053205/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E6%8A%80%E6%9C%AF/">技术</a><a class="post-meta__tags" href="/tags/A%E7%AE%97%E6%B3%95%E7%9A%84%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">A算法的内存优化</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/23/2025-07-24-053414/" title="微服务架构的熔断与降级：构建韧性分布式系统的艺术"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">微服务架构的熔断与降级：构建韧性分布式系统的艺术</div></div><div class="info-2"><div class="info-item-1">你好，技术爱好者们！我是你们的老朋友 qmwneb946。今天，我们将深入探讨微服务架构中两个至关重要的韧性模式：熔断（Circuit Breaker）与降级（Degradation）。在分布式系统日益复杂的今天，理解并精通这些模式，是构建高可用、高可靠系统的基石。这不仅仅是关于代码技巧，更是关于系统设计哲学和应对复杂性的智慧。 在当今瞬息万变的数字化世界里，微服务架构以其敏捷性、可伸缩性和技术多样性，成为了构建现代应用的主流选择。然而，硬币的另一面是，微服务将原先内聚在单个应用中的复杂性，分散到了由数百乃至数千个独立服务组成的网络中。网络延迟、服务故障、资源争用，这些在单体应用中鲜有考虑的问题，在分布式环境中被放大，并可能引发连锁反应，导致整个系统瘫痪。 试想一下，一个用户请求可能需要跨越十几个甚至几十个微服务才能完成。如果其中一个服务因为瞬时高负载、网络抖动或自身缺陷而变得缓慢或不可用，会发生什么？最糟糕的情况是，这个故障点会像病毒一样迅速蔓延：上游服务会持续重试，耗尽自己的资源，然后导致其上游服务也崩溃，最终，整个系统都会陷入瘫痪。这正是我们所说的“级联失败”或“雪崩效应”...</div></div></div></a><a class="pagination-related" href="/2025/07/23/2025-07-24-053108/" title="量子近似优化算法（QAOA）：连接经典优化与量子计算的桥梁"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">量子近似优化算法（QAOA）：连接经典优化与量子计算的桥梁</div></div><div class="info-2"><div class="info-item-1">你好，我是 qmwneb946，一名热爱探索技术前沿、深耕数学奥秘的博主。今天，我们将一同踏上一段激动人心的旅程，深入剖析一个在量子计算领域备受瞩目的算法——量子近似优化算法（Quantum Approximate Optimization Algorithm, QAOA）。这个算法不仅代表了量子计算在解决实际问题上的巨大潜力，更体现了经典计算与量子计算协同工作的精妙艺术。 经典优化问题无处不在，从物流配送路径规划到金融投资组合优化，从药物分子结构设计到人工智能模型的训练，其重要性不言而喻。然而，许多这类问题，特别是组合优化问题，随着规模的增长，其复杂性呈指数级爆炸，使得即使是当今最强大的超级计算机也束手无策。这就是著名的NP-hard问题，它们在理论上被认为是“难以求解”的。传统算法在面对这类问题时，往往只能退而求其次，寻求启发式解或近似解，且随着问题规模的增大，其性能差距日益显著。 近年来，随着量子计算技术的突飞猛进，人们开始将目光投向量子领域，希望利用量子力学独特的叠加性、纠缠和干涉等特性，为这些“顽固”的优化难题带来新的曙光。量子计算并非万能钥匙，但在某些特定问题上，它展...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082448/" title="数据挖掘在金融风控的应用：从算法到实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">数据挖掘在金融风控的应用：从算法到实践</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术博主，今天我们来深入探讨一个与我们日常生活息息相关，却又充满技术挑战的领域：金融风控。在这个领域中，数据挖掘技术发挥着越来越重要的作用，它帮助金融机构有效识别和管理风险，保障金融体系的稳定运行。本文将从多个角度深入探讨数据挖掘在金融风控中的应用，并结合实际案例进行分析。 数据挖掘在金融风控中的关键作用 金融风控的目标是识别、评估和控制各种金融风险，例如信用风险、欺诈风险、操作风险等。传统的风控方法往往依赖于人工审核和简单的统计模型，效率低、准确率不高。而数据挖掘技术的出现，为金融风控带来了革命性的变革。它能够从海量数据中提取有价值的信息，建立更精确的风险模型，从而提高风控效率和准确性。 具体来说，数据挖掘在金融风控中主要发挥以下作用： 欺诈检测 欺诈行为日益猖獗，给金融机构造成巨大的经济损失。数据挖掘技术，特别是异常检测算法，能够有效识别出可疑交易行为。例如，基于机器学习的异常检测模型可以学习正常交易的模式，然后识别偏离该模式的异常交易，从而有效识别潜在的欺诈行为。常用的算法包括：  孤立森林 (Isolation Forest): 通过随机分割数据来隔离异...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082509/" title="虚拟现实技术的沉浸式体验：从感知到认知"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">虚拟现实技术的沉浸式体验：从感知到认知</div></div><div class="info-2"><div class="info-item-1">虚拟现实（VR）技术不再是科幻小说中的幻想，它已经逐渐融入我们的生活，并正在深刻地改变着我们与世界互动的方式。本文将深入探讨VR技术的沉浸式体验，从技术原理到感知机制，再到其潜在的应用和未来发展方向，为技术爱好者提供一个全面的视角。 沉浸式体验的奥秘：技术层面 VR技术能够创造出令人信服的沉浸式体验，这依赖于多项关键技术的协同作用。 显示技术与图像渲染 高质量的图像渲染是VR体验的关键。高分辨率、高刷新率的显示器能够有效减少画面延迟和模糊感，提升视觉舒适度。目前主流的VR头显大多采用OLED或LCD屏幕，并通过透镜系统将图像投射到用户的视网膜上，模拟真实世界的视觉体验。  为了实现更广阔的视野（FOV），厂商们也在不断改进透镜设计和显示面板技术。 空间音频技术 除了视觉，听觉在构建沉浸式环境中也扮演着至关重要的角色。空间音频技术通过模拟声音在三维空间中的传播，让用户能够准确感知声音的方位和距离，增强临场感。例如，头部追踪技术配合精密的算法，可以根据用户头部姿态实时调整声音的输出，使声音效果更加逼真。 追踪技术与交互方式 精确的追踪技术是VR体验流畅的关键。目前常用的追踪技术包括：...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082730/" title="有机合成中的手性催化技术：构建分子世界的精巧艺术"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">有机合成中的手性催化技术：构建分子世界的精巧艺术</div></div><div class="info-2"><div class="info-item-1">有机合成，这门将简单的化学物质转化为复杂分子的艺术，正因手性分子的存在而变得更加精妙和挑战性。手性分子如同左右手一样，结构互为镜像，但性质却可能大相径庭。在药物研发、材料科学等领域，获得特定手性的分子至关重要，而手性催化技术正是实现这一目标的关键。本文将深入探讨有机合成中的手性催化技术，揭示其背后的原理和应用。 手性与手性催化：从镜像到精准控制 手性，源于希腊语“cheir”（手），指的是分子不能与其镜像重合的特性。这种结构差异导致手性分子具有不同的物理性质和生物活性。例如，一种药物的左旋体可能具有疗效，而其右旋体则可能无效甚至有害。因此，精准控制手性合成至关重要。 手性催化技术利用手性催化剂来控制反应的立体选择性，即优先生成特定手性的产物。催化剂本身是手性的，它通过与反应物形成短暂的超分子复合物，影响反应路径，从而引导反应朝特定立体异构体方向进行。这就好比一个熟练的工匠，用巧妙的手法引导反应物“组装”成预期的分子结构。 手性催化剂的类型及作用机制 目前，广泛应用的手性催化剂主要包括： 过渡金属配合物催化剂 这类催化剂通常含有手性配体与过渡金属中心（如铑、钌、钯等）结合而成。配体...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082852/" title="光谱分析技术在环境监测的应用：从原理到实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">光谱分析技术在环境监测的应用：从原理到实践</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术博主 DataWhisperer！今天我们来聊一个既高大上又贴近生活的技术领域：光谱分析技术在环境监测中的应用。  这可不是简单的“看看颜色”就能搞定的，它背后蕴含着丰富的物理学、化学和数学原理，并且在保护我们的环境方面发挥着越来越重要的作用。 引言：光谱分析 – 环境监测的“火眼金睛” 环境监测的目标是及时、准确地获取环境污染物的信息，为环境保护和管理提供科学依据。传统监测方法往往费时费力，且灵敏度有限。而光谱分析技术，凭借其快速、灵敏、多组分同时检测等优点，成为了环境监测领域的一匹黑马。  它利用物质与电磁辐射相互作用的特性，分析物质的成分和结构，从而实现对环境污染物的精准识别和定量分析。 光谱分析技术的种类及原理 光谱分析技术涵盖多种方法，根据所用电磁波的波长范围不同，可以分为： 紫外-可见光谱法 (UV-Vis) UV-Vis 光谱法利用物质对紫外和可见光区域电磁波的吸收特性进行分析。  不同物质具有独特的吸收光谱，通过测量吸收光谱的特征峰，可以确定物质的种类和浓度。  这在水质监测中应用广泛，例如检测重金属离子、有机污染物等。  其原理基于朗伯-比...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082903/" title="计算化学模拟分子间相互作用：从经典力场到量子力学"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">计算化学模拟分子间相互作用：从经典力场到量子力学</div></div><div class="info-2"><div class="info-item-1">引言 分子间相互作用是化学和生物学领域的核心概念，它支配着物质的物理和化学性质，例如溶解度、沸点、蛋白质折叠等等。精确地模拟这些相互作用对于理解和预测分子行为至关重要。计算化学为我们提供了一套强大的工具来研究分子间相互作用，从经典的力场方法到复杂的量子力学计算，本文将深入探讨这些方法及其应用。 经典力场方法 经典力场方法基于牛顿力学，将分子简化为一系列原子，并通过经验参数化的势能函数来描述原子间的相互作用。这种方法计算效率高，适用于模拟大量的原子和分子，例如蛋白质、DNA和材料科学中的大分子体系。 势能函数 经典力场通常包含以下几种类型的相互作用项：  键伸缩 (Bond Stretching): 描述键长偏离平衡键长的能量变化，通常用谐振势能函数表示：Ebond=12kb(r−r0)2E_{bond} = \frac{1}{2}k_b(r - r_0)^2Ebond​=21​kb​(r−r0​)2，其中 kbk_bkb​ 是力常数，rrr 是键长，r0r_0r0​ 是平衡键长。 键角弯曲 (Angle Bending): 描述键角偏离平衡键角的能量变化，通常也用谐振势能函数表示...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082912/" title="绿色化学与可持续发展目标：技术与未来的融合"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">绿色化学与可持续发展目标：技术与未来的融合</div></div><div class="info-2"><div class="info-item-1">近年来，可持续发展已成为全球关注的焦点，联合国提出的17个可持续发展目标 (SDGs) 为全球共同努力提供了蓝图。其中，许多目标都与化学工业息息相关，而绿色化学作为一种旨在减少或消除有害物质使用的化学方法，扮演着至关重要的角色。本文将探讨绿色化学如何为实现可持续发展目标做出贡献，并从技术角度深入分析其应用。 绿色化学的十二原则：通向可持续未来的基石 绿色化学的核心是其十二项原则，这些原则指导着化学家的研究和工业生产，力求最大限度地减少环境影响。这些原则并非相互独立，而是相互关联，共同构成了一个整体的框架。 预防原则 这是绿色化学的首要原则，强调在化学反应的设计阶段就应避免产生有害物质，而非在产生后进行处理。这需要化学家们从根本上重新思考化学反应的设计和工艺流程。 原子经济性 理想情况下，所有反应物原子都应转化为最终产物，没有任何浪费。原子经济性是衡量化学反应效率的重要指标，其计算公式为： 原子经济性=目标产物的分子量所有反应物的分子量总和×100%原子经济性 = \frac{目标产物的分子量}{所有反应物的分子量总和} \times 100\%原子经济性=所有反应物的分子量总和目...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">1332</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1336</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#A-%E7%AE%97%E6%B3%95%E7%9A%84%E6%A0%B8%E5%BF%83%E9%AD%85%E5%8A%9B%EF%BC%9A%E4%B8%80%E4%B8%AA%E7%AE%80%E8%A6%81%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">A* 算法的核心魅力：一个简要回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88A-%E6%98%AF%E5%86%85%E5%AD%98%E5%A4%A7%E6%88%B7%EF%BC%9F%E6%B7%B1%E5%B1%82%E5%89%96%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">为什么A*是内存大户？深层剖析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BC%80%E6%94%BE%E9%9B%86-Open-Set-%E7%9A%84%E8%86%A8%E8%83%80"><span class="toc-number">2.1.</span> <span class="toc-text">1. 开放集 (Open Set) 的膨胀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B0%81%E9%97%AD%E9%9B%86-Closed-Set-%E7%9A%84%E7%B4%AF%E7%A7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">2. 封闭集 (Closed Set) 的累积</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%8A%82%E7%82%B9%E8%A1%A8%E7%A4%BA%E7%9A%84%E5%BC%80%E9%94%80"><span class="toc-number">2.3.</span> <span class="toc-text">3. 节点表示的开销</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%9A%90%E5%BC%8F%E5%9B%BE-vs-%E6%98%BE%E5%BC%8F%E5%9B%BE"><span class="toc-number">2.4.</span> <span class="toc-text">4. 隐式图 vs. 显式图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5%EF%BC%9A%E5%A4%9A%E7%BB%B4%E5%BA%A6%E7%9A%84%E6%94%BB%E5%9D%9A%E6%88%98"><span class="toc-number">3.</span> <span class="toc-text">内存优化策略：多维度的攻坚战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#I-%E8%8A%82%E7%82%B9%E8%A1%A8%E7%A4%BA%E4%BC%98%E5%8C%96%EF%BC%9A%E7%B2%BE%E6%89%93%E7%BB%86%E7%AE%97%E6%AF%8F%E4%B8%AA%E5%AD%97%E8%8A%82"><span class="toc-number">3.1.</span> <span class="toc-text">I. 节点表示优化：精打细算每个字节</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%B4%A7%E5%87%91%E7%9A%84%E8%8A%82%E7%82%B9%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.1.</span> <span class="toc-text">1. 紧凑的节点结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AF%B9%E8%B1%A1%E6%B1%A0-%E5%86%85%E5%AD%98%E6%B1%A0-Object-Pooling-Memory-Pool"><span class="toc-number">3.1.2.</span> <span class="toc-text">2. 对象池&#x2F;内存池 (Object Pooling&#x2F;Memory Pool)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#II-%E5%BC%80%E6%94%BE%E9%9B%86%E5%92%8C%E5%B0%81%E9%97%AD%E9%9B%86%E4%BC%98%E5%8C%96%EF%BC%9A%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%9A%84%E7%98%A6%E8%BA%AB"><span class="toc-number">3.2.</span> <span class="toc-text">II. 开放集和封闭集优化：核心数据结构的瘦身</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%BC%80%E6%94%BE%E9%9B%86-Open-Set-%E4%BC%98%E5%8C%96"><span class="toc-number">3.2.1.</span> <span class="toc-text">1. 开放集 (Open Set) 优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%B0%81%E9%97%AD%E9%9B%86-Closed-Set-%E4%BC%98%E5%8C%96"><span class="toc-number">3.2.2.</span> <span class="toc-text">2. 封闭集 (Closed Set) 优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#III-%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95%E5%8F%98%E4%BD%93%E5%92%8C%E7%AD%96%E7%95%A5%EF%BC%9A%E4%BB%8E%E7%AE%97%E6%B3%95%E5%B1%82%E9%9D%A2%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96"><span class="toc-number">3.3.</span> <span class="toc-text">III. 搜索算法变体和策略：从算法层面进行优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%BF%AD%E4%BB%A3%E5%8A%A0%E6%B7%B1A-IDA-Iterative-Deepening-A"><span class="toc-number">3.3.1.</span> <span class="toc-text">1. 迭代加深A* (IDA* - Iterative Deepening A*)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%86%85%E5%AD%98%E6%9C%89%E9%99%90A-MA-Memory-bounded-A-%E4%B8%8E-%E7%AE%80%E5%8C%96%E5%86%85%E5%AD%98A-SMA-Simplified-Memory-bounded-A"><span class="toc-number">3.3.2.</span> <span class="toc-text">2. 内存有限A* (MA* - Memory-bounded A*) 与 简化内存A* (SMA* - Simplified Memory-bounded A*)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%80%92%E5%BD%92%E6%9C%80%E4%BD%B3%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2-RBFS-Recursive-Best-First-Search"><span class="toc-number">3.3.3.</span> <span class="toc-text">3. 递归最佳优先搜索 (RBFS - Recursive Best-First Search)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8F%8C%E5%90%91A-Bidirectional-A"><span class="toc-number">3.3.4.</span> <span class="toc-text">4. 双向A* (Bidirectional A*)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%90%AF%E5%8F%91%E5%BC%8F%E5%87%BD%E6%95%B0%E7%9A%84%E6%94%B9%E8%BF%9B-Heuristic-Function-Improvement"><span class="toc-number">3.3.5.</span> <span class="toc-text">5. 启发式函数的改进 (Heuristic Function Improvement)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E7%AE%80%E5%8C%96%E5%92%8C%E6%8A%BD%E8%B1%A1-State-Space-Simplification-Abstraction"><span class="toc-number">3.3.6.</span> <span class="toc-text">6. 状态空间简化和抽象 (State Space Simplification &amp; Abstraction)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IV-%E7%B3%BB%E7%BB%9F%E7%BA%A7%E4%BC%98%E5%8C%96%EF%BC%9A%E5%88%A9%E7%94%A8%E5%BA%95%E5%B1%82%E7%89%B9%E6%80%A7"><span class="toc-number">3.4.</span> <span class="toc-text">IV. 系统级优化：利用底层特性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8-Custom-Allocators"><span class="toc-number">3.4.1.</span> <span class="toc-text">1. 自定义内存分配器 (Custom Allocators)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E6%80%A7-Data-Locality"><span class="toc-number">3.4.2.</span> <span class="toc-text">2. 数据本地性 (Data Locality)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%B9%B6%E8%A1%8C%E5%8C%96-Parallelization"><span class="toc-number">3.4.3.</span> <span class="toc-text">3. 并行化 (Parallelization)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90%E4%B8%8E%E5%AE%9E%E8%B7%B5%E8%80%83%E9%87%8F"><span class="toc-number">4.</span> <span class="toc-text">案例分析与实践考量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD%EF%BC%9A%E5%9C%A8%E6%9D%83%E8%A1%A1%E4%B8%AD%E6%B1%82%E7%B4%A2%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="toc-number">5.</span> <span class="toc-text">结语：在权衡中求索最优解</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062627/" title="蛋白质组学的翻译后修饰组学：解码生命复杂性的密码">蛋白质组学的翻译后修饰组学：解码生命复杂性的密码</a><time datetime="2025-07-25T22:26:27.000Z" title="发表于 2025-07-26 06:26:27">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062521/" title="钠离子电池的负极材料：开启储能新纪元的核心密码">钠离子电池的负极材料：开启储能新纪元的核心密码</a><time datetime="2025-07-25T22:25:21.000Z" title="发表于 2025-07-26 06:25:21">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062424/" title="基于人工智能的靶点识别：重塑药物发现的未来">基于人工智能的靶点识别：重塑药物发现的未来</a><time datetime="2025-07-25T22:24:24.000Z" title="发表于 2025-07-26 06:24:24">2025-07-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

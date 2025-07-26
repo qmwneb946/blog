@@ -1,0 +1,623 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>联邦学习中的模型异构性：驾驭分布式智能的复杂挑战 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="大家好，我是你们的博主qmwneb946，一个对技术和数学充满热情的探索者。今天，我们要深入探讨一个在联邦学习（Federated Learning, FL）领域日益凸显，且极具挑战性的话题——模型异构性 (Model Heterogeneity)。 联邦学习自问世以来，便以其独特的隐私保护和分布式训练优势，成为人工智能领域的一颗耀眼新星。它允许机构或设备在不共享原始数据的前提下，协同训练一个全局">
+<meta property="og:type" content="article">
+<meta property="og:title" content="联邦学习中的模型异构性：驾驭分布式智能的复杂挑战">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-163556/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="大家好，我是你们的博主qmwneb946，一个对技术和数学充满热情的探索者。今天，我们要深入探讨一个在联邦学习（Federated Learning, FL）领域日益凸显，且极具挑战性的话题——模型异构性 (Model Heterogeneity)。 联邦学习自问世以来，便以其独特的隐私保护和分布式训练优势，成为人工智能领域的一颗耀眼新星。它允许机构或设备在不共享原始数据的前提下，协同训练一个全局">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-24T08:35:56.000Z">
+<meta property="article:modified_time" content="2025-07-26T06:50:50.209Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="科技前沿">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="联邦学习中的模型异构性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "联邦学习中的模型异构性：驾驭分布式智能的复杂挑战",
+  "url": "https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-163556/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-24T08:35:56.000Z",
+  "dateModified": "2025-07-26T06:50:50.209Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-163556/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '联邦学习中的模型异构性：驾驭分布式智能的复杂挑战',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">联邦学习中的模型异构性：驾驭分布式智能的复杂挑战</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">联邦学习中的模型异构性：驾驭分布式智能的复杂挑战<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-24-163556.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-24T08:35:56.000Z" title="发表于 2025-07-24 16:35:56">2025-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-26T06:50:50.209Z" title="更新于 2025-07-26 14:50:50">2025-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%A7%91%E6%8A%80%E5%89%8D%E6%B2%BF/">科技前沿</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>大家好，我是你们的博主qmwneb946，一个对技术和数学充满热情的探索者。今天，我们要深入探讨一个在联邦学习（Federated Learning, FL）领域日益凸显，且极具挑战性的话题——<strong>模型异构性 (Model Heterogeneity)</strong>。</p>
+<p>联邦学习自问世以来，便以其独特的隐私保护和分布式训练优势，成为人工智能领域的一颗耀眼新星。它允许机构或设备在不共享原始数据的前提下，协同训练一个全局模型。这听起来很美好，对吧？然而，现实世界往往比理想模型复杂得多。在实际的联邦学习部署中，我们常常会遇到一个根本性的挑战：参与训练的各个客户端（如智能手机、物联网设备、不同组织）不仅数据分布可能不同（即数据异构性），它们的计算能力、存储容量、网络带宽乃至所偏好的模型架构都可能千差万别。这就是我们今天要剖析的“模型异构性”。</p>
+<p>传统的联邦学习算法，如联邦平均 (FedAvg)，通常假设所有客户端都使用相同结构的模型。但当这一假设被打破时，会出现什么问题？我们又该如何应对？本文将带你一层层揭开模型异构性的面纱，从其成因、带来的挑战，到各种前沿的解决方案，再到未来的发展方向。准备好了吗？让我们一起踏上这场分布式智能的探索之旅！</p>
+<h2 id="联邦学习回顾：从同质假设到异质挑战">联邦学习回顾：从同质假设到异质挑战</h2>
+<p>在深入模型异构性之前，我们先来简单回顾一下联邦学习的基本范式。</p>
+<h3 id="标准联邦学习范式：联邦平均-FedAvg">标准联邦学习范式：联邦平均 (FedAvg)</h3>
+<p>联邦学习的核心思想是“数据不动，模型动”。在标准的联邦平均算法中，其工作流程大致如下：</p>
+<ol>
+<li><strong>服务器初始化</strong>：服务器初始化一个全局模型 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">W_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，并将其发送给参与训练的客户端。</li>
+<li><strong>客户端本地训练</strong>：每个客户端 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 接收到全局模型后，使用其本地数据集 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">D_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 对模型进行训练（通常是多个本地 epoch）。训练完成后，客户端得到一个更新后的本地模型 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>W</mi><mi>k</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">W_k&#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-2.4169em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li><strong>客户端上传更新</strong>：客户端将本地模型的更新（通常是权重或梯度）发送回服务器。</li>
+<li><strong>服务器聚合</strong>：服务器收集所有客户端的更新，并根据一定的聚合策略（例如，按客户端数据量加权平均）生成一个新的全局模型 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">W_{t+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span>。聚合公式通常是：<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>W</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><mfrac><msub><mi>n</mi><mi>k</mi></msub><mi>N</mi></mfrac><msubsup><mi>W</mi><mi>k</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">W_{t+1} = \sum_{k=1}^K \frac{n_k}{N} W_k&#x27;
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8917em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.1304em;vertical-align:-1.3021em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8479em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3021em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-2.453em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 是参与客户端总数，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">n_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是客户端 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 的数据样本数量，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msub><mi>n</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">N = \sum_{k=1}^K n_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2809em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9812em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是所有参与客户端的总样本数量。</li>
+<li><strong>迭代</strong>：重复步骤 1-4，直到模型收敛或达到预设的训练轮次。</li>
+</ol>
+<h3 id="FedAvg-的隐含假设">FedAvg 的隐含假设</h3>
+<p>FedAvg 及其许多变体在设计时，通常隐含着两个重要假设：</p>
+<ol>
+<li><strong>数据非独立同分布 (Non-IID)</strong>：这是联邦学习的常态，即客户端的数据分布可能不同。FedAvg 通过聚合解决了这一问题，尽管在极端非IID情况下性能仍可能下降。</li>
+<li><strong>模型同质性 (Model Homogeneity)</strong>：这是今天的主角。FedAvg 假设所有客户端都使用<strong>相同</strong>的模型架构和参数数量。这样，服务器才能简单地对权重或梯度进行加权平均。</li>
+</ol>
+<p>在理想的实验环境中，我们通常会设置所有客户端使用相同的模型。但在真实世界中，尤其是在异构的边缘计算环境中，这个假设往往无法成立。</p>
+<h2 id="什么是模型异构性？">什么是模型异构性？</h2>
+<p>模型异构性指的是在联邦学习系统中，各个参与客户端所使用的机器学习模型在<strong>架构、大小、复杂度和能力</strong>上存在差异的现象。它不仅仅是数据分布的不同，而是模型本身的结构性差异。</p>
+<h3 id="模型异构性的成因">模型异构性的成因</h3>
+<p>为什么会出现模型异构性？这背后有诸多现实因素的驱动：</p>
+<ol>
+<li>
+<p><strong>硬件资源限制</strong>：</p>
+<ul>
+<li><strong>计算能力</strong>：智能手机、智能手表、IoT传感器等边缘设备，CPU/GPU性能、内存大小都远不及数据中心的服务器。它们无法高效运行大型、复杂的神经网络模型。</li>
+<li><strong>存储容量</strong>：模型参数本身也需要占用存储空间。较小的设备可能无法存储巨大的模型。</li>
+<li><strong>能耗</strong>：训练大型模型会消耗大量电能，对于电池供电的设备而言是不可承受的。因此，客户端倾向于使用更轻量级的模型。</li>
+</ul>
+</li>
+<li>
+<p><strong>数据特性与任务需求</strong>：</p>
+<ul>
+<li><strong>数据量差异</strong>：拥有海量数据的客户端可能倾向于训练更大的模型来充分利用数据，而数据稀疏的客户端可能只需要一个小模型就能避免过拟合。</li>
+<li><strong>数据类型与结构</strong>：不同客户端的数据可能涉及不同的模态（图像、文本、传感器数据），或者具有不同的复杂性。这可能导致客户端选择针对特定数据类型优化的模型架构（例如，图像任务常用CNN，序列任务常用RNN/Transformer）。</li>
+<li><strong>子任务差异</strong>：即使是同一个大的应用，不同客户端可能关注不同的子任务或具有不同的性能偏好。例如，一个手机应用可能需要一个快速响应的超小模型进行实时预测，而一个云端服务可能需要一个高精度的复杂模型进行离线分析。</li>
+</ul>
+</li>
+<li>
+<p><strong>隐私与独立性考量</strong>：</p>
+<ul>
+<li><strong>模型隐私</strong>：客户端可能不希望将其完整的模型架构暴露给服务器或其他客户端。它们可能只愿意共享一个简化版或某个子模块的更新。</li>
+<li><strong>自主选择</strong>：为了保持客户端的独立性和灵活性，允许它们根据自身情况选择合适的模型架构，是符合去中心化精神的。</li>
+</ul>
+</li>
+<li>
+<p><strong>遗留系统与兼容性</strong>：</p>
+<ul>
+<li>在某些场景下，客户端可能已经部署了成熟的、基于特定架构的局部模型。为了集成到联邦学习系统中，简单地替换模型可能不现实或成本高昂。他们可能希望在现有模型基础上进行联邦训练。</li>
+</ul>
+</li>
+<li>
+<p><strong>通信带宽限制</strong>：</p>
+<ul>
+<li>虽然模型异构性主要是模型大小和结构问题，但更小的模型通常意味着更少的参数，这有助于降低通信开销，对于带宽受限的环境尤为重要。</li>
+</ul>
+</li>
+</ol>
+<h3 id="模型异构性的类型">模型异构性的类型</h3>
+<p>模型异构性可以体现在多个维度：</p>
+<ol>
+<li>
+<p><strong>架构异构 (Architectural Heterogeneity)</strong>：客户端使用完全不同的神经网络架构，例如，一个客户端使用ResNet，另一个使用MobileNet，第三个使用ViT（Vision Transformer）。它们可能具有不同的层类型（卷积层、全连接层、注意力层）、连接方式和激活函数。</p>
+</li>
+<li>
+<p><strong>深度与宽度异构 (Depth/Width Heterogeneity)</strong>：即使是相同类型的架构（如都是CNN），它们的层数（深度）或每层的神经元数量/滤波器数量（宽度）也可能不同。例如，ResNet-18 vs. ResNet-50。</p>
+</li>
+<li>
+<p><strong>参数数量异构 (Parameter Count Heterogeneity)</strong>：这是架构和深度/宽度异构的直接结果，不同模型包含的参数总数差异巨大。这直接影响模型的存储需求和计算负载。</p>
+</li>
+<li>
+<p><strong>计算图异构 (Computational Graph Heterogeneity)</strong>：虽然不常见，但某些情况下，即使模型的层块相似，但它们的内部连接方式或计算流程也可能不同。</p>
+</li>
+</ol>
+<p>理解这些成因和类型，是探讨解决方案的前提。</p>
+<h2 id="模型异构性带来的挑战">模型异构性带来的挑战</h2>
+<p>模型异构性对联邦学习的传统范式构成了根本性挑战。当客户端的模型结构不一致时，FedAvg 那种简单的参数平均操作将变得毫无意义，甚至会导致模型崩溃。</p>
+<h3 id="1-聚合困境-Aggregation-Dilemma">1. 聚合困境 (Aggregation Dilemma)</h3>
+<p>这是最直接的挑战。</p>
+<ul>
+<li><strong>参数不匹配</strong>：如果客户端 A 有一个 10 层的模型，客户端 B 有一个 5 层的模型，服务器如何对它们进行参数平均？不同层之间无法直接对应，即使有对应层，它们的维度也可能不同。</li>
+<li><strong>语义不匹配</strong>：即使理论上可以找到某种映射关系，不同模型中的参数可能学习到不同的特征表示，简单地平均可能破坏它们的语义完整性，导致聚合后的全局模型性能下降。</li>
+<li><strong>全局模型定义</strong>：在模型异构的环境下，“全局模型”的定义本身就变得模糊。我们是想要一个能包容所有客户端的“超级模型”，还是一个所有客户端都能从中受益的“通用模型”？</li>
+</ul>
+<h3 id="2-收敛性与性能下降-Convergence-and-Performance-Degradation">2. 收敛性与性能下降 (Convergence and Performance Degradation)</h3>
+<ul>
+<li><strong>训练不稳定</strong>：由于各客户端模型能力不同，它们的学习速度和收敛轨迹可能差异巨大。强模型的更新可能冲垮弱模型的贡献，反之亦然，导致全局模型难以稳定收敛。</li>
+<li><strong>次优性能</strong>：聚合后的全局模型可能无法达到同质模型假设下的最佳性能，甚至可能出现灾难性遗忘，即在适应一部分客户端的同时，损害了另一部分客户端的性能。</li>
+<li><strong>公平性问题</strong>：某些客户端的模型可能因为其结构简单或数据量小，其贡献在聚合中被“稀释”，无法从全局模型中充分受益，这可能降低其参与联邦学习的积极性。</li>
+</ul>
+<h3 id="3-通信与计算效率-Communication-and-Computation-Efficiency">3. 通信与计算效率 (Communication and Computation Efficiency)</h3>
+<ul>
+<li>虽然小型模型有助于降低本地计算和通信开销，但如何有效地协调大小不一的模型，避免大型模型成为瓶颈，或小型模型因其信息量不足而被忽视，仍然是一个挑战。</li>
+<li>复杂的模型异构性解决方案本身可能引入额外的通信（例如，传递蒸馏信息）或计算开销（例如，服务器端进行复杂的模型转换或匹配）。</li>
+</ul>
+<h3 id="4-安全与隐私风险-Security-and-Privacy-Risks">4. 安全与隐私风险 (Security and Privacy Risks)</h3>
+<ul>
+<li>在模型异构场景下，某些解决方案可能需要客户端之间共享更多的元信息（如模型架构信息，尽管不是原始数据），这可能引入新的隐私泄露风险。</li>
+<li>复杂的聚合过程也可能为恶意攻击者提供更多利用漏洞的机会。</li>
+</ul>
+<p>面对这些挑战，研究者们提出了各种富有创见性的解决方案。</p>
+<h2 id="驾驭异构：前沿解决方案">驾驭异构：前沿解决方案</h2>
+<p>解决模型异构性的核心思想是，<strong>如何在不强制所有客户端使用相同模型的前提下，实现知识的有效共享与聚合</strong>。以下是一些主流的方法和方向：</p>
+<h3 id="A-知识蒸馏-Knowledge-Distillation-驱动的联邦学习">A. 知识蒸馏 (Knowledge Distillation) 驱动的联邦学习</h3>
+<p>知识蒸馏是一种将一个“教师”模型的知识转移到另一个“学生”模型的方法。在模型异构的联邦学习中，这一思想被广泛应用，因为它允许不同架构的模型之间进行知识传递，而不是参数传递。</p>
+<ul>
+<li>
+<p><strong>基本思想</strong>：不直接聚合模型参数，而是聚合模型学习到的“知识”。这种知识通常表现为模型的软标签（logits）、中间层特征或模型行为。</p>
+</li>
+<li>
+<p><strong>常见模式</strong>：</p>
+<ol>
+<li>
+<p><strong>服务器作为教师</strong>：</p>
+<ul>
+<li>服务器维护一个全局的“教师”模型。</li>
+<li>客户端下载教师模型，使用自己的本地数据对其进行推理，生成软标签。</li>
+<li>或者，服务器生成一个公共的无标签数据集（或少量有标签数据），用当前全局模型对其进行推理，得到软标签，然后将这些软标签连同数据发送给客户端。</li>
+<li>客户端将这些软标签作为目标，训练自己的本地“学生”模型。蒸馏损失函数通常是 Kullback-Leibler (KL) 散度：<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mrow><mi>d</mi><mi>i</mi><mi>s</mi><mi>t</mi><mi>i</mi><mi>l</mi><mi>l</mi></mrow></msub><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><mi>H</mi><mo stretchy="false">(</mo><msub><mi>q</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>p</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L_{distill} = \sum_{i} H(q_i(\mathbf{x}), p_i(\mathbf{x}))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">ll</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3277em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathbf">x</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathbf">x</span><span class="mclose">))</span></span></span></span></span></p>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q_i(\mathbf{x})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathbf">x</span><span class="mclose">)</span></span></span></span> 是学生模型对样本 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">x</mi></mrow><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">x</span></span></span></span> 的输出分布，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p_i(\mathbf{x})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathbf">x</span><span class="mclose">)</span></span></span></span> 是教师模型对样本 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">x</mi></mrow><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">x</span></span></span></span> 的输出分布，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span> 是交叉熵或KL散度。</li>
+<li>客户端只上传自己本地模型的训练结果（例如，验证集上的性能，或者模型的摘要信息），或者将本地模型作为新的教师模型。</li>
+<li>服务器通过某种机制（如聚合客户端上传的“模型知识”）来更新全局教师模型。</li>
+</ul>
+</li>
+<li>
+<p><strong>客户端之间蒸馏 (FedMD, FedKD)</strong>：</p>
+<ul>
+<li>客户端在本地训练自己的异构模型。</li>
+<li>客户端之间共享（或通过服务器中继）模型在公共数据集（或共享的蒸馏数据集）上的软标签或特征。</li>
+<li>每个客户端除了自己的本地数据训练外，还会使用这些共享的软标签来约束自己的模型，使其行为与其他客户端的模型保持一致。</li>
+<li>服务器可能仍然负责聚合某种形式的“模型知识”或协调蒸馏过程。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>优点</strong>：</p>
+<ul>
+<li><strong>架构无关</strong>：这是最显著的优势，客户端可以使用任意架构的模型。</li>
+<li><strong>隐私保护</strong>：客户端不直接共享模型参数，只共享输出或中间表示，通常被认为是更安全的。</li>
+</ul>
+</li>
+<li>
+<p><strong>挑战</strong>：</p>
+<ul>
+<li><strong>公共数据集需求</strong>：很多蒸馏方法需要一个公共数据集或共享的“蒸馏数据”，这可能是一个限制。</li>
+<li><strong>通信开销</strong>：传输软标签或特征可能产生额外的通信量，尤其是在大规模数据集上。</li>
+<li><strong>性能瓶颈</strong>：教师模型的性能上限可能限制学生模型的最终性能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="B-共享子模型与个性化层-Shared-Sub-Model-and-Personalized-Layers">B. 共享子模型与个性化层 (Shared Sub-Model and Personalized Layers)</h3>
+<p>这种方法的核心思想是将模型分为两部分：一个在客户端之间共享并聚合的公共基座（或特征提取器），以及一个客户端特有的个性化头部（或分类器）。</p>
+<ul>
+<li><strong>基本思想</strong>：
+<ul>
+<li>所有客户端训练一个<strong>共同的特征提取器</strong>（例如，一个CNN的卷积层部分或一个Transformer的编码器部分）。</li>
+<li>每个客户端拥有<strong>自己独立的个性化头部</strong>（例如，一个全连接层或一个小型分类器），这部分不参与全局聚合。</li>
+</ul>
+</li>
+<li><strong>工作流程</strong>：
+<ul>
+<li>服务器初始化一个全局共享的基座模型。</li>
+<li>客户端下载基座模型，并将其与自己的个性化头部拼接，形成完整的模型。</li>
+<li>客户端使用本地数据训练这个完整模型。</li>
+<li>训练结束后，客户端只将<strong>基座模型的更新</strong>上传给服务器。</li>
+<li>服务器对基座模型的更新进行聚合，生成新的全局基座模型。</li>
+<li>客户端的个性化头部则完全由其本地数据训练和维护。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>部分异构性支持</strong>：允许个性化头部层不同，从而支持一定程度的模型异构。</li>
+<li><strong>效率</strong>：只需聚合模型的一部分，降低通信开销。</li>
+<li><strong>个性化</strong>：允许客户端根据其特定任务和数据特性进行本地优化。</li>
+</ul>
+</li>
+<li><strong>挑战</strong>：
+<ul>
+<li><strong>基座模型选择</strong>：如何确定一个对所有客户端都有效的公共基座模型？</li>
+<li><strong>共享部分的同质性</strong>：基座模型仍然需要是同质的，这限制了异构的程度。</li>
+<li><strong>任务关联性</strong>：要求所有客户端的核心任务能够通过共享的特征提取器来完成。</li>
+</ul>
+</li>
+</ul>
+<h3 id="C-元学习-Meta-Learning-在联邦学习中的应用">C. 元学习 (Meta-Learning) 在联邦学习中的应用</h3>
+<p>元学习（学习如何学习）旨在使模型能够快速适应新任务或新环境。在联邦学习中，元学习可以帮助模型适应客户端之间的异构性。</p>
+<ul>
+<li><strong>基本思想</strong>：
+<ul>
+<li><strong>MAML (Model-Agnostic Meta-Learning) 变体</strong>：在联邦学习中，服务器可以学习一个“元初始化”参数，使得客户端从这个初始化参数开始，只需少量步骤就能快速适应其本地任务和异构模型。</li>
+<li>服务器聚合的不再是最终的模型参数，而是能够指导客户端进行快速适应的“元参数”。</li>
+</ul>
+</li>
+<li><strong>工作流程</strong>：
+<ul>
+<li>服务器提供一个元模型初始化 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>m</mi><mi>e</mi><mi>t</mi><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">W_{meta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li>客户端基于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>m</mi><mi>e</mi><mi>t</mi><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">W_{meta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 进行少量本地更新，得到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>W</mi><mi>k</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">W_k&#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.035em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-2.4169em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li>客户端计算其本地模型在验证集上的损失，并计算相对于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>m</mi><mi>e</mi><mi>t</mi><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">W_{meta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的梯度。</li>
+<li>服务器聚合这些梯度，更新 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>m</mi><mi>e</mi><mi>t</mi><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">W_{meta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">a</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，使其能更好地作为所有客户端的通用初始化。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>泛化性强</strong>：学习到的元参数能够很好地适应各种客户端。</li>
+<li><strong>支持模型调整</strong>：客户端可以在元参数的基础上自由调整其模型。</li>
+</ul>
+</li>
+<li><strong>挑战</strong>：
+<ul>
+<li><strong>计算复杂性</strong>：元学习通常涉及高阶梯度计算，计算成本较高。</li>
+<li><strong>收敛性</strong>：元学习的收敛性往往比传统优化更难保证。</li>
+<li><strong>异构性程度</strong>：对于完全不同的模型架构，元学习的适应能力仍有待商榷，更适用于模型结构相似但参数不同的场景。</li>
+</ul>
+</li>
+</ul>
+<h3 id="D-动态模型生成与神经架构搜索-Dynamic-Model-Generation-NAS">D. 动态模型生成与神经架构搜索 (Dynamic Model Generation &amp; NAS)</h3>
+<p>这种方法允许客户端或服务器动态地生成或选择适合当前环境的模型架构。</p>
+<ul>
+<li><strong>基本思想</strong>：
+<ul>
+<li><strong>FL + NAS</strong>：在联邦学习环境中进行神经架构搜索 (NAS)。客户端可以根据其本地数据和资源约束，搜索并训练一个最佳的子模型。</li>
+<li>服务器可以维护一个“超网络 (Supernet)”，客户端从这个超网络中提取或剪枝出适合自己的子网络进行训练，并将子网络的更新映射回超网络进行聚合。</li>
+</ul>
+</li>
+<li><strong>工作流程</strong>：
+<ul>
+<li>服务器初始化或维护一个大的超网络。</li>
+<li>客户端根据自身资源（内存、算力）和数据特性，从超网络中采样（或搜索）出一个子模型。</li>
+<li>客户端训练这个子模型，并将更新（例如，权重、梯度或梯度掩码）上传到服务器。</li>
+<li>服务器将这些更新聚合到超网络中，更新超网络的权重。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>高度灵活性</strong>：每个客户端可以拥有高度定制化的模型架构。</li>
+<li><strong>资源适配</strong>：模型大小和复杂度可以根据客户端的具体资源进行优化。</li>
+</ul>
+</li>
+<li><strong>挑战</strong>：
+<ul>
+<li><strong>计算开销巨大</strong>：NAS 本身就是计算密集型的。在联邦环境中实现大规模NAS非常困难。</li>
+<li><strong>聚合复杂性</strong>：如何将不同子网络的更新聚合到共同的超网络中是一个复杂的问题。</li>
+<li><strong>收敛性</strong>：训练超网络并保证所有子网络都能从中受益是巨大的挑战。</li>
+</ul>
+</li>
+</ul>
+<h3 id="E-多模型-集成学习-Multi-Model-Ensemble-Learning">E. 多模型/集成学习 (Multi-Model / Ensemble Learning)</h3>
+<p>与其强制所有客户端使用一个模型，不如让系统维护多个模型，或者让客户端从一个模型池中选择。</p>
+<ul>
+<li><strong>基本思想</strong>：
+<ul>
+<li><strong>模型池</strong>：服务器维护一个模型池，包含不同大小和复杂度的预训练模型。</li>
+<li><strong>客户端选择</strong>：客户端根据其能力和任务需求，从模型池中选择一个最适合自己的模型。</li>
+<li><strong>独立聚合/协作</strong>：每个模型可以独立聚合属于它自己的客户端更新，或者在某些层面上进行协作（例如，通过知识蒸馏在模型之间共享信息）。</li>
+<li><strong>集成学习</strong>：服务器最终可以将这些不同模型的结果进行集成，以获得更好的整体性能。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>直观</strong>：符合异构客户端的实际需求。</li>
+<li><strong>灵活性</strong>：允许客户端独立选择最适合自己的模型。</li>
+</ul>
+</li>
+<li><strong>挑战</strong>：
+<ul>
+<li><strong>管理复杂性</strong>：服务器需要管理多个全局模型。</li>
+<li><strong>客户端分配</strong>：如何有效地将客户端分配到不同的模型？</li>
+<li><strong>性能提升</strong>：虽然能适应异构，但如何确保集成后的性能优于单模型仍需研究。</li>
+</ul>
+</li>
+</ul>
+<h3 id="F-参数高效的联邦学习-Parameter-Efficient-Federated-Learning">F. 参数高效的联邦学习 (Parameter-Efficient Federated Learning)</h3>
+<p>近年来，参数高效微调 (Parameter-Efficient Fine-Tuning, PEFT) 技术在大型模型领域取得了巨大成功，其思想是冻结大部分预训练模型的参数，只训练少量新增的或可插拔的参数（如适配器 Adapters, LoRA）。这种思想同样可以应用于联邦学习中的模型异构性。</p>
+<ul>
+<li><strong>基本思想</strong>：
+<ul>
+<li>客户端可以拥有不同的<strong>基座模型 (backbone model)</strong>，这些基座模型可能已经预训练好，或者结构各异。</li>
+<li>在基座模型之上，客户端训练和聚合<strong>小部分可训练的参数模块</strong>，例如适配器层或LoRA (Low-Rank Adaptation) 矩阵。</li>
+<li>只有这些小型、可插拔的模块参与联邦聚合。</li>
+</ul>
+</li>
+<li><strong>工作流程</strong>：
+<ul>
+<li>服务器初始化或预定义一系列小型、可共享的参数模块（例如，适配器）。</li>
+<li>客户端下载这些模块，并将其插入到自己的异构基座模型中。基座模型的参数通常是冻结的。</li>
+<li>客户端只训练这些小的参数模块，并将这些模块的更新上传给服务器。</li>
+<li>服务器聚合这些模块的更新。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>高度异构性兼容</strong>：只要基座模型能接受这些模块，就可以实现高度的架构异构。</li>
+<li><strong>通信和计算效率</strong>：聚合的参数量极小。</li>
+<li><strong>利用预训练模型</strong>：可以充分利用现有的各种预训练大模型作为基座。</li>
+</ul>
+</li>
+<li><strong>挑战</strong>：
+<ul>
+<li><strong>性能权衡</strong>：只训练小部分参数可能会牺牲一定的模型性能。</li>
+<li><strong>模块设计</strong>：如何设计这些可插拔的模块，使其在各种异构基座模型上都能有效工作，是一个挑战。</li>
+</ul>
+</li>
+</ul>
+<h3 id="G-其他新兴方向">G. 其他新兴方向</h3>
+<ul>
+<li><strong>模型剪枝/量化</strong>：结合联邦学习，客户端可以根据自身资源对模型进行剪枝或量化，然后只聚合量化后的模型或剪枝网络的共享部分。</li>
+<li><strong>联邦学习中的图神经网络 (GNN)</strong>：利用GNN来建模客户端之间的关系和依赖性，从而实现更智能的、考虑异构性的聚合。</li>
+<li><strong>强化学习 (RL) 驱动的联邦学习</strong>：RL可以用于动态调整联邦学习的策略，例如客户端选择、聚合权重、甚至模型架构的选择，以适应异构环境。</li>
+</ul>
+<p>这些解决方案并非相互独立，许多先进的联邦学习系统可能会结合多种方法来应对复杂的现实场景。</p>
+<h2 id="代码示例：知识蒸馏的简化联邦学习片段">代码示例：知识蒸馏的简化联邦学习片段</h2>
+<p>为了更好地理解知识蒸馏在联邦学习中的应用，我们来看一个简化的 PyTorch 风格伪代码片段。这里我们假设有一个公共的无标签数据集 <code>public_unlabeled_data</code> 用于蒸馏。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, TensorDataset</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- 辅助函数：KL散度用于知识蒸馏 ---</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">kl_divergence</span>(<span class="params">p, q, temperature=<span class="number">1.0</span></span>):</span><br><span class="line">    <span class="comment"># p: 教师模型的log_softmax输出</span></span><br><span class="line">    <span class="comment"># q: 学生模型的log_softmax输出</span></span><br><span class="line">    <span class="keyword">return</span> nn.KLDivLoss(reduction=<span class="string">&#x27;batchmean&#x27;</span>)(torch.log_softmax(q / temperature, dim=<span class="number">1</span>),</span><br><span class="line">                                              torch.softmax(p / temperature, dim=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- 客户端模型定义 (异构示例) ---</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SmallCNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(SmallCNN, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">10</span>, kernel_size=<span class="number">5</span>)</span><br><span class="line">        <span class="variable language_">self</span>.relu1 = nn.ReLU()</span><br><span class="line">        <span class="variable language_">self</span>.pool1 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.conv2 = nn.Conv2d(<span class="number">10</span>, <span class="number">20</span>, kernel_size=<span class="number">5</span>)</span><br><span class="line">        <span class="variable language_">self</span>.relu2 = nn.ReLU()</span><br><span class="line">        <span class="variable language_">self</span>.pool2 = nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc = nn.Linear(<span class="number">320</span>, <span class="number">10</span>) <span class="comment"># Adjust based on input size, e.g., 28x28 MNIST</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = <span class="variable language_">self</span>.pool1(<span class="variable language_">self</span>.relu1(<span class="variable language_">self</span>.conv1(x)))</span><br><span class="line">        x = <span class="variable language_">self</span>.pool2(<span class="variable language_">self</span>.relu2(<span class="variable language_">self</span>.conv2(x)))</span><br><span class="line">        x = x.view(-<span class="number">1</span>, <span class="number">320</span>)</span><br><span class="line">        x = <span class="variable language_">self</span>.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LargeCNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LargeCNN, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.features = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">64</span>, <span class="number">128</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool2d(<span class="number">2</span>)</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.classifier = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">128</span> * <span class="number">3</span> * <span class="number">3</span>, <span class="number">256</span>), <span class="comment"># Adjust based on input size</span></span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = <span class="variable language_">self</span>.features(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = <span class="variable language_">self</span>.classifier(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- 模拟客户端数据和模型 ---</span></span><br><span class="line"><span class="comment"># 假设有 N 个客户端，每个客户端有不同的数据和可能不同的模型</span></span><br><span class="line">NUM_CLIENTS = <span class="number">3</span></span><br><span class="line">LOCAL_EPOCHS = <span class="number">2</span></span><br><span class="line">BATCH_SIZE = <span class="number">32</span></span><br><span class="line">LEARNING_RATE = <span class="number">0.01</span></span><br><span class="line">TEMPERATURE = <span class="number">2.0</span> <span class="comment"># 蒸馏温度</span></span><br><span class="line">ALPHA = <span class="number">0.5</span> <span class="comment"># 软标签损失与硬标签损失的权重</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟公共无标签数据集</span></span><br><span class="line"><span class="comment"># 实际中这可能是一个小的共享数据集，或者由服务器生成</span></span><br><span class="line"><span class="comment"># 简化：使用随机数据</span></span><br><span class="line">public_unlabeled_data = torch.randn(<span class="number">100</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">public_dataloader = DataLoader(TensorDataset(public_unlabeled_data), batch_size=BATCH_SIZE)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟客户端本地数据集</span></span><br><span class="line">client_datasets = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(NUM_CLIENTS):</span><br><span class="line">    <span class="comment"># 假设每个客户端有1000个样本</span></span><br><span class="line">    data = torch.randn(<span class="number">1000</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">    labels = torch.randint(<span class="number">0</span>, <span class="number">10</span>, (<span class="number">1000</span>,))</span><br><span class="line">    client_datasets.append(DataLoader(TensorDataset(data, labels), batch_size=BATCH_SIZE, shuffle=<span class="literal">True</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 客户端模型实例 (异构)</span></span><br><span class="line"><span class="comment"># 客户端0: SmallCNN</span></span><br><span class="line"><span class="comment"># 客户端1: LargeCNN</span></span><br><span class="line"><span class="comment"># 客户端2: SmallCNN</span></span><br><span class="line">client_models = [SmallCNN(), LargeCNN(), SmallCNN()]</span><br><span class="line"></span><br><span class="line"><span class="comment"># --- 服务器端操作 ---</span></span><br><span class="line"><span class="comment"># 服务器维护一个全局教师模型 (这里假设服务器模型是 LargeCNN)</span></span><br><span class="line"><span class="comment"># 实际中，服务器模型可以根据聚合策略动态更新</span></span><br><span class="line">global_teacher_model = LargeCNN()</span><br><span class="line"><span class="comment"># 初始化全局教师模型的权重 (通常是随机初始化或预训练)</span></span><br><span class="line"><span class="comment"># ... 这里省略真实的预训练或初始化过程</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--- 联邦学习回合开始 ---&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> round_idx <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>): <span class="comment"># 模拟5个联邦学习回合</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;\n--- 回合 <span class="subst">&#123;round_idx + <span class="number">1</span>&#125;</span> ---&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 1. 服务器生成教师模型的软标签 (在公共数据集上)</span></span><br><span class="line">    <span class="comment"># 这一步也可以在服务器上完成，并将软标签发送给客户端</span></span><br><span class="line">    global_teacher_model.<span class="built_in">eval</span>()</span><br><span class="line">    teacher_logits_list = []</span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="keyword">for</span> batch_data <span class="keyword">in</span> public_dataloader:</span><br><span class="line">            logits = global_teacher_model(batch_data[<span class="number">0</span>])</span><br><span class="line">            teacher_logits_list.append(logits)</span><br><span class="line">    teacher_logits_on_public_data = torch.cat(teacher_logits_list, dim=<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. 客户端本地训练</span></span><br><span class="line">    client_local_models = []</span><br><span class="line">    <span class="keyword">for</span> client_id <span class="keyword">in</span> <span class="built_in">range</span>(NUM_CLIENTS):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;客户端 <span class="subst">&#123;client_id&#125;</span>: 训练...&quot;</span>)</span><br><span class="line">        model = client_models[client_id]</span><br><span class="line">        optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE)</span><br><span class="line">        criterion = nn.CrossEntropyLoss()</span><br><span class="line"></span><br><span class="line">        model.train()</span><br><span class="line">        <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(LOCAL_EPOCHS):</span><br><span class="line">            <span class="keyword">for</span> batch_idx, (data, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(client_datasets[client_id]):</span><br><span class="line">                optimizer.zero_grad()</span><br><span class="line">                output = model(data)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 计算硬标签损失 (本地数据)</span></span><br><span class="line">                hard_loss = criterion(output, target)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 假设客户端也接收到了服务器生成的公共数据集和教师软标签</span></span><br><span class="line">                <span class="comment"># 实际中，客户端会下载 public_unlabeled_data 和 teacher_logits_on_public_data</span></span><br><span class="line">                <span class="comment"># 这里为了简化，直接在本地模拟使用</span></span><br><span class="line">                <span class="comment"># 注意：这里需要确保 public_unlabeled_data 和 teacher_logits_on_public_data 的批次处理和实际传输一致</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 从 public_dataloader 获取一个批次的公共数据来生成学生模型软标签</span></span><br><span class="line">                <span class="comment"># 为了简化，这里直接用公共数据集的一个随机批次</span></span><br><span class="line">                public_data_batch = public_unlabeled_data[torch.randint(<span class="number">0</span>, public_unlabeled_data.size(<span class="number">0</span>), (data.size(<span class="number">0</span>),))]</span><br><span class="line">                student_output_on_public = model(public_data_batch)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 找到对应批次的教师模型软标签</span></span><br><span class="line">                <span class="comment"># 实际中，这需要服务器将公共数据和其对应的软标签发送给客户端</span></span><br><span class="line">                <span class="comment"># 这里为了演示，我们假设 teacher_logits_on_public_data 已经准备好，</span></span><br><span class="line">                <span class="comment"># 但需要更复杂的索引或数据传输逻辑来匹配批次</span></span><br><span class="line">                <span class="comment"># 简化处理：假设每批次的公共数据都匹配了对应的教师软标签</span></span><br><span class="line">                teacher_logits_batch = teacher_logits_on_public_data[torch.randint(<span class="number">0</span>, teacher_logits_on_public_data.size(<span class="number">0</span>), (data.size(<span class="number">0</span>),))]</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 计算软标签损失 (知识蒸馏损失)</span></span><br><span class="line">                soft_loss = kl_divergence(teacher_logits_batch, student_output_on_public, temperature=TEMPERATURE)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 总损失 = 硬标签损失 + 软标签损失</span></span><br><span class="line">                loss = (<span class="number">1</span> - ALPHA) * hard_loss + ALPHA * soft_loss</span><br><span class="line">                </span><br><span class="line">                loss.backward()</span><br><span class="line">                optimizer.step()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;客户端 <span class="subst">&#123;client_id&#125;</span> 训练完成。&quot;</span>)</span><br><span class="line">        client_local_models.append(model.state_dict()) <span class="comment"># 客户端准备上传模型状态字典</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3. 服务器聚合更新 (这里是知识蒸馏的聚合，不是简单的参数平均)</span></span><br><span class="line">    <span class="comment"># 在知识蒸馏中，服务器通常不会直接平均异构模型的参数。</span></span><br><span class="line">    <span class="comment"># 它可以采取以下策略之一：</span></span><br><span class="line">    <span class="comment">#   a) 服务器重新训练自己的全局教师模型，使用客户端上传的“知识”或摘要。</span></span><br><span class="line">    <span class="comment">#      例如，客户端上传其在公共数据集上的logits，服务器用这些logits来训练全局教师模型。</span></span><br><span class="line">    <span class="comment">#   b) 服务器根据客户端模型的表现（例如，验证准确率），选择一个性能最好的客户端模型作为新的全局教师模型。</span></span><br><span class="line">    <span class="comment">#   c) 服务器可以维护一个集成模型，每个客户端的训练结果作为集成模型的一部分。</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 简化演示：我们假设服务器的目标是更新其 `global_teacher_model`</span></span><br><span class="line">    <span class="comment"># 并假设客户端上传了其在公共数据集上训练后的模型。</span></span><br><span class="line">    <span class="comment"># 在这个简化例子中，我们假设客户端上传了其训练好的模型。</span></span><br><span class="line">    <span class="comment"># 服务器可以执行更复杂的聚合，例如使用这些本地模型对一个公共验证集进行投票或集成。</span></span><br><span class="line">    <span class="comment"># 最常见的是，服务器会通过某种方式（如使用一个聚合器）</span></span><br><span class="line">    <span class="comment"># 来综合这些客户端模型在公共数据集上的预测，并用这些聚合后的预测来更新全局教师模型。</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 在本例中，我们演示一种简化的聚合：</span></span><br><span class="line">    <span class="comment"># 服务器聚合所有客户端在公共数据集上的输出，然后用这些聚合的输出</span></span><br><span class="line">    <span class="comment"># 来训练或微调全局教师模型。</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这里我们只展示一个概念：服务器如何利用客户端的“知识”</span></span><br><span class="line">    <span class="comment"># 假设服务器有一个公共验证集，它收集客户端模型在该验证集上的预测</span></span><br><span class="line">    <span class="comment"># 并使用某种策略来更新 global_teacher_model</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 模拟服务器聚合过程：</span></span><br><span class="line">    <span class="comment"># 我们可以想象服务器收集了每个 client_local_models</span></span><br><span class="line">    <span class="comment"># 然后在一个服务器维护的公共数据集上进行评估</span></span><br><span class="line">    <span class="comment"># 并使用这些评估结果来更新 global_teacher_model (比如通过蒸馏)</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 作为一个简单的“知识”聚合示例：</span></span><br><span class="line">    <span class="comment"># 服务器可以对所有客户端模型在公共数据集上的软标签进行平均，</span></span><br><span class="line">    <span class="comment"># 然后用这个平均软标签来训练新的 global_teacher_model。</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 获取所有客户端模型在公共数据集上的logits</span></span><br><span class="line">    all_client_logits_on_public = []</span><br><span class="line">    <span class="keyword">for</span> client_model_state <span class="keyword">in</span> client_local_models:</span><br><span class="line">        temp_model = global_teacher_model.__class__() <span class="comment"># 创建一个和全局教师模型相同类型的临时模型</span></span><br><span class="line">        temp_model.load_state_dict(client_model_state)</span><br><span class="line">        temp_model.<span class="built_in">eval</span>()</span><br><span class="line">        client_logits_list = []</span><br><span class="line">        <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">            <span class="keyword">for</span> batch_data <span class="keyword">in</span> public_dataloader:</span><br><span class="line">                logits = temp_model(batch_data[<span class="number">0</span>])</span><br><span class="line">                client_logits_list.append(logits)</span><br><span class="line">        all_client_logits_on_public.append(torch.cat(client_logits_list, dim=<span class="number">0</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 聚合客户端的软标签 (简单平均)</span></span><br><span class="line">    <span class="comment"># 这里的聚合方式有很多种，例如加权平均、联邦蒸馏特定算法等</span></span><br><span class="line">    aggregated_teacher_logits = torch.stack(all_client_logits_on_public).mean(dim=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 服务器用聚合的软标签来更新全局教师模型</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;服务器: 更新全局教师模型...&quot;</span>)</span><br><span class="line">    server_optimizer = optim.SGD(global_teacher_model.parameters(), lr=<span class="number">0.005</span>) <span class="comment"># 服务器的学习率可以不同</span></span><br><span class="line">    server_criterion = kl_divergence <span class="comment"># 使用KL散度作为损失</span></span><br><span class="line">    </span><br><span class="line">    global_teacher_model.train()</span><br><span class="line">    <span class="comment"># 假设服务器有一个用于更新的公共数据集 (这里我们直接用 public_unlabeled_data 和 aggregated_teacher_logits)</span></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>): <span class="comment"># 服务器只进行少量epoch的更新</span></span><br><span class="line">        <span class="keyword">for</span> i, batch_data <span class="keyword">in</span> <span class="built_in">enumerate</span>(public_dataloader):</span><br><span class="line">            data = batch_data[<span class="number">0</span>]</span><br><span class="line">            <span class="comment"># 获取对应批次的聚合教师软标签</span></span><br><span class="line">            <span class="comment"># 同样，这里需要更复杂的匹配逻辑</span></span><br><span class="line">            start_idx = i * BATCH_SIZE</span><br><span class="line">            end_idx = <span class="built_in">min</span>((i + <span class="number">1</span>) * BATCH_SIZE, aggregated_teacher_logits.size(<span class="number">0</span>))</span><br><span class="line">            current_aggregated_logits = aggregated_teacher_logits[start_idx:end_idx]</span><br><span class="line"></span><br><span class="line">            server_optimizer.zero_grad()</span><br><span class="line">            output = global_teacher_model(data)</span><br><span class="line">            loss = server_criterion(current_aggregated_logits, output, temperature=TEMPERATURE)</span><br><span class="line">            loss.backward()</span><br><span class="line">            server_optimizer.step()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;服务器: 全局教师模型更新完成。&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 为下一个回合更新客户端模型：客户端会下载新的 global_teacher_model</span></span><br><span class="line">    <span class="comment"># 实际中，客户端可能只需要下载 global_teacher_model 的参数</span></span><br><span class="line">    <span class="comment"># 在这个示例中，客户端模型在每个回合都会被服务器提供的知识“校准”</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n--- 联邦学习回合结束 ---&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最终，我们可以评估 global_teacher_model 的性能</span></span><br><span class="line"><span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p><strong>代码说明：</strong></p>
+<ol>
+<li><strong>模型异构</strong>：定义了 <code>SmallCNN</code> 和 <code>LargeCNN</code> 两种不同架构的客户端模型，模拟了模型异构性。</li>
+<li><strong>知识蒸馏损失</strong>：<code>kl_divergence</code> 函数计算了学生模型输出与教师模型输出之间的KL散度，这是知识蒸馏的核心。</li>
+<li><strong>客户端训练</strong>：
+<ul>
+<li>客户端同时计算了<strong>硬标签损失</strong>（使用其本地真实标签）和<strong>软标签损失</strong>（使用服务器教师模型在公共数据集上生成的软标签）。</li>
+<li>通过加权和 <code>(1 - ALPHA) * hard_loss + ALPHA * soft_loss</code> 来结合两种损失。</li>
+</ul>
+</li>
+<li><strong>服务器聚合</strong>：
+<ul>
+<li>与 FedAvg 直接平均模型参数不同，这里的服务器首先让当前的 <code>global_teacher_model</code> 在一个 <code>public_unlabeled_data</code> 上生成软标签。这些软标签可以被视为当前全局知识的体现。</li>
+<li>在客户端训练完成后，客户端实际上并没有直接上传模型参数以供平均。相反，服务器可以收集客户端训练后的模型，并在公共数据集上再次生成它们的软标签。</li>
+<li>服务器然后<strong>聚合这些客户端生成的软标签</strong>（例如，简单平均），得到一个“集体智慧”的软标签。</li>
+<li>最后，服务器使用这个“集体智慧”的软标签来<strong>重新训练或微调其自身的 <code>global_teacher_model</code></strong>。这使得服务器模型能够吸收来自所有异构客户端的知识。</li>
+<li><strong>简化处理</strong>：在示例中，为了方便演示，我让服务器直接获取了客户端训练后的模型，并在服务器端对它们进行评估以获得软标签。**在实际的联邦学习中，客户端应该只上传其在公共数据集上的 logits，而不是完整的模型参数。**服务器再聚合这些 logits 来更新其教师模型。</li>
+</ul>
+</li>
+</ol>
+<p>这个示例非常简化，旨在展示知识蒸馏在处理模型异构性方面的基本思路。实际的联邦蒸馏算法如 FedMD、FedKD 等会在此基础上引入更复杂的客户端-服务器交互协议和聚合策略。</p>
+<h2 id="实际考量与未来方向">实际考量与未来方向</h2>
+<p>解决模型异构性并非一蹴而就，它涉及多方面的权衡。</p>
+<h3 id="1-评估指标的重新思考">1. 评估指标的重新思考</h3>
+<p>在模型异构的联邦学习中，仅仅使用全局模型的平均准确率可能不够。我们需要考虑：</p>
+<ul>
+<li><strong>公平性</strong>：不同大小的模型或客户端是否都能从联邦训练中受益？性能较弱的客户端是否被“抛弃”？</li>
+<li><strong>个性化性能</strong>：聚合后的模型对于每个客户端的本地任务和数据而言，性能如何？是否需要为每个客户端提供定制化的评估？</li>
+<li><strong>资源效率</strong>：在达到特定性能目标的同时，总体的计算、通信和能耗成本是多少？</li>
+</ul>
+<h3 id="2-挑战与权衡">2. 挑战与权衡</h3>
+<ul>
+<li><strong>性能 vs. 灵活性</strong>：允许高度的模型异构性通常意味着更复杂的聚合策略，这可能导致全局模型性能的轻微下降。如何在灵活性和性能之间找到最佳平衡点？</li>
+<li><strong>通信成本 vs. 计算成本</strong>：某些解决方案可能减少模型参数的传输（降低通信），但引入了额外的本地计算（如蒸馏中的额外损失计算）或服务器计算（如NAS）。</li>
+<li><strong>隐私与安全</strong>：复杂的异构性解决方案可能引入新的数据流和交互模式，需要重新评估隐私和安全风险。</li>
+</ul>
+<h3 id="3-未来研究方向">3. 未来研究方向</h3>
+<ol>
+<li><strong>自适应联邦学习</strong>：开发能够根据客户端的实时资源、数据分布和任务需求，动态调整模型架构、聚合策略和训练参数的联邦学习系统。</li>
+<li><strong>更智能的知识聚合</strong>：除了简单的软标签平均，探索更高级的知识表示和聚合方法，例如利用注意力机制、图神经网络来识别和聚合不同模型学习到的核心知识。</li>
+<li><strong>异构性感知优化</strong>：设计新的优化算法，能够在高度异构的环境下保证全局模型的收敛性和鲁棒性，同时考虑客户端的贡献差异。</li>
+<li><strong>可解释性与透明度</strong>：在模型异构的复杂系统中，如何理解每个客户端的贡献，以及聚合如何影响最终模型，将变得更加重要。</li>
+<li><strong>联邦学习 + 基础模型</strong>：结合大型预训练模型（如GPT-3, CLIP）和参数高效微调技术，将是解决模型异构性的一个重要方向。客户端可以基于不同的基础模型，通过联邦学习共同训练轻量级的适配器。</li>
+</ol>
+<h2 id="结语">结语</h2>
+<p>模型异构性是联邦学习迈向真实世界大规模应用时，不可避免且极其重要的挑战。它迫使我们从传统的参数共享和聚合模式中跳脱出来，转向更灵活、更智能的知识共享范式。从知识蒸馏的柔性传递，到共享子模型的结构化协作，再到元学习、动态NAS和参数高效微调的深度探索，我们看到了研究者们如何巧妙地驾驭这种复杂性。</p>
+<p>解决模型异构性，不仅仅是为了让联邦学习在技术上更完善，更是为了让分布式AI系统真正地惠及更广泛、更多样化的终端设备和用户群体。这不仅仅是一场技术挑战，更是一场关于如何构建真正“普适智能”的深刻思考。</p>
+<p>我是qmwneb946，感谢你今天的陪伴。希望这篇深入的探讨能让你对联邦学习中的模型异构性有一个全面而深刻的理解。分布式智能的未来充满无限可能，而我们，正在亲手塑造它。下次见！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-163556/">https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-163556/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%A7%91%E6%8A%80%E5%89%8D%E6%B2%BF/">科技前沿</a><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E5%BC%82%E6%9E%84%E6%80%A7/">联邦学习中的模型异构性</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/24/2025-07-24-163659/" title="数字身份与隐私计算：如何在数字世界中守护自我"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">数字身份与隐私计算：如何在数字世界中守护自我</div></div><div class="info-2"><div class="info-item-1"> 你好，我是 qmwneb946，一名热爱技术与数学的博主。 在数字时代浪潮中，我们正经历着一场前所未有的信息爆炸。从社交媒体到在线购物，从远程办公到智能家居，我们的生活轨迹被无数的数字足迹所勾勒。这些足迹构成了我们的“数字身份”，它在便利我们生活的同时，也带来了前所未有的挑战：我们的个人数据正在被收集、分析、交易，甚至滥用。隐私泄露、数据盗用、精准画像下的“算法歧视”……这些并非危言耸听，而是我们正在面临的现实。 那么，我们如何在享受数字世界便利的同时，有效守护自己的数字身份与个人隐私呢？这正是本文将深入探讨的核心：数字身份的演进，以及隐私计算这一前沿技术如何为我们筑起一道坚实的隐私防线。 本文将从数字身份的定义与演变开始，剖析传统数字身份面临的困境。随后，我们将深入探索隐私计算的四大核心技术：多方安全计算（MPC）、同态加密（HE）、零知识证明（ZKP）和差分隐私（DP），揭示它们如何从根本上改变数据的使用范式。最后，我们将讨论隐私计算在数字身份领域的融合应用，并展望这一交叉领域所面临的挑战与无限可能。 准备好了吗？让我们一起踏上这场关于数字身份与隐私的深度之旅。 第一部分：...</div></div></div></a><a class="pagination-related" href="/2025/07/24/2025-07-24-160247/" title="智能合约的生命周期管理：从概念到实践的深度解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">智能合约的生命周期管理：从概念到实践的深度解析</div></div><div class="info-2"><div class="info-item-1">各位技术爱好者、数学同仁们，大家好！我是你们的老朋友 qmwneb946。今天，我们要深入探讨一个在区块链世界中至关重要的概念——智能合约的生命周期管理。智能合约作为区块链上的“数字协议”，其不可篡改性和自执行性赋予了它强大的能力，但同时也带来了传统软件开发中不曾有过的独特挑战。如何有效地管理一个从诞生到“退役”的智能合约，确保其安全、高效、可持续地运行，正是我们今天要解开的谜题。 引言：智能合约——区块链世界的自执行协议 在深入探讨其生命周期管理之前，我们先快速回顾一下智能合约的核心概念。智能合约是运行在区块链上的计算机程序，一旦部署，便依照预设的规则自动执行。它具有以下核心特性：  不可篡改性 (Immutability)：一旦代码部署到区块链上，通常无法修改。 透明性 (Transparency)：所有代码和执行结果都在链上公开可查。 自执行性 (Self-Execution)：满足条件后，合约自动执行，无需第三方干预。 去中心化 (Decentralization)：合约的执行不依赖于任何中心化实体。  这些特性使得智能合约在去中心化金融 (DeFi)、供应链、数字身份等...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082408/" title="人工智能在医疗诊断中的应用：机遇与挑战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">人工智能在医疗诊断中的应用：机遇与挑战</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术和数学博主！今天，我们来深入探讨一个激动人心的领域：人工智能 (AI) 在医疗诊断中的应用。AI 的快速发展正在彻底改变医疗行业，为更精准、高效的诊断提供了前所未有的可能性。但同时，我们也需要审慎地看待其挑战和局限性。 引言：AI 赋能医疗诊断 医疗诊断是一个复杂的过程，需要医生具备丰富的知识、经验和判断力。然而，人类医生可能会受到主观偏差、疲劳以及信息过载的影响。AI 的介入，则为提高诊断准确性和效率提供了新的途径。通过分析大量的医学影像数据、病历记录和基因组信息，AI 算法可以学习识别疾病模式，辅助医生进行诊断，甚至在某些情况下独立完成初步诊断。 AI 在医疗诊断中的核心技术 深度学习在医学影像分析中的应用 深度学习，特别是卷积神经网络 (CNN)，在医学影像分析中取得了显著的成功。CNN 可以从大量的医学影像数据（例如 X 光片、CT 扫描、MRI 图像）中学习特征，并识别出细微的病变，例如肺癌结节、脑瘤或心血管疾病。 例如，一个训练良好的 CNN 模型可以比人类放射科医生更早地检测出肺癌，从而提高早期诊断率和治疗成功率。  这其中的关键在于大量的标注...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082643/" title="高分子化学与可降解塑料：迈向可持续未来的关键"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">高分子化学与可降解塑料：迈向可持续未来的关键</div></div><div class="info-2"><div class="info-item-1">近年来，塑料污染已成为全球性环境问题。传统塑料由于其难以降解的特性，对环境造成了巨大的压力。而可降解塑料的出现，为解决这一问题提供了一条可行的途径。本文将深入探讨高分子化学在可降解塑料研发中的关键作用，并介绍几种主要的降解机制和材料。 高分子化学：可降解塑料的基础 可降解塑料并非简单的“可被分解的塑料”，其核心在于高分子材料的分子结构设计。高分子化学为我们提供了理解和操纵聚合物结构的工具，从而设计出具有特定降解性能的材料。传统塑料通常由难以断裂的强共价键连接而成，而可降解塑料则通过引入特定的化学键或结构单元，使其在特定条件下能够断裂，从而实现降解。  这需要对聚合物的合成方法、分子量分布、链结构以及结晶度等进行精细的控制。 常见的可降解塑料聚合物 目前，市场上常见的可降解塑料主要包括以下几种：   聚乳酸 (PLA):  PLA 是一种生物基聚合物，由可再生资源（例如玉米淀粉）制成。其降解过程主要依靠水解反应，在特定条件下（例如堆肥环境）可以被微生物降解。PLA 的机械性能较好，但耐热性相对较差。   聚羟基脂肪酸酯 (PHAs): PHAs 是一类由微生物合成的聚酯。它们具有良...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082805/" title="电化学储能技术的新进展：迈向更清洁、更持久的能源未来"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">电化学储能技术的新进展：迈向更清洁、更持久的能源未来</div></div><div class="info-2"><div class="info-item-1">电化学储能技术作为解决可再生能源间歇性问题的关键技术，近年来取得了显著进展。从电动汽车到智能电网，电化学储能系统正深刻地改变着我们的生活。本文将深入探讨电化学储能技术的最新突破，涵盖不同类型的储能技术及其面临的挑战与机遇。 电化学储能技术的类型 目前，市场上主要的电化学储能技术包括： 锂离子电池 锂离子电池凭借其高能量密度、长循环寿命和相对较低的成本，占据了当前电化学储能市场的主导地位。然而，锂资源的有限性和安全性问题仍然是制约其发展的瓶颈。  近年来，研究者们致力于开发高能量密度锂离子电池，例如：  固态锂电池:  固态电解质的采用可以显著提高电池的安全性，并有望实现更高的能量密度。然而，固态电解质的离子电导率和界面接触仍然是需要克服的挑战。 锂硫电池:  锂硫电池具有极高的理论能量密度，但其循环寿命和硫的穿梭效应仍然是需要解决的关键问题。  研究者们正在探索各种改性策略来提高锂硫电池的性能。 锂空气电池:  锂空气电池拥有理论上最高的能量密度，但其反应动力学缓慢，副反应多，循环寿命短等问题限制了其商业化应用。  钠离子电池 作为锂离子的潜在替代品，钠离子电池具有成本低、资源丰...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-092352/" title="材料科学与新型半导体材料：摩尔定律的未来"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">材料科学与新型半导体材料：摩尔定律的未来</div></div><div class="info-2"><div class="info-item-1">引言 摩尔定律，即集成电路上的晶体管数量每隔两年翻一番，几十年来一直驱动着信息技术产业的飞速发展。然而，随着晶体管尺寸逼近物理极限，摩尔定律的持续性受到了挑战。为了维持这种指数级增长，我们需要探索新型半导体材料，突破硅基技术的瓶颈。本文将深入探讨材料科学在新型半导体材料研发中的关键作用，并介绍一些具有前景的候选材料。 新型半导体材料的需求 硅作为半导体材料的主力，其优势在于成本低、工艺成熟。但其固有的物理特性限制了其在更高频率、更高功率和更低功耗方面的性能提升。例如，硅的载流子迁移率相对较低，导致能量损耗增加，尤其是在高频应用中。因此，我们需要寻找具有更高载流子迁移率、更宽禁带宽度、更高饱和电子漂移速度等优异特性的材料。 性能瓶颈及解决方案 硅基技术的性能瓶颈主要体现在以下几个方面：  漏电流:  随着晶体管尺寸的缩小，漏电流问题日益严重，导致功耗增加和性能下降。 热耗散: 高频运行会导致晶体管产生大量热量，影响器件稳定性和可靠性。 开关速度: 硅的载流子迁移率限制了晶体管的开关速度，限制了处理器的运行频率。  为了解决这些问题，研究人员正在积极探索各种新型半导体材料，例如：  ...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-092411/" title="弦理论中的额外维度探索：超越我们感知的宇宙"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">弦理论中的额外维度探索：超越我们感知的宇宙</div></div><div class="info-2"><div class="info-item-1">引言 我们生活在一个看似三维的空间中，加上时间构成四维时空。然而，弦理论，这个试图统一所有基本力的优雅理论，却预言了额外维度的存在。这些额外维度并非我们日常经验所能感知，它们蜷缩在比原子尺度还要小得多的空间里。本文将深入探讨弦理论中额外维度的概念，并解释科学家们如何尝试探测这些隐藏的宇宙维度。 弦理论与额外维度：一个必要的假设 弦理论的核心思想是将基本粒子视为微小的振动弦，不同振动模式对应不同的粒子。为了使理论自洽，并消除量子场论中的一些困扰，弦理论需要引入额外空间维度。最初的弦理论版本需要 26 个维度，而超弦理论则将维度数量缩减到 10 个（或 11 个，在 M 理论中）。这多出来的 6 个（或 7 个）维度是如何隐藏起来的呢？ 卡拉比-丘空间：卷曲的维度 弦理论提出，额外维度并非不存在，而是以紧致化的形式存在，就像一根细细的管子卷曲得非常紧密，以至于在宏观尺度上无法被察觉。这些紧致化的额外维度通常被描述为卡拉比-丘空间，这是一类复杂的六维流形，具有独特的几何性质。卡拉比-丘空间的形状和大小直接影响了我们观察到的粒子物理学特性，例如粒子质量和相互作用强度。 R6R^6R6 表...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-092451/" title="粒子物理学的标准模型之外：探索宇宙未解之谜"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">粒子物理学的标准模型之外：探索宇宙未解之谜</div></div><div class="info-2"><div class="info-item-1">我们生活在一个由基本粒子及其相互作用组成的宇宙中。粒子物理学的标准模型，如同一个精妙的乐章，成功地描述了已知的基本粒子及其三种基本作用力（电磁力、弱力和强力），并准确预测了许多实验结果。然而，这个模型并非完美无缺，它留下了许多未解之谜，指引着我们向标准模型之外的更广阔领域探索。 标准模型的局限性 标准模型尽管取得了巨大的成功，但它并不能解释宇宙中的一切现象。一些关键的不足之处包括： 暗物质与暗能量 宇宙学观测表明，宇宙中存在大量的暗物质和暗能量，它们构成了宇宙质量能量的大部分，但标准模型中却无法解释它们的本质。暗物质不参与电磁相互作用，因此我们无法直接观测到它，只能通过其引力效应间接探测。暗能量则是一种神秘的能量形式，导致宇宙加速膨胀。它们的发现暗示着标准模型之外存在着新的物理学。 中微子质量 标准模型最初假设中微子是无质量的。然而，实验观测表明中微子具有微小的质量，这与标准模型的预言相矛盾。中微子的质量之谜需要新的物理机制来解释，例如 seesaw 机制。 质子衰变 标准模型预言质子是稳定的，然而，一些大统一理论（GUTs）预测质子会发生极其缓慢的衰变。虽然到目前为止还没有观测...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">1332</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1336</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E5%9B%9E%E9%A1%BE%EF%BC%9A%E4%BB%8E%E5%90%8C%E8%B4%A8%E5%81%87%E8%AE%BE%E5%88%B0%E5%BC%82%E8%B4%A8%E6%8C%91%E6%88%98"><span class="toc-number">1.</span> <span class="toc-text">联邦学习回顾：从同质假设到异质挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E8%8C%83%E5%BC%8F%EF%BC%9A%E8%81%94%E9%82%A6%E5%B9%B3%E5%9D%87-FedAvg"><span class="toc-number">1.1.</span> <span class="toc-text">标准联邦学习范式：联邦平均 (FedAvg)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FedAvg-%E7%9A%84%E9%9A%90%E5%90%AB%E5%81%87%E8%AE%BE"><span class="toc-number">1.2.</span> <span class="toc-text">FedAvg 的隐含假设</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9E%8B%E5%BC%82%E6%9E%84%E6%80%A7%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">什么是模型异构性？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BC%82%E6%9E%84%E6%80%A7%E7%9A%84%E6%88%90%E5%9B%A0"><span class="toc-number">2.1.</span> <span class="toc-text">模型异构性的成因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BC%82%E6%9E%84%E6%80%A7%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.2.</span> <span class="toc-text">模型异构性的类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BC%82%E6%9E%84%E6%80%A7%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-number">3.</span> <span class="toc-text">模型异构性带来的挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%81%9A%E5%90%88%E5%9B%B0%E5%A2%83-Aggregation-Dilemma"><span class="toc-number">3.1.</span> <span class="toc-text">1. 聚合困境 (Aggregation Dilemma)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%94%B6%E6%95%9B%E6%80%A7%E4%B8%8E%E6%80%A7%E8%83%BD%E4%B8%8B%E9%99%8D-Convergence-and-Performance-Degradation"><span class="toc-number">3.2.</span> <span class="toc-text">2. 收敛性与性能下降 (Convergence and Performance Degradation)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%9A%E4%BF%A1%E4%B8%8E%E8%AE%A1%E7%AE%97%E6%95%88%E7%8E%87-Communication-and-Computation-Efficiency"><span class="toc-number">3.3.</span> <span class="toc-text">3. 通信与计算效率 (Communication and Computation Efficiency)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AE%89%E5%85%A8%E4%B8%8E%E9%9A%90%E7%A7%81%E9%A3%8E%E9%99%A9-Security-and-Privacy-Risks"><span class="toc-number">3.4.</span> <span class="toc-text">4. 安全与隐私风险 (Security and Privacy Risks)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A9%BE%E9%A9%AD%E5%BC%82%E6%9E%84%EF%BC%9A%E5%89%8D%E6%B2%BF%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">4.</span> <span class="toc-text">驾驭异构：前沿解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F-Knowledge-Distillation-%E9%A9%B1%E5%8A%A8%E7%9A%84%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0"><span class="toc-number">4.1.</span> <span class="toc-text">A. 知识蒸馏 (Knowledge Distillation) 驱动的联邦学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E5%85%B1%E4%BA%AB%E5%AD%90%E6%A8%A1%E5%9E%8B%E4%B8%8E%E4%B8%AA%E6%80%A7%E5%8C%96%E5%B1%82-Shared-Sub-Model-and-Personalized-Layers"><span class="toc-number">4.2.</span> <span class="toc-text">B. 共享子模型与个性化层 (Shared Sub-Model and Personalized Layers)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E5%85%83%E5%AD%A6%E4%B9%A0-Meta-Learning-%E5%9C%A8%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">4.3.</span> <span class="toc-text">C. 元学习 (Meta-Learning) 在联邦学习中的应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D-%E5%8A%A8%E6%80%81%E6%A8%A1%E5%9E%8B%E7%94%9F%E6%88%90%E4%B8%8E%E7%A5%9E%E7%BB%8F%E6%9E%B6%E6%9E%84%E6%90%9C%E7%B4%A2-Dynamic-Model-Generation-NAS"><span class="toc-number">4.4.</span> <span class="toc-text">D. 动态模型生成与神经架构搜索 (Dynamic Model Generation &amp; NAS)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#E-%E5%A4%9A%E6%A8%A1%E5%9E%8B-%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0-Multi-Model-Ensemble-Learning"><span class="toc-number">4.5.</span> <span class="toc-text">E. 多模型&#x2F;集成学习 (Multi-Model &#x2F; Ensemble Learning)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#F-%E5%8F%82%E6%95%B0%E9%AB%98%E6%95%88%E7%9A%84%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0-Parameter-Efficient-Federated-Learning"><span class="toc-number">4.6.</span> <span class="toc-text">F. 参数高效的联邦学习 (Parameter-Efficient Federated Learning)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G-%E5%85%B6%E4%BB%96%E6%96%B0%E5%85%B4%E6%96%B9%E5%90%91"><span class="toc-number">4.7.</span> <span class="toc-text">G. 其他新兴方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F%E7%9A%84%E7%AE%80%E5%8C%96%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E7%89%87%E6%AE%B5"><span class="toc-number">5.</span> <span class="toc-text">代码示例：知识蒸馏的简化联邦学习片段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E8%80%83%E9%87%8F%E4%B8%8E%E6%9C%AA%E6%9D%A5%E6%96%B9%E5%90%91"><span class="toc-number">6.</span> <span class="toc-text">实际考量与未来方向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87%E7%9A%84%E9%87%8D%E6%96%B0%E6%80%9D%E8%80%83"><span class="toc-number">6.1.</span> <span class="toc-text">1. 评估指标的重新思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8C%91%E6%88%98%E4%B8%8E%E6%9D%83%E8%A1%A1"><span class="toc-number">6.2.</span> <span class="toc-text">2. 挑战与权衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%AA%E6%9D%A5%E7%A0%94%E7%A9%B6%E6%96%B9%E5%90%91"><span class="toc-number">6.3.</span> <span class="toc-text">3. 未来研究方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">7.</span> <span class="toc-text">结语</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062627/" title="蛋白质组学的翻译后修饰组学：解码生命复杂性的密码">蛋白质组学的翻译后修饰组学：解码生命复杂性的密码</a><time datetime="2025-07-25T22:26:27.000Z" title="发表于 2025-07-26 06:26:27">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062521/" title="钠离子电池的负极材料：开启储能新纪元的核心密码">钠离子电池的负极材料：开启储能新纪元的核心密码</a><time datetime="2025-07-25T22:25:21.000Z" title="发表于 2025-07-26 06:25:21">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062424/" title="基于人工智能的靶点识别：重塑药物发现的未来">基于人工智能的靶点识别：重塑药物发现的未来</a><time datetime="2025-07-25T22:24:24.000Z" title="发表于 2025-07-26 06:24:24">2025-07-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

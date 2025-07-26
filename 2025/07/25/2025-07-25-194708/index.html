@@ -1,0 +1,763 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>量子密钥分发的实际安全性：理论与实践的交锋 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="各位技术与数学爱好者们，大家好！我是你们的老朋友qmwneb946。今天，我们要深入探讨一个既充满科幻色彩又日益走进现实的领域——量子密钥分发（Quantum Key Distribution, QKD）。QKD以其独特的“信息论安全性”承诺，被誉为是应对未来量子计算威胁的终极武器。然而，任何一项从实验室走向实际应用的技术，都不可避免地要面对理想与现实之间的鸿沟。QKD的实际安全性，正是我们今天要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="量子密钥分发的实际安全性：理论与实践的交锋">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/25/2025-07-25-194708/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="各位技术与数学爱好者们，大家好！我是你们的老朋友qmwneb946。今天，我们要深入探讨一个既充满科幻色彩又日益走进现实的领域——量子密钥分发（Quantum Key Distribution, QKD）。QKD以其独特的“信息论安全性”承诺，被誉为是应对未来量子计算威胁的终极武器。然而，任何一项从实验室走向实际应用的技术，都不可避免地要面对理想与现实之间的鸿沟。QKD的实际安全性，正是我们今天要">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-25T11:47:08.000Z">
+<meta property="article:modified_time" content="2025-07-26T06:50:50.264Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="量子密钥分发的实际安全性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "量子密钥分发的实际安全性：理论与实践的交锋",
+  "url": "https://qmwneb946.dpdns.org/2025/07/25/2025-07-25-194708/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-25T11:47:08.000Z",
+  "dateModified": "2025-07-26T06:50:50.264Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/25/2025-07-25-194708/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '量子密钥分发的实际安全性：理论与实践的交锋',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">量子密钥分发的实际安全性：理论与实践的交锋</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">量子密钥分发的实际安全性：理论与实践的交锋<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-25-194708.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-25T11:47:08.000Z" title="发表于 2025-07-25 19:47:08">2025-07-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-26T06:50:50.264Z" title="更新于 2025-07-26 14:50:50">2025-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>各位技术与数学爱好者们，大家好！我是你们的老朋友qmwneb946。今天，我们要深入探讨一个既充满科幻色彩又日益走进现实的领域——量子密钥分发（Quantum Key Distribution, QKD）。QKD以其独特的“信息论安全性”承诺，被誉为是应对未来量子计算威胁的终极武器。然而，任何一项从实验室走向实际应用的技术，都不可避免地要面对理想与现实之间的鸿沟。QKD的实际安全性，正是我们今天要聚焦的核心议题：它在理论上固若金汤，但在工程实现中又有哪些潜在的薄弱环节？我们如何弥补这些漏洞，使其真正成为我们信息安全的坚实屏障？</p>
+<p>密码学，这门古老而又充满活力的学科，是现代信息社会赖以运转的基石。从你每天的在线支付，到国家机密文件的传输，无不依赖于密码学的保护。长期以来，经典密码学凭借数学上的“计算困难问题”构筑起了安全防线，例如大数分解（RSA）和椭圆曲线离散对数（ECC）。我们相信，在现有计算能力下，这些问题在合理时间内无法被解决，从而保证了加密信息的安全。</p>
+<p>然而，二十世纪末量子计算理论的兴起，给经典密码学投下了巨大的阴影。彼得·秀尔（Peter Shor）在1994年提出的量子算法，能够以指数级的速度破解大数分解和离散对数问题；而洛夫·格罗弗（Lov Grover）的量子搜索算法，则能加速穷举搜索过程。这意味着，一旦大规模通用量子计算机成为现实，我们今天赖以信任的绝大多数公钥密码体系将瞬间崩溃，所有历史加密信息也可能面临被追溯破解的风险。这并非危言耸听，而是物理定律预示的未来。</p>
+<p>正是在这样的背景下，量子密码学应运而生，其中最受瞩目的便是量子密钥分发（QKD）。与依赖计算复杂度的经典密码学不同，QKD的安全性基于量子力学的基本原理，如叠加态、不确定性原理和不可克隆定理。它承诺提供“信息论安全性”（Information-Theoretic Security, ITS），意味着即使攻击者拥有无限的计算能力，也无法从截获的量子信号中获取任何有效信息。这听起来如同魔法一般，为我们带来了对抗未来量子威胁的希望曙光。</p>
+<p>然而，QKD的理论安全性是在理想条件下成立的。现实世界中的量子设备并非完美无缺，它们存在着效率损耗、噪声干扰、以及各种不可避免的硬件缺陷。这些非理想因素在实际部署中，可能引入“侧信道”（Side-Channel）漏洞，从而为窃听者（通常被称为Eve）提供了绕过量子物理定律进行攻击的机会。因此，“实际安全性”成为了QKD领域一个至关重要的研究方向，它关乎着如何将QKD从一个实验室概念，真正转化为一个在现实世界中可靠、安全的密钥分发解决方案。</p>
+<p>本文将带领大家，从QKD的基础原理出发，深入探讨其信息论安全性的根源。随后，我们将毫不避讳地揭露在实际实现中可能遭遇的各种设备非理想性及其导致的侧信道攻击，这些攻击是如何一步步侵蚀QKD的理论安全堡垒的。最后，我们将探讨学术界和工业界为弥补这些漏洞所做的努力，包括协议改进、硬件优化以及未来的发展方向。希望通过这篇文章，你能够对量子密钥分发有一个全面、深入，且兼顾理论与实践的理解。</p>
+<hr>
+<h2 id="量子密钥分发（QKD）基础回顾">量子密钥分发（QKD）基础回顾</h2>
+<p>在深入探讨QKD的实际安全性之前，我们首先需要回顾一下量子密钥分发的核心概念和基本原理。理解这些基础是理解后续挑战和解决方案的关键。</p>
+<h3 id="密码学中的密钥分发难题">密码学中的密钥分发难题</h3>
+<p>在对称密钥密码体系中，通信双方（通常称为Alice和Bob）使用同一个密钥进行加密和解密。这种方式效率高，但面临一个根本性问题：Alice和Bob如何安全地协商并共享这个密钥？这就是“密钥分发难题”。</p>
+<p>传统的经典密钥分发方法，如Diffie-Hellman密钥交换，依赖于计算困难问题。例如，Diffie-Hellman基于计算离散对数的困难性：Alice和Bob在公开信道上交换一些信息，然后各自计算出一个共享密钥。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>A</mi><mo>=</mo><msup><mi>g</mi><mi>a</mi></msup><mspace></mspace><mspace width="1em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mi>p</mi><mo stretchy="false">)</mo><mspace linebreak="newline"></mspace><mi>B</mi><mo>=</mo><msup><mi>g</mi><mi>b</mi></msup><mspace></mspace><mspace width="1em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mi>p</mi><mo stretchy="false">)</mo><mspace linebreak="newline"></mspace><msub><mi>K</mi><mrow><mi>A</mi><mi>l</mi><mi>i</mi><mi>c</mi><mi>e</mi></mrow></msub><mo>=</mo><msup><mi>B</mi><mi>a</mi></msup><mo>=</mo><mo stretchy="false">(</mo><msup><mi>g</mi><mi>b</mi></msup><msup><mo stretchy="false">)</mo><mi>a</mi></msup><mo>=</mo><msup><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msup><mspace></mspace><mspace width="1em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mi>p</mi><mo stretchy="false">)</mo><mspace linebreak="newline"></mspace><msub><mi>K</mi><mrow><mi>B</mi><mi>o</mi><mi>b</mi></mrow></msub><mo>=</mo><msup><mi>A</mi><mi>b</mi></msup><mo>=</mo><mo stretchy="false">(</mo><msup><mi>g</mi><mi>a</mi></msup><msup><mo stretchy="false">)</mo><mi>b</mi></msup><mo>=</mo><msup><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msup><mspace></mspace><mspace width="1em"/><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.3333em"/><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">A = g^{a} \pmod{p} \\
+B = g^{b} \pmod{p} \\
+K_{Alice} = B^a = (g^b)^a = g^{ab} \pmod{p} \\
+K_{Bob} = A^b = (g^a)^b = g^{ab} \pmod{p}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9088em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span></span></span></span></span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:1em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0935em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">b</span></span></span></span></span></span></span></span></span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:1em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">ce</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7144em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1491em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0935em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ab</span></span></span></span></span></span></span></span></span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:1em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">b</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8991em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1491em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0935em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ab</span></span></span></span></span></span></span></span></span><span class="mspace allowbreak"></span><span class="mspace" style="margin-right:1em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord mathnormal">p</span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi></mrow><annotation encoding="application/x-tex">g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span> 是公开参数，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> 是Alice和Bob各自的秘密随机数。攻击者Eve截获 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> 后，需要求解 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> （即离散对数问题）才能得到密钥 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><msup><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msup></mrow><annotation encoding="application/x-tex">K = g^{ab}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0435em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ab</span></span></span></span></span></span></span></span></span></span></span></span>。然而，正如前面提到的，Shor算法能够有效地解决这个问题，从而使Diffie-Hellman等经典密钥交换协议在未来量子计算机面前变得脆弱不堪。</p>
+<p>QKD的目的正是为了解决这个密钥分发难题，而且是提供一种即使面对无限计算能力的窃听者也无法攻破的密钥分发方式。</p>
+<h3 id="量子力学基础与QKD原理">量子力学基础与QKD原理</h3>
+<p>QKD的安全性来源于量子力学的几个基本定律：</p>
+<ol>
+<li>
+<p><strong>量子态的叠加原理（Superposition Principle）</strong>：一个量子比特（qubit）可以处于0态和1态的叠加状态，即 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>ψ</mi><mo stretchy="false">⟩</mo><mo>=</mo><mi>α</mi><mi mathvariant="normal">∣</mi><mn>0</mn><mo stretchy="false">⟩</mo><mo>+</mo><mi>β</mi><mi mathvariant="normal">∣</mi><mn>1</mn><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">| \psi \rangle = \alpha |0\rangle + \beta |1\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.03588em;">ψ</span><span class="mclose">⟩</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="mord">∣0</span><span class="mclose">⟩</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mord">∣1</span><span class="mclose">⟩</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span></span></span></span> 是复数，且满足 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>α</mi><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup><mo>+</mo><mi mathvariant="normal">∣</mi><mi>β</mi><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">|\alpha|^2 + |\beta|^2 = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>。这表示量子比特在测量前同时具备多种可能性。</p>
+</li>
+<li>
+<p><strong>测量的扰动效应（Measurement Disturbance）</strong>：一旦对一个量子态进行测量，它就会坍缩到某个确定的本征态，并且测量过程本身会不可避免地改变或扰动量子态。例如，如果你试图测量一个偏振方向为对角线方向的光子（例如 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span>），你如果使用水平/垂直基（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span>/<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span>）去测量，那么它会以50%的概率坍缩到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span>。这个测量结果并不能完全告诉我们原来的状态是什么，并且这个测量改变了原来的对角线状态。</p>
+</li>
+<li>
+<p><strong>不可克隆定理（No-Cloning Theorem）</strong>：任意一个未知量子态都不能被精确地复制。这意味着窃听者Eve无法在不惊动通信双方的情况下，复制传输中的量子比特并进行测量。如果Eve试图复制光子，她只会得到一个被扰动的或不完全的副本，并且不可避免地会在原始光子上留下可检测的痕迹。</p>
+</li>
+<li>
+<p><strong>不确定性原理（Uncertainty Principle）</strong>：海森堡不确定性原理告诉我们，一对共轭物理量（如位置和动量，或不同基下的自旋/偏振）不能同时被精确测量。在QKD中，这意味着Alice和Bob可以使用非正交的基（例如，直线基和对角线基）来编码和测量信息。如果Eve试图用一个基测量量子比特，她就无法确定它在另一个基上的信息，并且她的测量行为必然会引入可检测的误差。</p>
+</li>
+</ol>
+<p>正是基于这些原理，QKD协议能够让Alice和Bob通过传输量子态来生成一个共享的秘密密钥，并在窃听者存在时检测到其存在。</p>
+<h3 id="经典QKD协议：BB84">经典QKD协议：BB84</h3>
+<p>BB84协议（由Charles Bennett和Gilles Brassard在1984年提出）是最早且最著名的QKD协议，它也是绝大多数QKD系统实现的基础。</p>
+<p>BB84协议利用了光子偏振态作为量子比特的载体，使用了两对非正交的基：</p>
+<ul>
+<li><strong>直线基（Rectilinear Basis）</strong>：包含水平偏振 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span>（对应比特0）和垂直偏振 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span>（对应比特1）。</li>
+<li><strong>对角线基（Diagonal Basis）</strong>：包含 +45°偏振 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span>（对应比特0）和 -45°偏振 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span>（对应比特1）。</li>
+</ul>
+<p>直线基和对角线基是非正交的，这意味着用其中一个基测量另一个基下的光子，会随机地得到0或1，并且扰动了原始态。例如，一个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span> 光子，如果用直线基测量，会以50%的概率得到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span>。</p>
+<p><strong>BB84协议流程如下：</strong></p>
+<ol>
+<li>
+<p><strong>量子态传输（Alice to Bob）：</strong></p>
+<ul>
+<li>Alice随机生成一个二进制序列作为原始密钥比特。</li>
+<li>对于每个比特，Alice随机选择一个编码基（直线基或对角线基）。</li>
+<li>如果选择直线基：比特0编码为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span>，比特1编码为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span>。</li>
+<li>如果选择对角线基：比特0编码为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span>，比特1编码为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span>。</li>
+<li>Alice将编码后的光子通过量子信道发送给Bob。</li>
+</ul>
+<p><strong>示例：</strong><br>
+Alice的比特序列：0 1 0 0 1 1 0 1<br>
+Alice选择的基：   + x x + x + + x  （+表示直线基，x表示对角线基）<br>
+Alice发送的光子：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span></p>
+</li>
+<li>
+<p><strong>测量与记录（Bob）：</strong></p>
+<ul>
+<li>Bob接收到每个光子后，独立地随机选择一个基（直线基或对角线基）进行测量。</li>
+<li>Bob记录下每个光子的测量结果以及所使用的基。他并不知道Alice发送时用了哪个基。</li>
+</ul>
+<p><strong>示例（Bob选择的基）：</strong><br>
+Bob接收到的光子：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span><br>
+Bob选择的基：   + + x x + x + x<br>
+Bob的测量结果： 0   ?   1   ?   0   ?   0   ?<br>
+（如果Bob选择的基与Alice相同，结果是确定的；如果不同，结果是随机的）</p>
+</li>
+<li>
+<p><strong>基协商（Sifting）：</strong></p>
+<ul>
+<li>Bob通过公开信道告诉Alice他为每个光子选择了哪个测量基。</li>
+<li>Alice将她发送时使用的基告诉Bob。</li>
+<li>双方共同舍弃那些基选择不匹配的比特。只保留基选择匹配的比特，这些比特构成了“筛选密钥”（Sifted Key）。</li>
+</ul>
+<p><strong>示例：</strong><br>
+Alice发送的基： + x x + x + + x<br>
+Bob选择的基：   + + x x + x + x<br>
+匹配位置：      1   0   1   1   0   0   1   1<br>
+筛选后的比特：<br>
+Alice的筛选比特：0     0 0           0 1<br>
+Bob的筛选比特：  0     1 0           0 1<br>
+（注意：即使基匹配，Bob的测量结果也可能因Eve的窃听或信道噪声而出错）</p>
+</li>
+<li>
+<p><strong>错误校正（Error Correction）：</strong></p>
+<ul>
+<li>由于信道噪声或Eve的窃听，Alice和Bob的筛选密钥可能不完全相同（存在量子比特误差率，QBER）。</li>
+<li>Alice和Bob通过公开信道运行一个错误校正协议（例如，级联协议 Cascading Protocol 或 LDPC 码）。</li>
+<li>这个过程会暴露一些关于密钥的信息，但可以通过后续的隐私放大步骤来弥补。</li>
+</ul>
+</li>
+<li>
+<p><strong>隐私放大（Privacy Amplification）：</strong></p>
+<ul>
+<li>在错误校正后，Alice和Bob的密钥完全一致，但Eve可能通过错误校正过程中泄露的信息以及她可能进行的窃听，掌握了一部分密钥信息。</li>
+<li>Alice和Bob共同使用一个公开的、均匀随机的哈希函数（例如，通用哈希函数），将长密钥映射成一个短密钥。</li>
+<li>由于哈希函数的性质，Eve即使掌握了原始长密钥的大部分信息，也难以推断出新的短密钥的任何有效信息。最终得到的密钥具有高信息论安全性。</li>
+</ul>
+</li>
+</ol>
+<p><strong>BB84的信息论安全性来源：</strong></p>
+<p>BB84的安全性核心在于测量扰动和不可克隆定理。如果Eve试图窃听：</p>
+<ul>
+<li>她必须测量光子来获取信息。</li>
+<li>如果她选择的测量基与Alice的编码基不匹配，她的测量就会扰动光子的状态，导致Bob以50%的概率得到错误结果。</li>
+<li>即使她选择的测量基与Alice的编码基匹配，她也无法知道Alice用了哪个基。她不知道应该用什么基去测量，否则她就知道了Alice的比特值。如果她随机选择基，那么仍然会有一半的概率选择错误的基，从而引入错误。</li>
+<li>Eve无法复制光子并在稍后测量，因为这违反了不可克隆定理。</li>
+<li>最终，Alice和Bob可以通过检查QBER来判断是否存在窃听。如果QBER高于某个阈值（通常为11%左右，取决于具体协议和系统），说明窃听过于严重，双方会放弃这次密钥生成，重新开始。</li>
+</ul>
+<p>通过这些步骤，Alice和Bob能够生成一个共享的、具有信息论安全性的密钥，即使面对拥有无限计算能力的Eve，只要QBER低于阈值，他们也能确保密钥的安全性。</p>
+<h3 id="其他QKD协议简介">其他QKD协议简介</h3>
+<p>除了BB84，还有一些重要的QKD协议：</p>
+<ul>
+<li>
+<p><strong>E91协议（Ekert91）</strong>：基于量子纠缠。Alice和Bob不直接交换光子，而是共同从一个纠缠光子源接收一对纠缠光子。他们通过测量各自的光子并比较测量结果（利用Bell不等式）来检测窃听。纠缠的特性确保了测量结果的相关性，任何窃听都会破坏这种相关性，从而被检测到。E91也具有信息论安全性，但纠缠源的实现比单光子源更复杂。</p>
+</li>
+<li>
+<p><strong>B92协议（Bennett92）</strong>：BB84的简化版本，只使用两个非正交态（例如， <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span>）来编码信息。比特0编码为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>H</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|H\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mclose">⟩</span></span></span></span>，比特1编码为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>+</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|+\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">+</span><span class="mclose">⟩</span></span></span></span>。Bob只能用一个非正交基进行测量。如果Bob测到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>V</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|V\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">⟩</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>−</mo><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">|-\rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">−</span><span class="mclose">⟩</span></span></span></span>，他知道Alice不可能发送这个状态，所以可以直接抛弃。这种协议的密钥率通常低于BB84，因为它放弃了更多的信息。</p>
+</li>
+<li>
+<p><strong>诱骗态BB84（Decoy State BB84）</strong>：这是BB84的一个重要实用改进。由于理想的单光子源难以实现，实际系统通常使用衰减后的激光脉冲作为“弱相干光源”（WCS）。WCS会产生泊松分布的光子，这意味着脉冲可能包含零个、一个或多个光子。多光子脉冲（Multi-Photon Pulse, MPP）是BB84的主要漏洞之一，因为Eve可以对MPP进行“光子数分离”（Photon Number Splitting, PNS）攻击，即截获部分光子并转发其余光子，而不引起可检测的QBER。诱骗态协议通过在传输中随机插入不同平均光子数（通常为三种：信号态、弱诱骗态、真空态）的脉冲来解决这个问题。通过比较不同强度脉冲的响应，Alice和Bob可以估计单光子脉冲和多光子脉冲的损耗和错误率，从而计算出窃听者可能获取的信息量，并安全地进行隐私放大。</p>
+</li>
+<li>
+<p><strong>测量设备无关QKD（Measurement-Device-Independent QKD, MDI-QKD）</strong>：MDI-QKD旨在解决QKD系统中最严重的“侧信道”漏洞之一——探测器侧信道攻击。在MDI-QKD中，Alice和Bob不再直接互相发送光子，而是各自发送光子到一个不可信的第三方中继（Eve或一个中立的测量站）。中继执行一个贝尔态测量，并公布测量结果。Alice和Bob根据这个公开结果和他们自己发送的状态来推断密钥。这种协议将所有的探测器攻击漏洞转移到了不可信的中继处，而中继即使攻击，也只能导致协议中止，而无法窃取密钥信息。它的安全性不再依赖于探测器的完美性，大大提高了实际安全性，但代价是实现复杂性和通常较低的密钥率。</p>
+</li>
+<li>
+<p><strong>双场QKD（Twin-Field QKD, TF-QKD）</strong>：TF-QKD是近年提出的，旨在大幅提升QKD的传输距离和密钥率。它结合了MDI-QKD的一些思想，并利用单光子干涉来实现长距离通信。与传统QKD密钥率随距离指数下降不同，TF-QKD的密钥率可以近似为距离的平方根下降，从而有望将QKD的实用传输距离扩展到数百公里以上，甚至在没有量子中继的情况下实现城际乃至城际间的安全通信。这使得TF-QKD成为未来量子互联网的关键技术之一。</p>
+</li>
+</ul>
+<p>以上这些协议构成了QKD家族的核心，它们各有所长，但都共同致力于在物理定律的保障下实现密钥的安全分发。</p>
+<hr>
+<h2 id="理论安全性：QKD的基石">理论安全性：QKD的基石</h2>
+<p>QKD之所以备受瞩目，在于它承诺的“信息论安全性”（Information-Theoretic Security, ITS）。理解ITS的含义、其来源以及相关的安全性证明框架，是把握QKD核心价值的关键。</p>
+<h3 id="信息论安全性-Information-Theoretic-Security-ITS">信息论安全性 (Information-Theoretic Security, ITS)</h3>
+<p>传统密码学，如RSA、AES等，其安全性是基于“计算安全性”（Computational Security, CS）的。这意味着：</p>
+<ul>
+<li>攻击者（Eve）具有<strong>有限</strong>的计算能力。</li>
+<li>破解密码问题在现有计算资源下是<strong>计算上困难的</strong>，即需要非常大的计算量和时间，以至于在可预见未来是不可行的。</li>
+</ul>
+<p>这种安全性是相对的，它依赖于计算复杂性理论的假设，并可能随着计算能力的提升（例如量子计算机的出现）而失效。</p>
+<p>相比之下，QKD所宣称的“信息论安全性”则是一种更为强大的安全承诺：</p>
+<ul>
+<li>攻击者（Eve）具有<strong>无限</strong>的计算能力。</li>
+<li>即使攻击者拥有无限的计算资源，也<strong>无法从截获的信息中获取任何有效信息</strong>。换句话说，加密信息泄露的信息量是零，或者说即使泄露了，也无法重建密钥。</li>
+</ul>
+<p>QKD实现信息论安全性的核心在于它利用了量子物理定律的固有特性：</p>
+<ol>
+<li><strong>测量扰动</strong>：任何试图窃听量子比特的行为都会不可避免地对其状态造成扰动，从而引入可检测的错误。</li>
+<li><strong>不可克隆</strong>：Eve无法复制一个未知的量子态，这意味着她无法无痕窃听。</li>
+</ol>
+<p>因此，QKD的安全性不依赖于任何未经验证的数学难题，而是直接基于已知的物理定律。这使得QKD能够抵御任何未来的计算突破，包括量子计算机的威胁。在理论上，只要QBER低于一定阈值，Alice和Bob就能确保生成的密钥对Eve而言是完全随机的，她的互信息为零。</p>
+<p>数学上，一个密钥 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 对窃听者Eve来说是信息论安全的，意味着条件熵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>K</mi><mi mathvariant="normal">∣</mi><mi>E</mi><mo stretchy="false">)</mo><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">H(K|E) &gt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>，理想情况下 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>K</mi><mi mathvariant="normal">∣</mi><mi>E</mi><mo stretchy="false">)</mo><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><mi>K</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(K|E) = H(K)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mclose">)</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span> 是Eve所掌握的所有信息。这意味着给定Eve所知的一切，她对 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 的不确定性与她一无所知时一样大。</p>
+<h3 id="安全性证明框架">安全性证明框架</h3>
+<p>QKD的安全性并非凭空而来，而是经过严格的数学和物理证明。这些证明通常基于量子信息论，并且在更广阔的密码学框架中进行。</p>
+<p><strong>基于量子信息论的证明</strong><br>
+早期的QKD安全性证明通常关注点对点的窃听模型，分析窃听者在量子信道上能够获取的最大信息量。核心思想是通过量化Alice和Bob之间的量子比特误差率（QBER）来评估Eve的信息增益。</p>
+<p>例如，对于BB84协议，著名的证明包括：</p>
+<ul>
+<li><strong>截断证明（Truncated Proofs）</strong>：这类证明通常假设Eve进行了一种所谓的“个体攻击”（Individual Attack），即她对每个发送的量子比特独立地进行测量和处理。通过量子纠错码的容量理论，可以证明当QBER低于一定阈值时，Alice和Bob可以提取出一个安全的密钥。</li>
+<li><strong>集体攻击证明（Collective Attack Proofs）</strong>：Eve不是独立处理每个光子，而是对所有光子进行某种集体操作，然后一起测量。这种攻击比个体攻击更普遍。证明显示，即使在集体攻击下，QBER仍然能有效限制Eve的信息增益。</li>
+<li><strong>相干攻击证明（Coherent Attack Proofs）</strong>：这是最强大的攻击模型，Eve被允许对所有光子进行任意的量子操作，并且她的测量可以被延迟到所有量子传输完成后。这类证明通常更为复杂，依赖于更高级的量子信息理论工具，如量子熵不等式、平滑熵（Smooth Entropies）等。在相干攻击下，QKD的安全性通常通过“隐私放大”步骤来保证，确保最终密钥的安全性。</li>
+</ul>
+<p><strong>可组合安全性 (Composable Security) 和通用组合 (Universal Composability, UC) 框架</strong><br>
+在现代密码学中，仅仅证明一个协议在孤立运行时是安全的还不够。一个现实的密码系统往往是由多个协议组件组成的，它们互相交互，并且可能在更复杂的环境中被多次调用。如果一个协议在单独运行时是安全的，但在与其他协议组合使用时变得不安全，那么它就不是真正实用的。</p>
+<p>“可组合安全性”的概念应运而生，它旨在确保即使将协议作为更大系统的一部分或在并发执行中重复使用时，其安全性也能得到保持。</p>
+<p>“通用组合（UC）框架”是密码学中一个非常强大的形式化工具，由Ran Canetti提出。它提供了一种严谨的方式来定义和证明协议的安全性，即使在复杂的、由多个并发协议组成的系统中，面对任意的恶意攻击者。UC框架通过比较真实世界中协议的执行与理想世界中理想功能的执行来定义安全性。如果真实世界中的任何攻击者都无法在理想世界中模拟一个敌手，那么协议就是安全的。</p>
+<p>将QKD协议嵌入到UC框架中进行安全性证明，能够提供一个更全面、更强大的安全保证。这意味着QKD不仅在理论上能够抵抗无限计算能力的窃听者，而且它生成的密钥可以在更广泛的密码学应用中安全使用，例如作为加密数据、数字签名或认证协议的输入。许多现代QKD安全性证明都采用了UC框架或其变体。例如，MDI-QKD的安全性通常在UC框架下进行证明，因为其复杂性要求更严格的安全性分析。</p>
+<h3 id="密钥率与距离">密钥率与距离</h3>
+<p>密钥率（Key Rate）是衡量QKD系统性能的关键指标，它指的是系统每秒能够生成的安全密钥比特数。密钥率受到多种因素的影响：</p>
+<ul>
+<li>
+<p><strong>传输损耗（Transmission Loss）</strong>：光子在光纤中传输时会发生损耗，强度随距离呈指数衰减。光纤通信中，典型损耗约为0.2 dB/km。这意味着传输距离越长，到达Bob的有效光子数越少，从而导致密钥率下降。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>P</mi><mrow><mi>r</mi><mi>e</mi><mi>c</mi><mi>e</mi><mi>i</mi><mi>v</mi><mi>e</mi></mrow></msub><mo>=</mo><msub><mi>P</mi><mrow><mi>s</mi><mi>e</mi><mi>n</mi><mi>d</mi></mrow></msub><mo>⋅</mo><msup><mn>10</mn><mrow><mo>−</mo><mi>α</mi><mi>L</mi><mi mathvariant="normal">/</mi><mn>10</mn></mrow></msup></mrow><annotation encoding="application/x-tex">P_{receive} = P_{send} \cdot 10^{-\alpha L / 10}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">rece</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">se</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.938em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">αL</span><span class="mord mtight">/10</span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mi>r</mi><mi>e</mi><mi>c</mi><mi>e</mi><mi>i</mi><mi>v</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P_{receive}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">rece</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是接收到的功率，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mi>s</mi><mi>e</mi><mi>n</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P_{send}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">se</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是发送的功率，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span> 是光纤损耗系数（dB/km），<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 是距离（km）。<br>
+在QKD中，光子数是离散的，这意味着接收到的光子数量会随距离呈指数下降。密钥率 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> 与距离 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 的关系大致为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>∝</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>β</mi><mi>L</mi></mrow></msup></mrow><annotation encoding="application/x-tex">R \propto e^{-\beta L}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.05278em;">β</span><span class="mord mathnormal mtight">L</span></span></span></span></span></span></span></span></span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span></span></span></span> 是与光纤损耗相关的常数。</p>
+</li>
+<li>
+<p><strong>量子比特误差率（Quantum Bit Error Rate, QBER）</strong>：QBER是Alice和Bob在基匹配时，他们密钥比特不一致的比例。QBER的来源包括信道噪声、设备不完善以及窃听。QBER越高，说明泄露给Eve的信息越多，需要进行更多的隐私放大，从而导致最终安全密钥率的降低。当QBER超过某个阈值（例如BB84的11%），系统将无法生成安全密钥。</p>
+</li>
+<li>
+<p><strong>单光子源的理想性与实际挑战</strong>：在理想的BB84协议中，Alice发送的是严格的单光子脉冲。然而，实际的单光子源成本高昂且效率低下。因此，大多数QKD系统使用衰减的激光脉冲作为“弱相干光源”（WCS）。WCS发出的光子数遵循泊松分布：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><msup><mi>μ</mi><mi>n</mi></msup><msup><mi>e</mi><mrow><mo>−</mo><mi>μ</mi></mrow></msup></mrow><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(n) = \frac{\mu^n e^{-\mu}}{n!}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1343em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4483em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">μ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">μ</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 是脉冲中包含 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个光子的概率，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span> 是脉冲的平均光子数。<br>
+可以看到，即使平均光子数很低（例如 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>≈</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\mu \approx 0.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6776em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.1</span></span></span></span>），脉冲中仍有一定概率包含多个光子（多光子脉冲，MPP），或者不包含光子（真空态）。多光子脉冲是光子数分离（PNS）攻击的主要途径，极大地限制了WCS QKD的密钥率。诱骗态协议的引入就是为了缓解这一问题。</p>
+</li>
+</ul>
+<p>因此，理论上的高密钥率往往只能在短距离和理想设备下实现。在实际应用中，QKD系统的密钥率会随着传输距离的增加和设备非理想性的累积而显著下降。提升实际密钥率和传输距离是QKD技术发展的重要方向。</p>
+<hr>
+<h2 id="实际安全性：理论与实践的鸿沟">实际安全性：理论与实践的鸿沟</h2>
+<p>尽管QKD在理论上提供了信息论安全性，但正如前面所强调的，理论是在理想条件下的完美模型。当我们将QKD从实验室原型推向实际部署时，各种非理想的硬件特性和环境因素就会引入潜在的漏洞，这些漏洞可能被精明的攻击者利用，从而使得“绝对安全”的承诺变得不再绝对。这就是“实际安全性”的核心挑战。</p>
+<p>我们将从几个主要方面剖析这些理想与现实的差距以及由此产生的攻击向量。</p>
+<h3 id="理想与现实的差距：设备不完善性">理想与现实的差距：设备不完善性</h3>
+<p>实际的量子密钥分发系统由一系列光学和电子元件组成，这些元件都有其固有的缺陷和局限性。</p>
+<h4 id="3-1-1-光源非理想性">3.1.1 光源非理想性</h4>
+<p>理想的QKD协议要求Alice使用完美的单光子源，即每次只发射一个光子。然而，现实情况远非如此。</p>
+<ul>
+<li>
+<p><strong>单光子源的挑战</strong>：制造出可靠、高效、按需产生单光子的光源极其困难且昂贵。量子点、NV色心等固态单光子源虽然在发展，但目前仍难以满足QKD系统对高重复频率、高纯度和高效率的苛刻要求。</p>
+</li>
+<li>
+<p><strong>弱相干光源（WCS）的泊松分布</strong>：因此，大多数商用QKD系统采用的是<strong>弱相干光源（Weak Coherent Source, WCS）</strong>，即衰减后的激光脉冲。WCS的光子数遵循泊松分布 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><msup><mi>μ</mi><mi>n</mi></msup><msup><mi>e</mi><mrow><mo>−</mo><mi>μ</mi></mrow></msup></mrow><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(n) = \frac{\mu^n e^{-\mu}}{n!}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3845em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0395em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mclose mtight">!</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.4461em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">μ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7385em;"><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8477em;"><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">μ</span></span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span> 是平均光子数。这意味着一个脉冲可能包含零个光子（真空态）、一个光子（单光子态），或多个光子（多光子态）。</p>
+</li>
+<li>
+<p><strong>多光子脉冲（MPP）与光子数分离（PNS）攻击</strong>：</p>
+<ul>
+<li><strong>PNS攻击原理</strong>：当Alice发送一个多光子脉冲时，Eve可以截获其中一部分光子（例如，只截获一个，让其余的通过），而将剩余的光子无扰动地发送给Bob。由于Bob只接收到一个光子，他无法知道这个光子最初是来自一个单光子脉冲还是一个多光子脉冲。Eve可以安全地测量她截获的光子，获取信息，而不引起QBER的增加。</li>
+<li><strong>影响</strong>：PNS攻击是WCS QKD系统的主要安全漏洞。它使得Eve能够从理论上安全的单光子脉冲中分离出信息，且不被Alice和Bob察觉。这严重降低了安全密钥率，甚至可能导致密钥完全不安全。</li>
+<li><strong>缓解</strong>：PNS攻击通过**诱骗态协议（Decoy State Protocol）**得到有效缓解，我们将在第四部分详细讨论。诱骗态协议通过在不同平均光子数的脉冲中切换，让Alice和Bob能够可靠地估计单光子脉子脉冲的损耗和窃听率。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-1-2-探测器非理想性">3.1.2 探测器非理想性</h4>
+<p>量子探测器是QKD系统中最敏感、最容易被攻击的部分，因为它需要对微弱的光子信号进行精确测量。</p>
+<ul>
+<li>
+<p><strong>探测器效率（Detection Efficiency）</strong>：探测器无法100%地检测到每一个到达的光子。效率低下意味着更多的光子被丢失，从而降低密钥率。更重要的是，探测器效率可能依赖于入射光子的某些特性（如偏振、强度、到达时间），这可能被Eve利用。</p>
+</li>
+<li>
+<p><strong>暗计数（Dark Counts）</strong>：即使没有光子入射，探测器也可能随机地产生一个“点击”信号，这被称为暗计数。暗计数增加了QBER，降低了密钥率。在低光子率、长距离传输中，暗计数的影响尤为显著。</p>
+</li>
+<li>
+<p><strong>门控探测器与探测器死区时间（Gated Detectors and Dead Time）</strong>：大多数单光子探测器（如雪崩光电二极管APD）是门控的，即它们只在预设的时间窗口内激活。当一个光子被探测到后，探测器需要一段“死区时间”才能恢复到可探测状态。Eve可以利用这些时间特性进行攻击。</p>
+</li>
+<li>
+<p><strong>探测器侧信道攻击（Detector Side-Channel Attacks）</strong>：这是QKD实际安全性研究的焦点之一，也是最成功、最危险的一类攻击。这些攻击利用了探测器对特定输入光信号的非理想响应。</p>
+<ul>
+<li>
+<p><strong>探测器致盲攻击（Detector Blinding Attack）/亮光攻击（Laser Damage Attack, Saturation Attack）</strong>：</p>
+<ul>
+<li><strong>原理</strong>：Eve向Bob的探测器发送一个高强度的激光脉冲，使探测器饱和（致盲），从而失去其单光子探测能力。在高强度光下，探测器可能表现得像一个经典的光电二极管，其响应（例如，电脉冲的幅度或时序）与入射光子的强度和偏振方向存在确定性关系。Eve可以在致盲探测器后，发送她自己构造的“诱骗”光子来模拟Alice发送的合法光子。通过精确控制这些诱骗光子的强度和偏振，Eve可以欺骗Bob的探测器，使其“点击”并产生她预期的结果。</li>
+<li><strong>实现</strong>：2007年，瑞典马尔默大学的研究者演示了对ID Quantique商业QKD系统的亮光攻击。Eve用一个高功率连续波（CW）激光器致盲Bob的APD，使其不再工作在盖革模式（单光子模式），而是进入线性模式。之后，Eve发送自己的弱脉冲，通过控制这些弱脉冲的偏振和强度，她可以准确地预测Bob的探测器会“点击”哪个比特值，从而完全获取密钥信息，而QBER保持在可接受范围内。</li>
+<li><strong>对策</strong>：增加光功率监控、引入预认证光子衰减器、使用新的探测器模式（如自适应偏置，Adaptive Bias）。</li>
+</ul>
+</li>
+<li>
+<p><strong>时间位移攻击（Time-Shift Attack）</strong>：</p>
+<ul>
+<li><strong>原理</strong>：QKD系统中的探测器通常由门控脉冲触发，并有微小的时延。Eve可以利用探测器响应时间与输入光子到达时间之间的关系。通过发送精心制作的、在不同时间到达的光子，Eve可以控制哪个探测器被触发（例如，控制原本应该由A探测器探测的光子被B探测器探测），从而在不改变光子偏振的情况下，改变Bob的测量结果。</li>
+<li><strong>实现</strong>：中国科技大学的研究者在2010年代初演示了对QKD系统的时间位移攻击。他们发现，由于Bob的两个探测器（对应0和1）在时间响应上存在微小差异，Eve可以利用这个差异。通过改变她发送给Bob的光子到达时间，Eve可以确保光子只进入特定的探测器的时间窗口，从而控制Bob的测量结果，窃取信息。</li>
+<li><strong>对策</strong>：精确同步所有探测器的时间响应，随机化门控时间，或者采用MDI-QKD。</li>
+</ul>
+</li>
+<li>
+<p><strong>旁路攻击（Faked States Attack）</strong>：</p>
+<ul>
+<li><strong>原理</strong>：某些QKD系统中，偏振分析器可能无法完全阻挡垂直于其偏振方向的光子（例如，偏振片消光比有限）。Eve可以发送一个具有特定偏振的强光脉冲，其大部分被Bob的接收器阻挡，但有一小部分泄漏到“错误”的探测器中。通过精确控制强度，Eve可以欺骗Bob相信他收到了一个具有特定偏振的光子。</li>
+<li><strong>实现</strong>：2010年，中国科技大学的研究者发现了一个旁路漏洞。Alice发送的是弱光脉冲，而Bob的接收端光路中，可能存在光子泄漏，即应该被某一偏振方向的滤波器完全阻挡的光子，仍有微弱的能量泄漏通过。Eve发送高功率脉冲，大部分光子被阻挡，但泄漏的部分足以触发Bob的探测器，并导致Bob认为自己收到了一个特定偏振的光子。</li>
+<li><strong>对策</strong>：高消光比的偏振分析器、系统内部光功率监测。</li>
+</ul>
+</li>
+<li>
+<p><strong>后门攻击（Back-door Attack）</strong>：</p>
+<ul>
+<li><strong>原理</strong>：这是一种更普遍的漏洞类型，指任何由于硬件实现不完善导致的，允许Eve在不被发现的情况下获取信息的信道。例如，光子通过光纤传输时，可能由于瑞利散射而反向传播一部分光子回到Alice端。Eve可以利用这些反向光子来获取Alice的基选择信息。</li>
+<li><strong>实现</strong>：例如，Alice的光源可能存在微弱的偏振依赖性，使得光子在离开光源时，其某些特性（如时序、强度）与偏振方向有关。Eve可以通过反向光监测这些特性，从而推断出Alice的基选择。</li>
+<li><strong>对策</strong>：使用光隔离器阻止反向光，对设备进行更严格的特性测试，确保没有可供利用的侧信道。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-1-3-量子通道非理想性">3.1.3 量子通道非理想性</h4>
+<p>量子信号在传输过程中也面临各种现实挑战。</p>
+<ul>
+<li><strong>光纤损耗</strong>：这是最显著的问题，导致密钥率随距离指数下降。长距离QKD需要更高的发射功率或更灵敏的探测器，但这也增加了其他攻击的风险。</li>
+<li><strong>色散</strong>：不同波长的光在光纤中传播速度不同，导致脉冲展宽，影响时序同步。</li>
+<li><strong>偏振漂移</strong>：在标准单模光纤中，光子的偏振态会随机漂移，这对于依赖偏振编码的BB84系统是一个巨大挑战。通常需要实时偏振控制器来补偿，但这又增加了系统的复杂性和潜在的侧信道。</li>
+<li><strong>环境噪声</strong>：温度变化、机械振动等都可能影响光纤的性能和器件的稳定性。</li>
+</ul>
+<h3 id="3-2-辅助设备与协议缺陷">3.2 辅助设备与协议缺陷</h3>
+<p>QKD系统不仅包含量子光学部分，还包括许多经典辅助设备和复杂的后处理协议。这些部分也可能引入漏洞。</p>
+<h4 id="3-2-1-偏振控制器、相位调制器等">3.2.1 偏振控制器、相位调制器等</h4>
+<ul>
+<li><strong>器件的非线性响应</strong>：用于编码和解码的调制器（如偏振调制器、相位调制器）和分束器在实际操作中可能并非完美的线性响应。例如，一个理想的偏振调制器应该能够完美地将输入光子旋转到指定的偏振方向，但现实中它可能存在微小的偏差。如果Eve能够检测到这些偏差（例如，通过测量输出光子的微弱能量差异），她就可以推断出Alice的编码信息。</li>
+<li><strong>注入锁定攻击（Injection Locking Attack）</strong>：在某些QKD系统中，Bob可能使用一个激光器来发送参考脉冲给Alice，以帮助她同步或锁定她的调制器。Eve可以向Bob的激光器注入一个高功率的脉冲，使得Bob的激光器被“注入锁定”到Eve的频率和相位上，从而Eve可以精确控制Bob的本地振荡器，并利用它来欺骗Bob的探测器。</li>
+</ul>
+<h4 id="3-2-2-经典辅助通道的安全性">3.2.2 经典辅助通道的安全性</h4>
+<p>QKD协议的许多步骤，如基协商、错误校正、隐私放大，都通过公共经典信道进行。这个经典信道的安全性至关重要。</p>
+<ul>
+<li><strong>认证协议的重要性</strong>：经典信道必须是<strong>认证的</strong>，即Alice和Bob必须确保他们正在与预期的对方通信，而不是与伪装成对方的Eve通信。如果Eve能够成功地冒充Alice或Bob，她就可以进行中间人攻击（Man-in-the-Middle Attack），完全控制密钥协商过程。
+<ul>
+<li><strong>认证密钥的预共享或QKD生成</strong>：认证通常需要一个预共享的短期安全密钥（或长期密钥），例如使用消息认证码（MAC）或数字签名。这个认证密钥的来源和管理是一个核心问题。如果认证密钥被泄露，QKD系统的整个安全性将失效。这形成了一个“鸡生蛋，蛋生鸡”的问题：我们需要一个安全密钥来认证，而QKD正是为了生成安全密钥。通常的解决方案是使用一个非常短的预共享密钥（“认证种子密钥”），然后通过QKD生成的密钥来更新和扩展这个认证密钥。</li>
+<li><strong>拒绝服务攻击（Denial-of-Service, DoS）</strong>：即使无法窃取密钥，Eve也可以通过阻塞经典信道或量子信道来阻止密钥生成，从而发起DoS攻击。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2-3-后处理协议缺陷">3.2.3 后处理协议缺陷</h4>
+<p>QKD后处理包括错误校正和隐私放大，这两个步骤也可能引入漏洞。</p>
+<ul>
+<li>
+<p><strong>错误校正：信息泄露</strong>：</p>
+<ul>
+<li>在错误校正过程中，Alice和Bob会交换冗余信息来纠正比特错误。这些冗余信息不可避免地会泄露一部分关于最终密钥的信息给Eve。</li>
+<li><strong>泄露容忍度</strong>：错误校正协议的设计需要最小化泄露的信息量。如果泄露的信息过多，即使通过隐私放大也无法弥补，最终的密钥就不安全。例如，早期的BB84协议错误校正算法可能泄露过多信息，攻击者可以利用这些泄露信息来提高破解密钥的概率。</li>
+<li><strong>对策</strong>：采用信息效率更高的错误校正码（如LDPC码）和协议（如级联协议），并精确计算错误校正过程中的信息泄露量。</li>
+</ul>
+</li>
+<li>
+<p><strong>隐私放大：随机性要求、哈希函数选择</strong>：</p>
+<ul>
+<li>隐私放大的核心是使用一个强哈希函数将长密钥压缩成短密钥，从而消除Eve可能掌握的信息。</li>
+<li><strong>随机性要求</strong>：哈希函数的选择必须是公开的、均匀随机的，并且不能被Eve预测。如果哈希函数选择不当或其随机性不足，隐私放大效果将大打折扣。</li>
+<li><strong>重复使用经典认证密钥的风险</strong>：某些QKD实现可能重复使用QKD生成的密钥来进行后续的认证。如果密钥泄露，攻击者可以利用旧密钥来伪造认证信息，进而攻击新的密钥协商。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-3-实际攻击案例分析">3.3 实际攻击案例分析</h3>
+<p>理论漏洞只有通过实际的攻击演示才能得到充分验证和理解。以下是一些著名的QKD系统实际攻击案例，它们揭示了QKD系统从实验室走向商业化过程中所面临的严峻挑战。</p>
+<ul>
+<li>
+<p><strong>瑞典马尔默大学的亮光攻击（2007）</strong>：</p>
+<ul>
+<li><strong>目标系统</strong>：ID Quantique公司的第一个商用QKD系统。</li>
+<li><strong>漏洞利用</strong>：该系统使用了雪崩光电二极管（APD）作为单光子探测器。研究者发现，当APD受到足够强的连续激光照射时，它会从单光子计数模式（盖革模式）进入线性模式，其输出电信号的幅度与入射光强度成正比，并且对偏振敏感。</li>
+<li><strong>攻击过程</strong>：Eve首先向Bob的APD发射一个强烈的CW激光致盲探测器，使其进入线性模式。然后，Eve再向被致盲的APD发送她自己的弱相干光脉冲，其偏振与Alice发送的原始偏振一致（Eve通过中间人攻击获取）。由于APD现在处于线性模式，Eve可以通过调整她发送的弱脉冲的偏振和强度，使得Bob的两个探测器（对应0和1）能够产生她预期的点击模式，从而完全获取密钥。</li>
+<li><strong>结果</strong>：Eve在不被发现（QBER正常）的情况下，窃取了全部密钥信息。这次攻击震惊了QKD领域，促使人们开始重新审视QKD的实际安全性。</li>
+</ul>
+</li>
+<li>
+<p><strong>中国科技大学的旁路攻击（2010）</strong>：</p>
+<ul>
+<li><strong>目标系统</strong>：一个基于偏振编码的QKD系统。</li>
+<li><strong>漏洞利用</strong>：这个系统中使用了一个非理想的偏振光束分离器（PBS）。理想的PBS应该能将光子完全地分离到两个输出端口，分别对应水平和垂直偏振。但现实中，PBS的消光比是有限的，这意味着即使是垂直偏振的光子也可能有一小部分能量泄漏到水平偏振的端口，反之亦然。</li>
+<li><strong>攻击过程</strong>：Alice发送的是弱光脉冲。Eve发送一个高功率的脉冲，其偏振方向与Alice发送的相同。当这个高功率脉冲到达Bob的PBS时，大部分能量被阻挡或导向正确的探测器，但由于PBS的非理想消光比，有一小部分能量会“泄漏”到另一个本不应有信号的端口，并触发那里的探测器。通过精确控制Eve发送的光子的强度，她可以确保只有泄漏的部分能量足以触发探测器，从而欺骗Bob，让他错误地认为他收到了一个具有不同偏振的光子。Eve通过这种方式控制Bob的测量结果。</li>
+<li><strong>结果</strong>：Eve能够以极低的QBER获取密钥。</li>
+</ul>
+</li>
+<li>
+<p><strong>中国科技大学的时间位移攻击（2011）</strong>：</p>
+<ul>
+<li><strong>目标系统</strong>：一个基于相位编码的QKD系统，其中Bob使用两个探测器来区分相位。</li>
+<li><strong>漏洞利用</strong>：该攻击利用了QKD系统中两个探测器（通常对应0和1）在响应时间上的微小差异。这些差异可能源于探测器本身的固有特性，也可能源于系统校准的不完善。</li>
+<li><strong>攻击过程</strong>：Eve在截获Alice的光子后，不测量其相位，而是根据Alice发送的比特值，稍微调整光子的到达时间，使其能够更有效地触发Bob的某个特定探测器（例如，对应比特0的探测器或对应比特1的探测器）。通过精确控制到达时间，Eve可以“引导”光子到她希望触发的探测器，从而控制Bob的测量结果，进而获取密钥。</li>
+<li><strong>结果</strong>：攻击者在QBER非常低的情况下获取了密钥，甚至在一些情况下可以实现无错窃听。</li>
+</ul>
+</li>
+<li>
+<p><strong>南京大学的相位重新映射攻击（Phase Re-mapping Attack）</strong>：</p>
+<ul>
+<li><strong>目标系统</strong>：基于相位编码的QKD系统。</li>
+<li><strong>漏洞利用</strong>：一些相位编码QKD系统通过相位调制器来编码信息。攻击者发现，通过向相位调制器注入不同强度的光，可以导致调制器的相位响应发生非线性变化。</li>
+<li><strong>攻击过程</strong>：Eve可以向Alice的相位调制器注入一个强烈的辅助光脉冲。这个辅助脉冲与Alice的信号光脉冲在调制器内发生干涉，从而改变了信号光脉冲的实际相位。Eve可以控制辅助脉冲的相位和强度，从而改变Alice发送给Bob的信号光的相位，并以此来获取信息。</li>
+<li><strong>结果</strong>：攻击者可以在不显著增加QBER的情况下窃取密钥。</li>
+</ul>
+</li>
+</ul>
+<p>这些实际攻击案例充分说明了QKD系统在从理论走向实践过程中所面临的严峻挑战。它们不仅是简单的工程问题，更是对QKD安全性定义和证明的深刻反思。为了弥补这些漏洞，研究人员和工程师们不断提出新的协议、改进硬件设计，并开发更严格的安全审计方法。这些努力共同构成了提升QKD实际安全性的核心方向。</p>
+<hr>
+<h2 id="增强QKD实际安全性的方法">增强QKD实际安全性的方法</h2>
+<p>面对上述的理论与实践的鸿沟，QKD领域的研究人员和工程师们付出了巨大的努力来弥补这些漏洞，从而使QKD能够真正提供其所承诺的安全性。这些努力主要体现在协议层面的改进和系统层面的优化。</p>
+<h3 id="4-1-协议层面改进">4.1 协议层面改进</h3>
+<p>协议层面的改进旨在通过设计更智能的量子密钥分发协议，来消除或缓解由于非理想设备和信道引起的漏洞，或者提高密钥分发的效率和距离。</p>
+<h4 id="4-1-1-诱骗态协议-Decoy-State-QKD">4.1.1 诱骗态协议 (Decoy State QKD)</h4>
+<ul>
+<li>
+<p><strong>原理</strong>：正如在基础回顾中提到的，诱骗态协议是解决弱相干光源（WCS）多光子脉冲（MPP）导致的PNS攻击的核心方案。它的基本思想是，Alice在传输中不只使用一种平均光子数（信号态），而是随机地使用多种（通常是两种或三种）不同的平均光子数来发送光脉冲。这些额外的脉冲被称为“诱骗态”。</p>
+<ul>
+<li><strong>通常配置</strong>：
+<ul>
+<li><strong>信号态（Signal State）</strong>：具有较高的平均光子数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">\mu_s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">μ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>（例如，0.1-0.5个光子/脉冲），用于生成最终密钥。</li>
+<li><strong>诱骗态（Decoy State）</strong>：具有较低的平均光子数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">\mu_d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">μ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>（例如，0.01-0.05个光子/脉冲）。</li>
+<li><strong>真空态（Vacuum State）</strong>：不发送光子（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>v</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mu_v = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">μ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>），用于估计暗计数和Eve对空脉冲的攻击。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>工作机制</strong>：当Bob接收到光子后，他并不知道Alice发送的是哪种态。他像往常一样进行测量。之后，Alice通过公开信道公布每个脉冲实际是哪种态。通过比较不同强度脉冲的响应率和QBER，Alice和Bob可以根据泊松分布的特性，精确地估计出每种光子数（尤其是单光子脉冲）在量子信道上的真实损耗和误码率。<br>
+例如，他们可以利用信号态、诱骗态和真空态的统计结果，通过求解线性方程组，来推算出在所有被Bob接收到的脉冲中，哪些是真正的单光子脉冲（Eve无法通过PNS攻击获取信息），从而计算出安全的密钥率。<br>
+其核心数学推导涉及到计算单光子脉冲的增益 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">Y_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 和误码率 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">e_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，以及其他多光子脉冲和真空态的相应值。例如，对于信号态，Bob的总增益 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>μ</mi></msub></mrow><annotation encoding="application/x-tex">Y_{\mu}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">μ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>（即Bob成功探测到的脉冲比例）可以写成：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>Y</mi><mi>μ</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mi mathvariant="normal">∞</mi></munderover><mfrac><mrow><msup><mi>e</mi><mrow><mo>−</mo><mi>μ</mi></mrow></msup><msup><mi>μ</mi><mi>n</mi></msup></mrow><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow></mfrac><msub><mi>Y</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">Y_{\mu} = \sum_{n=0}^{\infty} \frac{e^{-\mu}\mu^n}{n!} Y_n
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">μ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9185em;vertical-align:-1.2671em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8829em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∞</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2671em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4483em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">μ</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">μ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">Y_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个光子脉冲被Bob成功探测到的条件概率。通过不同 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span> 值的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>μ</mi></msub></mrow><annotation encoding="application/x-tex">Y_{\mu}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">μ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mi>μ</mi></msub></mrow><annotation encoding="application/x-tex">e_{\mu}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7167em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">μ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>（误码率）的测量值，可以估计出 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>Y</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>Y</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">Y_0, Y_1, Y_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 等，进而推导出安全密钥率的下限。</p>
+</li>
+<li>
+<p><strong>效果</strong>：诱骗态协议有效地堵塞了PNS攻击的漏洞，使得即使使用WCS，也能在实际系统中实现渐近无条件的安全性，极大地提高了QKD的实用性和安全性。目前，诱骗态协议已成为几乎所有实用QKD系统的标配。</p>
+</li>
+</ul>
+<h4 id="4-1-2-测量设备无关QKD-MDI-QKD">4.1.2 测量设备无关QKD (MDI-QKD)</h4>
+<ul>
+<li><strong>核心思想</strong>：MDI-QKD的设计初衷是为了彻底解决QKD系统中最大的漏洞之一——探测器侧信道攻击（如亮光攻击、时间位移攻击等）。它的创新之处在于将所有敏感的测量设备（探测器）从Alice和Bob手中移交给一个不可信的第三方（Eve自己或一个中立的测量站）。</li>
+<li><strong>协议流程</strong>：
+<ol>
+<li>Alice和Bob各自准备光子（例如，BB84协议中的四种偏振态），并将其发送到中间的不可信测量站（Untrusted Measurement Station, UMS）。</li>
+<li>UMS接收到Alice和Bob的光子后，对它们进行一个贝尔态测量（Bell State Measurement, BSM）。BSM是一种特殊的测量，它可以判断两个光子是否处于某种纠缠状态，并且其结果与两个输入光子的相对状态有关。</li>
+<li>UMS通过公开信道公布BSM的结果（例如，成功测量到哪个贝尔态）。</li>
+<li>Alice和Bob根据UMS公布的测量结果，以及他们自己发送的原始态，推断出他们共享的密钥比特。UMS本身并不能直接知道密钥。</li>
+</ol>
+</li>
+<li><strong>如何抵抗探测器侧信道攻击</strong>：在MDI-QKD中，UMS的探测器即使存在漏洞，被Eve完全控制，Eve也只能通过探测器获得关于Alice和Bob光子相对状态的信息，而无法直接得知Alice和Bob各自的秘密信息。Eve无论如何攻击UMS的探测器，都只会导致密钥生成失败（即DoS攻击），而无法获取密钥信息。</li>
+<li><strong>密钥率劣势</strong>：MDI-QKD的优点是安全性大幅提升，但缺点是系统复杂性更高，且由于需要进行贝尔态测量（通常效率较低），其密钥率通常低于同等距离下的传统QKD协议。然而，其安全性优势使得MDI-QKD成为构建长距离、高安全QKD网络的重要基础。</li>
+</ul>
+<h4 id="4-1-3-双场QKD-TF-QKD">4.1.3 双场QKD (TF-QKD)</h4>
+<ul>
+<li><strong>核心思想</strong>：TF-QKD是近年来提出的一种革新性协议，旨在突破传统QKD密钥率随距离指数下降的瓶颈，实现更长的传输距离和更高的密钥率。传统QKD的密钥率 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>∝</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>α</mi><mi>L</mi></mrow></msup></mrow><annotation encoding="application/x-tex">R \propto e^{-\alpha L}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">αL</span></span></span></span></span></span></span></span></span></span></span></span>（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span> 是信道损耗系数），而TF-QKD的密钥率理论上可以达到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>∝</mo><msqrt><mi>α</mi></msqrt><msup><mi>L</mi><mrow><mo>−</mo><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup></mrow><annotation encoding="application/x-tex">R \propto \sqrt{\alpha} L^{-1/2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1277em;vertical-align:-0.2397em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2397em;"><span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1/2</span></span></span></span></span></span></span></span></span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>∝</mo><mi>α</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">R \propto \alpha L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">αL</span></span></span></span> （在一些变体中），显著提升了长距离性能。</li>
+<li><strong>工作机制</strong>：TF-QKD结合了MDI-QKD和诱骗态的思想，但其关键创新在于利用单光子干涉。Alice和Bob各自发送弱相干光脉冲到一个不可信的中间站点。这个中间站点不进行贝尔态测量，而是执行一个干涉测量。Alice和Bob通过相位调制，将自己的密钥信息编码在他们发送的光子的相位中。中间站点的干涉仪会测量两个光子到达时的相位差。<br>
+通过这种方式，TF-QKD的性能不再直接依赖于光子的单个传输损耗，而是依赖于两个光子到达中间站点的相对相位。这使得其对距离的依赖性大大降低。</li>
+<li><strong>克服距离限制的机制</strong>：TF-QKD的核心在于，它不再要求Alice和Bob之间的单个光子传输效率很高，而是只要两个光子在中间站能够成功干涉即可。即使单个光子在长距离传输中损耗严重，但只要有足够的脉冲，总会有一些脉冲对能够到达中间站并发生干涉。这种机制使得密钥率衰减从指数级降为多项式级，从而极大地拓展了QKD的传输距离。</li>
+<li><strong>对相位噪声的敏感性</strong>：TF-QKD对相位稳定性要求极高，任何相位抖动或漂移都会引入QBER。因此，实现长距离TF-QKD需要极其精密的相位参考和补偿技术。</li>
+</ul>
+<h3 id="4-2-系统层面改进">4.2 系统层面改进</h3>
+<p>除了协议创新，系统硬件和工程实现上的优化同样是提升QKD实际安全性的关键。</p>
+<h4 id="4-2-1-优化硬件设计">4.2.1 优化硬件设计</h4>
+<ul>
+<li><strong>超导单光子探测器（SSPD）</strong>：SSPD具有超高的探测效率（可达90%以上）、极低的暗计数和非常短的死区时间，性能远超传统的APD。采用SSPD可以显著提升QKD系统的密钥率和传输距离，并且由于其固有的低暗计数和高效率，可以降低一些侧信道攻击的风险。然而，SSPD需要极低温（液氦温度）操作，成本高昂，集成复杂，目前主要用于科研和高端应用。</li>
+<li><strong>集成光子芯片</strong>：将QKD系统的核心光学元件（光源、调制器、分束器、探测器等）集成到一块小小的硅基或铌酸锂芯片上，可以大幅减小系统体积、重量和成本，并提高系统的稳定性和可靠性。芯片化QKD可以减少外部环境干扰，降低光路对准难度，并可能消除一些由于离散元件连接而产生的侧信道。</li>
+<li><strong>更稳定的偏振/相位编码</strong>：设计更稳定、更抗干扰的编码方案，并结合主动补偿技术（如偏振补偿器、相位锁定环路），以应对光纤中的偏振漂移和相位噪声。例如，采用时移编码（Time-bin encoding）可以减少对偏振稳定性的依赖。</li>
+<li><strong>硬件随机数生成器（TRNG）</strong>：QKD协议的安全性依赖于Alice和Bob的真随机数选择（例如，基选择和比特生成）。使用经过认证的、高质量的TRNG可以确保随机性的可靠性，避免因伪随机数或可预测的随机数导致密钥泄露。</li>
+</ul>
+<h4 id="4-2-2-认证机制增强">4.2.2 认证机制增强</h4>
+<ul>
+<li><strong>一次性认证密钥的使用</strong>：在经典信道认证中，理想情况下应该使用一次性认证密钥（One-Time Pad for Authentication）。这意味着每次认证都使用一个新的、从QKD生成的密钥段进行。这样即使过去的认证密钥被窃取，也无法用来伪造未来的认证。</li>
+<li><strong>更强的认证算法</strong>：使用基于成熟密码学算法（如HMAC-SHA256、基于椭圆曲线数字签名ECDSA）的认证方案，并确保认证密钥的足够长度，以抵御经典计算攻击。</li>
+<li><strong>密钥管理基础设施（KMI）的集成</strong>：将QKD系统与现有的KMI或PKI（公钥基础设施）集成，可以实现对认证密钥的有效管理、分发和轮换。</li>
+</ul>
+<h4 id="4-2-3-实时监控与异常检测">4.2.3 实时监控与异常检测</h4>
+<ul>
+<li><strong>QBER实时监控</strong>：QBER是QKD系统安全性的核心指标。实时监控QBER的变化，一旦QBER超过预设阈值，立即停止密钥生成，并触发告警机制，防止潜在的窃听行为。</li>
+<li><strong>设备参数（光强、时序）监控</strong>：在系统内部，对光源的平均光子数、探测器的计数率、光脉冲的到达时间、系统时钟同步精度等关键物理参数进行实时、高精度的监控。任何异常的波动都可能预示着攻击。例如，亮光攻击会导致探测器计数率异常升高，时间位移攻击可能改变脉冲到达时间分布。</li>
+<li><strong>异常行为分析</strong>：结合机器学习和数据分析技术，对QKD系统运行过程中的大量数据进行分析，识别出潜在的异常模式和攻击行为，提高攻击检测的灵敏度。</li>
+</ul>
+<h3 id="4-3-量子网络与密钥管理">4.3 量子网络与密钥管理</h3>
+<p>QKD的最终目标是构建安全的量子通信网络。这涉及到更复杂的挑战。</p>
+<ul>
+<li><strong>QKD网络架构</strong>：
+<ul>
+<li><strong>点对点</strong>：最简单的形式，Alice和Bob直接相连。</li>
+<li><strong>信任中继（Trusted Relay）网络</strong>：为了扩展距离，QKD可以在多个节点之间进行，每个中间节点都是一个“信任中继”，它接收前一个节点的密钥，解密，再用新生成的密钥加密后发送给下一个节点。这种方式可以实现长距离密钥分发，但安全性依赖于中继节点的物理安全，如果中继节点被攻破，则整个链条的安全性将失效。</li>
+<li><strong>星型/环型网络</strong>：将多个QKD链路连接起来，形成更复杂的拓扑结构，实现多用户密钥分发。</li>
+</ul>
+</li>
+<li><strong>密钥管理基础设施（KMI）与QKD的结合</strong>：QKD只解决了密钥分发问题。如何存储、使用、撤销和更新这些密钥，需要一个完善的密钥管理系统。QKD可以作为KMI的核心组件，为其他加密应用提供高安全性的密钥。</li>
+<li><strong>量子中继的挑战与展望</strong>：为了实现真正意义上的全球量子通信网络，摆脱信任中继的束缚，需要发展“量子中继”（Quantum Repeater）。量子中继利用量子纠缠交换和纠缠提纯技术，可以将密钥分发距离扩展到任意远，而无需在中间节点进行测量和重发，从而保持端到端的量子安全性。量子中继是量子互联网的关键技术，目前仍处于研发阶段，距离实用化尚远。</li>
+</ul>
+<p>通过上述协议和系统层面的持续改进，QKD的实际安全性正在逐步接近其理论承诺，使其成为未来信息安全体系中不可或缺的一部分。</p>
+<hr>
+<h2 id="QKD的标准化、部署与未来展望">QKD的标准化、部署与未来展望</h2>
+<p>量子密钥分发从诞生至今已经历了数十年的发展，从实验室概念走向了初步的商业化和实际部署。这一过程中，标准化、互操作性以及与现有基础设施的融合，都成为其走向大规模应用的关键。</p>
+<h3 id="5-1-标准化进展">5.1 标准化进展</h3>
+<p>任何一项新兴技术要得到广泛应用，都离不开一套统一的国际标准，以确保不同厂商设备之间的兼容性、互操作性以及安全性。QKD的标准化工作正在全球范围内积极推进。</p>
+<ul>
+<li><strong>ETSI ISG QKD（欧洲电信标准化协会 量子密钥分发产业规范组）</strong>：这是QKD领域最重要的标准化组织之一，发布了一系列关于QKD系统架构、协议规范、安全性评估以及测试方法的技术报告和规范。其工作覆盖了QKD的各个层面，旨在推动QKD的商业化应用。</li>
+<li><strong>ITU-T（国际电信联盟电信标准化部门）</strong>：ITU-T正在研究QKD在电信网络中的应用，并制定相关建议。例如，SG17（安全）和SG13（未来网络）等研究组都涉及QKD相关议题。</li>
+<li><strong>ISO/IEC（国际标准化组织/国际电工委员会）</strong>：ISO/IEC JTC 1/SC 27（信息安全、网络安全和隐私保护）也启动了QKD相关标准的制定，例如SC 27/WG 3 负责密码学相关标准，可能包括QKD的密码学方面。</li>
+<li><strong>国内标准</strong>：中国在QKD领域的研究和部署处于世界领先地位，也积极推进国家和行业标准的制定，例如中国密码学会、中国通信标准化协会等都在发布相关标准和规范，以支持QKD的产业发展。</li>
+</ul>
+<p><strong>互操作性挑战</strong>：尽管标准化工作正在进行，但不同QKD设备之间实现真正的“即插即用”的互操作性仍然是一个挑战。这涉及到不同编码方式、不同脉冲频率、不同光子数设置、以及后处理算法的兼容性问题。标准化将有助于解决这些问题，确保QKD系统能够像经典网络设备一样互联互通。</p>
+<h3 id="5-2-实际部署现状与挑战">5.2 实际部署现状与挑战</h3>
+<p>近年来，全球范围内涌现出多个QKD网络的实际部署案例，预示着QKD正从科研走向应用。</p>
+<ul>
+<li>
+<p><strong>全球QKD网络建设</strong>：</p>
+<ul>
+<li><strong>中国“京沪干线”</strong>：这是全球最长的商用QKD干线，连接了北京和上海，全长超过2000公里，沿线部署了32个信任中继站。它提供了一系列安全应用，包括视频会议、语音通信和文件传输。基于“京沪干线”，中国构建了天地一体化广域量子通信网络，实现了北京到奥地利维也纳的洲际量子保密通信。</li>
+<li><strong>欧盟QKD网络（EuroQCI）</strong>：欧盟正计划构建一个覆盖整个欧洲的量子通信基础设施（EuroQCI），旨在保护关键基础设施和敏感信息。</li>
+<li><strong>韩国、日本、美国等</strong>：其他国家也在积极建设各自的QKD网络，如韩国的KT QKD网络、日本的东芝QKD网络、以及美国的多个科研和政府项目。</li>
+</ul>
+</li>
+<li>
+<p><strong>实际部署的挑战</strong>：</p>
+<ul>
+<li><strong>成本</strong>：目前的QKD设备仍然相对昂贵，限制了其大规模商业部署。</li>
+<li><strong>体积</strong>：设备通常较大，需要专门的机房和维护人员。小型化、芯片化是未来的发展趋势。</li>
+<li><strong>环境适应性</strong>：QKD设备对温度、湿度、振动等环境因素敏感，需要稳定的工作环境。在复杂多变的环境中部署和维护是挑战。</li>
+<li><strong>与现有基础设施的兼容性</strong>：QKD系统通常需要专用的光纤，与现有经典光纤网络的融合存在挑战（例如，QKD光子信号与经典通信信号在同一光纤中传输可能存在干扰）。波分复用（WDM）技术被用于在同一光纤中承载QKD和经典数据，但这需要精细的工程设计以避免量子信号被经典光污染。</li>
+<li><strong>密钥管理和应用集成</strong>：QKD生成的密钥需要安全地集成到现有的IT安全架构中，并被各种应用程序（如IPSec VPN、TLS/SSL）调用。这需要开发统一的接口和密钥管理协议。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-3-量子密钥分发的哲学意义">5.3 量子密钥分发的哲学意义</h3>
+<p>QKD的出现，引发了对密码学“安全性”定义的深刻思考。</p>
+<ul>
+<li><strong>绝对安全与相对安全</strong>：经典密码学提供的是“计算安全性”，本质上是相对安全，依赖于计算困难问题的存在，且随着计算能力的发展可能被攻破。而QKD理论上提供的是“信息论安全性”，是基于物理定律的绝对安全，它不受计算能力提升的影响。这种“绝对”是QKD的魅力所在。</li>
+<li><strong>物理定律作为安全保证</strong>：QKD将密码学的基石从数学难题转移到了物理定律。这意味着只要量子力学是正确的，QKD就能够保证其安全性。这是一种前所未有的安全范式。</li>
+<li><strong>并非银弹</strong>：然而，我们必须清醒地认识到，即使是QKD也并非万能的“银弹”。它主要解决的是密钥分发问题。加密算法本身的安全性（例如，对称加密算法AES），以及认证、完整性等其他安全需求，仍需依赖于经典密码学或其他机制。同时，正如本文所强调的，实际QKD系统中的工程缺陷和侧信道漏洞，可能使其理论上的“绝对安全”在实践中打折扣。因此，QKD是未来密码体系的重要组成部分，而不是唯一组成部分。</li>
+</ul>
+<h3 id="5-4-QKD的未来发展趋势">5.4 QKD的未来发展趋势</h3>
+<p>QKD技术仍在快速发展，未来有望在多个方向取得突破。</p>
+<ul>
+<li><strong>芯片化、小型化</strong>：集成光子芯片技术将是未来的重要方向。通过将QKD系统微型化，降低成本，使其能够部署在各种终端设备上，例如智能手机、物联网设备，甚至嵌入到日常通信芯片中。</li>
+<li><strong>卫星QKD</strong>：地基QKD受限于光纤损耗，传输距离有限。卫星QKD通过将量子信道延伸到太空，可以克服地球曲率和大气损耗，实现全球范围内的量子密钥分发。中国已经成功发射了“墨子号”量子科学实验卫星，并实现了星地量子密钥分发和洲际量子视频通话。未来将有更多卫星QKD项目。</li>
+<li><strong>量子互联网</strong>：最终目标是构建一个全球性的量子互联网，不仅仅能够分发密钥，还能传输量子信息、构建量子传感器网络，实现分布式量子计算。这将需要量子中继、量子存储器等一系列前沿技术的成熟。</li>
+<li><strong>后量子密码学（PQC）的协同作用</strong>：后量子密码学（Post-Quantum Cryptography, PQC）是基于经典数学难题，但被认为能够抵抗量子计算机攻击的密码算法。PQC和QKD并非竞争关系，而是互补的。QKD提供信息论安全的密钥分发，但成本高昂、部署复杂；PQC则在经典计算平台上运行，效率高、易于部署。在未来，QKD和PQC很可能协同工作，形成一个混合（Hybrid）密码体系，以应对不同安全需求和部署场景。例如，QKD可以用来分发PQC算法的根密钥，或为最敏感的应用提供极致安全保障。</li>
+</ul>
+<hr>
+<h2 id="结论">结论</h2>
+<p>在数字时代，信息安全是永恒的追求，而量子计算的兴起，无疑为这一追求带来了前所未有的挑战。量子密钥分发（QKD）以其独特的“信息论安全性”承诺，为我们描绘了一幅即使在量子时代也能确保信息安全的蓝图。它基于量子物理定律，原则上可以抵御任何拥有无限计算能力的攻击者，包括未来的通用量子计算机。</p>
+<p>然而，从实验室的理论完美走向现实世界的工程应用，QKD不可避免地遭遇了严峻的“实际安全性”挑战。非理想的光源、效率低下且易受攻击的探测器、复杂的量子信道以及辅助经典系统中的各种漏洞，都可能成为精明窃听者利用的侧信道。亮光攻击、时间位移攻击、旁路攻击等真实案例，无情地揭示了理论与实践之间的鸿沟。这些并非QKD理论本身的缺陷，而是源于其物理实现中的不完善性。</p>
+<p>幸运的是，QKD领域的研究人员和工程师们从未止步。通过创新的协议设计，如诱骗态协议有效缓解了PNS攻击，测量设备无关QKD（MDI-QKD）彻底消除了探测器侧信道威胁，以及双场QKD（TF-QKD）大幅提升了传输距离和密钥率。同时，硬件层面的改进，如高性能的超导单光子探测器和集成光子芯片，以及系统层面的安全加固（如强化认证、实时监控），都在不断缩小这种差距。</p>
+<p>QKD并非密码学的“银弹”，它主要解决的是密钥分发问题，而加密算法本身的强度、密钥管理、身份认证等其他安全要素仍需由完善的经典密码学和安全工程来支撑。未来，我们很可能看到QKD与后量子密码学（PQC）协同工作，共同构建一个更为健壮、多层次的量子安全防御体系。</p>
+<p>今天的QKD，已经从深奥的物理概念，逐步走进了通信网络和实际应用。尽管仍面临成本、体积、互操作性等挑战，但全球范围内的QKD网络建设、标准化推进以及持续的技术创新，都预示着其广阔的前景。它提醒我们，密码学的安全始终是一个动态演进的过程，需要理论的深度、实践的严谨和持续的创新精神。理解QKD的实际安全性，不仅仅是为了掌握一项前沿技术，更是为了更好地把握未来信息安全发展的脉搏，并为我们的数字世界铸造更坚固的盾牌。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/25/2025-07-25-194708/">https://qmwneb946.dpdns.org/2025/07/25/2025-07-25-194708/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E6%8A%80%E6%9C%AF/">技术</a><a class="post-meta__tags" href="/tags/%E9%87%8F%E5%AD%90%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E7%9A%84%E5%AE%9E%E9%99%85%E5%AE%89%E5%85%A8%E6%80%A7/">量子密钥分发的实际安全性</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/25/2025-07-25-194837/" title="图的结构性质与算法：从理论到实践的深度探索"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">图的结构性质与算法：从理论到实践的深度探索</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的老朋友qmwneb946。今天，我们要一起踏上一段探索之旅，深入图论的奇妙世界。图，这个看似简单的数学结构，却蕴含着解决世间万物的无限可能。从社交网络的朋友关系，到交通系统的道路规划；从计算机芯片的设计，到生物基因的互作网络，图无处不在，它以其独特的结构描述着复杂系统，并通过精妙的算法揭示隐藏的规律。 这不仅仅是一篇关于图论基础知识的罗列，更是一次对图的结构性质及其支撑的强大算法的深度解剖。我们将从最基本的概念出发，逐步深入到连通性、最短路径、最小生成树、网络流、匹配、着色等核心问题，并触及图的分解、聚类乃至新兴的图嵌入技术。我的目标是，让你不仅理解“是什么”，更能洞察“为什么”和“如何用”。 准备好了吗？让我们一起走进这个由点和线构筑的抽象而又充满活力的世界。 引言：抽象世界的具象描述 当我们谈论“图”（Graph）时，我们通常指的是一个由顶点（Vertices，或称节点/Nodes）和边（Edges）组成的集合。每条边连接着一对顶点。这个简单的定义，却足以建模现实世界中几乎所有的关系和连接。 想象一下，你和你的朋友们构成了一个社交网络。你们每个人都是一个顶点...</div></div></div></a><a class="pagination-related" href="/2025/07/25/2025-07-25-193726/" title="金融市场的系统性风险：深渊边缘的舞步与理性之光"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">金融市场的系统性风险：深渊边缘的舞步与理性之光</div></div><div class="info-2"><div class="info-item-1">在高速发展的现代社会，金融市场如同一个庞大而复杂的生命体，它承载着全球经济的血脉，驱动着创新与增长。然而，在这看似高效有序的表象之下，潜藏着一种能够瞬间摧毁数十载财富积累、让经济陷入停滞的幽灵——系统性风险。对于技术和数学爱好者而言，理解系统性风险不仅仅是学习经济学概念，更是一次深入探索复杂系统、网络理论、统计建模与优化控制的绝佳机会。本文将以技术视角，剖析系统性风险的本质、来源、传导机制，并探讨如何运用数学和计算工具对其进行量化、预测与管理。 引言：金融的黑天鹅与蝴蝶效应 2008年全球金融危机，一个曾被认为是“百年一遇”的事件，让“系统性风险”这个词汇从专业术语走向了大众视野。雷曼兄弟的破产，如同多米诺骨牌的第一张，迅速引发了全球金融体系的连锁反应，信贷市场冻结，经济陷入衰退，无数家庭财富蒸发。这不仅仅是几家金融机构的倒闭，而是整个系统在特定冲击下失去了功能。系统性风险，并非单一机构或单一市场的失灵，而是指由于某个冲击导致金融系统内广泛的机构失灵，或导致关键市场功能丧失，从而对实体经济造成严重负面影响的风险。 其核心特征在于“传染性”和“非线性”。一个看似微小的局部震动，在高...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082448/" title="数据挖掘在金融风控的应用：从算法到实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">数据挖掘在金融风控的应用：从算法到实践</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术博主，今天我们来深入探讨一个与我们日常生活息息相关，却又充满技术挑战的领域：金融风控。在这个领域中，数据挖掘技术发挥着越来越重要的作用，它帮助金融机构有效识别和管理风险，保障金融体系的稳定运行。本文将从多个角度深入探讨数据挖掘在金融风控中的应用，并结合实际案例进行分析。 数据挖掘在金融风控中的关键作用 金融风控的目标是识别、评估和控制各种金融风险，例如信用风险、欺诈风险、操作风险等。传统的风控方法往往依赖于人工审核和简单的统计模型，效率低、准确率不高。而数据挖掘技术的出现，为金融风控带来了革命性的变革。它能够从海量数据中提取有价值的信息，建立更精确的风险模型，从而提高风控效率和准确性。 具体来说，数据挖掘在金融风控中主要发挥以下作用： 欺诈检测 欺诈行为日益猖獗，给金融机构造成巨大的经济损失。数据挖掘技术，特别是异常检测算法，能够有效识别出可疑交易行为。例如，基于机器学习的异常检测模型可以学习正常交易的模式，然后识别偏离该模式的异常交易，从而有效识别潜在的欺诈行为。常用的算法包括：  孤立森林 (Isolation Forest): 通过随机分割数据来隔离异...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082509/" title="虚拟现实技术的沉浸式体验：从感知到认知"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">虚拟现实技术的沉浸式体验：从感知到认知</div></div><div class="info-2"><div class="info-item-1">虚拟现实（VR）技术不再是科幻小说中的幻想，它已经逐渐融入我们的生活，并正在深刻地改变着我们与世界互动的方式。本文将深入探讨VR技术的沉浸式体验，从技术原理到感知机制，再到其潜在的应用和未来发展方向，为技术爱好者提供一个全面的视角。 沉浸式体验的奥秘：技术层面 VR技术能够创造出令人信服的沉浸式体验，这依赖于多项关键技术的协同作用。 显示技术与图像渲染 高质量的图像渲染是VR体验的关键。高分辨率、高刷新率的显示器能够有效减少画面延迟和模糊感，提升视觉舒适度。目前主流的VR头显大多采用OLED或LCD屏幕，并通过透镜系统将图像投射到用户的视网膜上，模拟真实世界的视觉体验。  为了实现更广阔的视野（FOV），厂商们也在不断改进透镜设计和显示面板技术。 空间音频技术 除了视觉，听觉在构建沉浸式环境中也扮演着至关重要的角色。空间音频技术通过模拟声音在三维空间中的传播，让用户能够准确感知声音的方位和距离，增强临场感。例如，头部追踪技术配合精密的算法，可以根据用户头部姿态实时调整声音的输出，使声音效果更加逼真。 追踪技术与交互方式 精确的追踪技术是VR体验流畅的关键。目前常用的追踪技术包括：...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082730/" title="有机合成中的手性催化技术：构建分子世界的精巧艺术"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">有机合成中的手性催化技术：构建分子世界的精巧艺术</div></div><div class="info-2"><div class="info-item-1">有机合成，这门将简单的化学物质转化为复杂分子的艺术，正因手性分子的存在而变得更加精妙和挑战性。手性分子如同左右手一样，结构互为镜像，但性质却可能大相径庭。在药物研发、材料科学等领域，获得特定手性的分子至关重要，而手性催化技术正是实现这一目标的关键。本文将深入探讨有机合成中的手性催化技术，揭示其背后的原理和应用。 手性与手性催化：从镜像到精准控制 手性，源于希腊语“cheir”（手），指的是分子不能与其镜像重合的特性。这种结构差异导致手性分子具有不同的物理性质和生物活性。例如，一种药物的左旋体可能具有疗效，而其右旋体则可能无效甚至有害。因此，精准控制手性合成至关重要。 手性催化技术利用手性催化剂来控制反应的立体选择性，即优先生成特定手性的产物。催化剂本身是手性的，它通过与反应物形成短暂的超分子复合物，影响反应路径，从而引导反应朝特定立体异构体方向进行。这就好比一个熟练的工匠，用巧妙的手法引导反应物“组装”成预期的分子结构。 手性催化剂的类型及作用机制 目前，广泛应用的手性催化剂主要包括： 过渡金属配合物催化剂 这类催化剂通常含有手性配体与过渡金属中心（如铑、钌、钯等）结合而成。配体...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082852/" title="光谱分析技术在环境监测的应用：从原理到实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">光谱分析技术在环境监测的应用：从原理到实践</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术博主 DataWhisperer！今天我们来聊一个既高大上又贴近生活的技术领域：光谱分析技术在环境监测中的应用。  这可不是简单的“看看颜色”就能搞定的，它背后蕴含着丰富的物理学、化学和数学原理，并且在保护我们的环境方面发挥着越来越重要的作用。 引言：光谱分析 – 环境监测的“火眼金睛” 环境监测的目标是及时、准确地获取环境污染物的信息，为环境保护和管理提供科学依据。传统监测方法往往费时费力，且灵敏度有限。而光谱分析技术，凭借其快速、灵敏、多组分同时检测等优点，成为了环境监测领域的一匹黑马。  它利用物质与电磁辐射相互作用的特性，分析物质的成分和结构，从而实现对环境污染物的精准识别和定量分析。 光谱分析技术的种类及原理 光谱分析技术涵盖多种方法，根据所用电磁波的波长范围不同，可以分为： 紫外-可见光谱法 (UV-Vis) UV-Vis 光谱法利用物质对紫外和可见光区域电磁波的吸收特性进行分析。  不同物质具有独特的吸收光谱，通过测量吸收光谱的特征峰，可以确定物质的种类和浓度。  这在水质监测中应用广泛，例如检测重金属离子、有机污染物等。  其原理基于朗伯-比...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082903/" title="计算化学模拟分子间相互作用：从经典力场到量子力学"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">计算化学模拟分子间相互作用：从经典力场到量子力学</div></div><div class="info-2"><div class="info-item-1">引言 分子间相互作用是化学和生物学领域的核心概念，它支配着物质的物理和化学性质，例如溶解度、沸点、蛋白质折叠等等。精确地模拟这些相互作用对于理解和预测分子行为至关重要。计算化学为我们提供了一套强大的工具来研究分子间相互作用，从经典的力场方法到复杂的量子力学计算，本文将深入探讨这些方法及其应用。 经典力场方法 经典力场方法基于牛顿力学，将分子简化为一系列原子，并通过经验参数化的势能函数来描述原子间的相互作用。这种方法计算效率高，适用于模拟大量的原子和分子，例如蛋白质、DNA和材料科学中的大分子体系。 势能函数 经典力场通常包含以下几种类型的相互作用项：  键伸缩 (Bond Stretching): 描述键长偏离平衡键长的能量变化，通常用谐振势能函数表示：Ebond=12kb(r−r0)2E_{bond} = \frac{1}{2}k_b(r - r_0)^2Ebond​=21​kb​(r−r0​)2，其中 kbk_bkb​ 是力常数，rrr 是键长，r0r_0r0​ 是平衡键长。 键角弯曲 (Angle Bending): 描述键角偏离平衡键角的能量变化，通常也用谐振势能函数表示...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082912/" title="绿色化学与可持续发展目标：技术与未来的融合"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">绿色化学与可持续发展目标：技术与未来的融合</div></div><div class="info-2"><div class="info-item-1">近年来，可持续发展已成为全球关注的焦点，联合国提出的17个可持续发展目标 (SDGs) 为全球共同努力提供了蓝图。其中，许多目标都与化学工业息息相关，而绿色化学作为一种旨在减少或消除有害物质使用的化学方法，扮演着至关重要的角色。本文将探讨绿色化学如何为实现可持续发展目标做出贡献，并从技术角度深入分析其应用。 绿色化学的十二原则：通向可持续未来的基石 绿色化学的核心是其十二项原则，这些原则指导着化学家的研究和工业生产，力求最大限度地减少环境影响。这些原则并非相互独立，而是相互关联，共同构成了一个整体的框架。 预防原则 这是绿色化学的首要原则，强调在化学反应的设计阶段就应避免产生有害物质，而非在产生后进行处理。这需要化学家们从根本上重新思考化学反应的设计和工艺流程。 原子经济性 理想情况下，所有反应物原子都应转化为最终产物，没有任何浪费。原子经济性是衡量化学反应效率的重要指标，其计算公式为： 原子经济性=目标产物的分子量所有反应物的分子量总和×100%原子经济性 = \frac{目标产物的分子量}{所有反应物的分子量总和} \times 100\%原子经济性=所有反应物的分子量总和目...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">1332</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1336</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8F%E5%AD%90%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%EF%BC%88QKD%EF%BC%89%E5%9F%BA%E7%A1%80%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">量子密钥分发（QKD）基础回顾</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E5%AD%A6%E4%B8%AD%E7%9A%84%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E9%9A%BE%E9%A2%98"><span class="toc-number">1.1.</span> <span class="toc-text">密码学中的密钥分发难题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8F%E5%AD%90%E5%8A%9B%E5%AD%A6%E5%9F%BA%E7%A1%80%E4%B8%8EQKD%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">量子力学基础与QKD原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%8F%E5%85%B8QKD%E5%8D%8F%E8%AE%AE%EF%BC%9ABB84"><span class="toc-number">1.3.</span> <span class="toc-text">经典QKD协议：BB84</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96QKD%E5%8D%8F%E8%AE%AE%E7%AE%80%E4%BB%8B"><span class="toc-number">1.4.</span> <span class="toc-text">其他QKD协议简介</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E5%AE%89%E5%85%A8%E6%80%A7%EF%BC%9AQKD%E7%9A%84%E5%9F%BA%E7%9F%B3"><span class="toc-number">2.</span> <span class="toc-text">理论安全性：QKD的基石</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%AE%89%E5%85%A8%E6%80%A7-Information-Theoretic-Security-ITS"><span class="toc-number">2.1.</span> <span class="toc-text">信息论安全性 (Information-Theoretic Security, ITS)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7%E8%AF%81%E6%98%8E%E6%A1%86%E6%9E%B6"><span class="toc-number">2.2.</span> <span class="toc-text">安全性证明框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E9%92%A5%E7%8E%87%E4%B8%8E%E8%B7%9D%E7%A6%BB"><span class="toc-number">2.3.</span> <span class="toc-text">密钥率与距离</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%AE%89%E5%85%A8%E6%80%A7%EF%BC%9A%E7%90%86%E8%AE%BA%E4%B8%8E%E5%AE%9E%E8%B7%B5%E7%9A%84%E9%B8%BF%E6%B2%9F"><span class="toc-number">3.</span> <span class="toc-text">实际安全性：理论与实践的鸿沟</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E6%83%B3%E4%B8%8E%E7%8E%B0%E5%AE%9E%E7%9A%84%E5%B7%AE%E8%B7%9D%EF%BC%9A%E8%AE%BE%E5%A4%87%E4%B8%8D%E5%AE%8C%E5%96%84%E6%80%A7"><span class="toc-number">3.1.</span> <span class="toc-text">理想与现实的差距：设备不完善性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-1-%E5%85%89%E6%BA%90%E9%9D%9E%E7%90%86%E6%83%B3%E6%80%A7"><span class="toc-number">3.1.1.</span> <span class="toc-text">3.1.1 光源非理想性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-2-%E6%8E%A2%E6%B5%8B%E5%99%A8%E9%9D%9E%E7%90%86%E6%83%B3%E6%80%A7"><span class="toc-number">3.1.2.</span> <span class="toc-text">3.1.2 探测器非理想性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-3-%E9%87%8F%E5%AD%90%E9%80%9A%E9%81%93%E9%9D%9E%E7%90%86%E6%83%B3%E6%80%A7"><span class="toc-number">3.1.3.</span> <span class="toc-text">3.1.3 量子通道非理想性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%BE%85%E5%8A%A9%E8%AE%BE%E5%A4%87%E4%B8%8E%E5%8D%8F%E8%AE%AE%E7%BC%BA%E9%99%B7"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 辅助设备与协议缺陷</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-1-%E5%81%8F%E6%8C%AF%E6%8E%A7%E5%88%B6%E5%99%A8%E3%80%81%E7%9B%B8%E4%BD%8D%E8%B0%83%E5%88%B6%E5%99%A8%E7%AD%89"><span class="toc-number">3.2.1.</span> <span class="toc-text">3.2.1 偏振控制器、相位调制器等</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-%E7%BB%8F%E5%85%B8%E8%BE%85%E5%8A%A9%E9%80%9A%E9%81%93%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7"><span class="toc-number">3.2.2.</span> <span class="toc-text">3.2.2 经典辅助通道的安全性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E5%90%8E%E5%A4%84%E7%90%86%E5%8D%8F%E8%AE%AE%E7%BC%BA%E9%99%B7"><span class="toc-number">3.2.3.</span> <span class="toc-text">3.2.3 后处理协议缺陷</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%AE%9E%E9%99%85%E6%94%BB%E5%87%BB%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 实际攻击案例分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%BC%BAQKD%E5%AE%9E%E9%99%85%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">增强QKD实际安全性的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%8D%8F%E8%AE%AE%E5%B1%82%E9%9D%A2%E6%94%B9%E8%BF%9B"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 协议层面改进</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-1-%E8%AF%B1%E9%AA%97%E6%80%81%E5%8D%8F%E8%AE%AE-Decoy-State-QKD"><span class="toc-number">4.1.1.</span> <span class="toc-text">4.1.1 诱骗态协议 (Decoy State QKD)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-2-%E6%B5%8B%E9%87%8F%E8%AE%BE%E5%A4%87%E6%97%A0%E5%85%B3QKD-MDI-QKD"><span class="toc-number">4.1.2.</span> <span class="toc-text">4.1.2 测量设备无关QKD (MDI-QKD)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-3-%E5%8F%8C%E5%9C%BAQKD-TF-QKD"><span class="toc-number">4.1.3.</span> <span class="toc-text">4.1.3 双场QKD (TF-QKD)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%B3%BB%E7%BB%9F%E5%B1%82%E9%9D%A2%E6%94%B9%E8%BF%9B"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 系统层面改进</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-1-%E4%BC%98%E5%8C%96%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1"><span class="toc-number">4.2.1.</span> <span class="toc-text">4.2.1 优化硬件设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-2-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E5%A2%9E%E5%BC%BA"><span class="toc-number">4.2.2.</span> <span class="toc-text">4.2.2 认证机制增强</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-3-%E5%AE%9E%E6%97%B6%E7%9B%91%E6%8E%A7%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">4.2.3.</span> <span class="toc-text">4.2.3 实时监控与异常检测</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E9%87%8F%E5%AD%90%E7%BD%91%E7%BB%9C%E4%B8%8E%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 量子网络与密钥管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#QKD%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E3%80%81%E9%83%A8%E7%BD%B2%E4%B8%8E%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="toc-number">5.</span> <span class="toc-text">QKD的标准化、部署与未来展望</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%A0%87%E5%87%86%E5%8C%96%E8%BF%9B%E5%B1%95"><span class="toc-number">5.1.</span> <span class="toc-text">5.1 标准化进展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%AE%9E%E9%99%85%E9%83%A8%E7%BD%B2%E7%8E%B0%E7%8A%B6%E4%B8%8E%E6%8C%91%E6%88%98"><span class="toc-number">5.2.</span> <span class="toc-text">5.2 实际部署现状与挑战</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E9%87%8F%E5%AD%90%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E7%9A%84%E5%93%B2%E5%AD%A6%E6%84%8F%E4%B9%89"><span class="toc-number">5.3.</span> <span class="toc-text">5.3 量子密钥分发的哲学意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-QKD%E7%9A%84%E6%9C%AA%E6%9D%A5%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF"><span class="toc-number">5.4.</span> <span class="toc-text">5.4 QKD的未来发展趋势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062627/" title="蛋白质组学的翻译后修饰组学：解码生命复杂性的密码">蛋白质组学的翻译后修饰组学：解码生命复杂性的密码</a><time datetime="2025-07-25T22:26:27.000Z" title="发表于 2025-07-26 06:26:27">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062521/" title="钠离子电池的负极材料：开启储能新纪元的核心密码">钠离子电池的负极材料：开启储能新纪元的核心密码</a><time datetime="2025-07-25T22:25:21.000Z" title="发表于 2025-07-26 06:25:21">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062424/" title="基于人工智能的靶点识别：重塑药物发现的未来">基于人工智能的靶点识别：重塑药物发现的未来</a><time datetime="2025-07-25T22:24:24.000Z" title="发表于 2025-07-26 06:24:24">2025-07-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

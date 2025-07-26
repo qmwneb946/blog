@@ -1,0 +1,544 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>探索AR的灵魂之光：实时光照估计的奥秘与实践 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="你好，亲爱的技术爱好者们！我是你们的老朋友 qmwneb946。今天，我们要一起深入探讨一个令人着迷且极具挑战性的领域——增强现实（AR）中的实时光照估计。如果你曾惊叹于AR应用中虚拟物体与现实环境的融合，那么你一定不能错过理解其背后“灵魂之光”的机会。 想象一下，你在家中打开一个AR应用，一只栩栩如生的虚拟恐龙突然出现在你的客厅地板上。如果这只恐龙看起来就像是被简单地“贴”在屏幕上，与周围环境格">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索AR的灵魂之光：实时光照估计的奥秘与实践">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-211937/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="你好，亲爱的技术爱好者们！我是你们的老朋友 qmwneb946。今天，我们要一起深入探讨一个令人着迷且极具挑战性的领域——增强现实（AR）中的实时光照估计。如果你曾惊叹于AR应用中虚拟物体与现实环境的融合，那么你一定不能错过理解其背后“灵魂之光”的机会。 想象一下，你在家中打开一个AR应用，一只栩栩如生的虚拟恐龙突然出现在你的客厅地板上。如果这只恐龙看起来就像是被简单地“贴”在屏幕上，与周围环境格">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-24T13:19:37.000Z">
+<meta property="article:modified_time" content="2025-07-26T06:50:50.222Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="计算机科学">
+<meta property="article:tag" content="AR中的实时光照估计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "探索AR的灵魂之光：实时光照估计的奥秘与实践",
+  "url": "https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-211937/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-24T13:19:37.000Z",
+  "dateModified": "2025-07-26T06:50:50.222Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-211937/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '探索AR的灵魂之光：实时光照估计的奥秘与实践',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">探索AR的灵魂之光：实时光照估计的奥秘与实践</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">探索AR的灵魂之光：实时光照估计的奥秘与实践<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-24-211937.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-24T13:19:37.000Z" title="发表于 2025-07-24 21:19:37">2025-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-26T06:50:50.222Z" title="更新于 2025-07-26 14:50:50">2025-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/">计算机科学</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>你好，亲爱的技术爱好者们！我是你们的老朋友 qmwneb946。今天，我们要一起深入探讨一个令人着迷且极具挑战性的领域——增强现实（AR）中的实时光照估计。如果你曾惊叹于AR应用中虚拟物体与现实环境的融合，那么你一定不能错过理解其背后“灵魂之光”的机会。</p>
+<p>想象一下，你在家中打开一个AR应用，一只栩栩如生的虚拟恐龙突然出现在你的客厅地板上。如果这只恐龙看起来就像是被简单地“贴”在屏幕上，与周围环境格格不入，没有影子，也没有被房间的灯光照亮，那么这种沉浸感就会瞬间被打破。而如果这只恐龙能够自然地投下与你客厅光线方向和强度相符的阴影，它的皮肤表面能够反射出窗外的阳光，甚至能被旁边台灯的光线照亮，那么它才真正像是“存在”于你的房间里。这种魔法般的融合，正是实时光照估计的魅力所在。</p>
+<p>光照是视觉感知的核心。没有光，我们什么也看不见。在计算机图形学中，模拟真实世界的光照是实现真实感的基石。然而，对于AR而言，挑战远不止于此——我们需要在毫秒级的帧率下，实时地理解和模拟我们周围真实世界的光照环境，然后将这些光照信息应用于虚拟物体，使其与物理世界无缝融合。这不仅是一项技术挑战，更是一场算法与计算资源的极限拉锯战。</p>
+<p>本文将带领你从基础概念出发，逐步揭示实时光照估计的重要性、面临的挑战、核心技术原理（包括传统的基于图像方法和前沿的深度学习方法），以及这些技术如何在AR管道中协同工作。我们还将探讨未来的发展方向，并希望激发你对这一领域更深层次的探索。</p>
+<h2 id="为什么实时光照估计至关重要？">为什么实时光照估计至关重要？</h2>
+<p>实时光照估计是AR领域中实现真正沉浸感和真实感的关键环节。它不仅仅是“锦上添花”，更是“画龙点睛”之笔。</p>
+<h3 id="增强真实感与沉浸感">增强真实感与沉浸感</h3>
+<p>虚拟物体融入真实场景的核心在于光影的物理正确性。</p>
+<ul>
+<li><strong>光照一致性</strong>：当虚拟物体受到与真实环境相同的光照时，它才能看起来像真实存在。这意味着光线的颜色、强度、方向，以及环境的反射特性，都必须被准确地捕捉和应用。</li>
+<li><strong>阴影的生成</strong>：阴影是物体存在感的重要标志。一个虚拟物体如果不能在地面上投下与真实光线方向和柔和度相符的阴影，它就会显得漂浮和不真实。</li>
+<li><strong>高光与反射</strong>：物体的材质特性决定了其对光的反射方式。金属会产生锐利的高光，玻璃会折射光线，而粗糙的表面则会散射光线。正确地模拟这些物理特性，需要精准的光照信息作为输入。</li>
+<li><strong>消除“违和感”</strong>：当虚拟物体与真实环境的光照不匹配时，就会产生一种“粘贴感”或“违和感”，破坏用户的沉浸式体验，使他们意识到这只是一个屏幕上的数字内容。</li>
+</ul>
+<h3 id="提升用户体验与交互">提升用户体验与交互</h3>
+<p>除了视觉上的真实感，光照估计还为AR应用带来了更深层次的交互可能性。</p>
+<ul>
+<li><strong>自然的用户反馈</strong>：例如，一个虚拟的手电筒能够根据用户的移动，真实地照亮周围的虚拟或真实物体，提供直观的交互反馈。</li>
+<li><strong>基于光照的场景理解</strong>：未来，AR系统可能不仅仅是渲染虚拟物体，还能利用光照信息理解场景的物理属性，例如物体的材质、距离，甚至辅助进行更复杂的语义分割。</li>
+<li><strong>支持复杂AR应用</strong>：在设计、教育、医疗等领域，精确的光照可以帮助用户更好地评估虚拟设计稿在真实环境中的效果，或者模拟手术器械在不同光照下的反射，提升专业应用的准确性和效率。</li>
+</ul>
+<h3 id="对AR应用的广泛影响">对AR应用的广泛影响</h3>
+<p>实时光照估计是众多AR应用能否成功落地的核心技术之一。</p>
+<ul>
+<li><strong>AR游戏</strong>：创造更具沉浸感和说服力的游戏世界，让玩家感觉虚拟角色就在身边。</li>
+<li><strong>室内设计与家居预览</strong>：让用户真实地看到虚拟家具在自己房间里的光影效果，辅助购买决策。</li>
+<li><strong>工业与医疗</strong>：在训练、模拟和辅助操作中，提供高保真度的视觉反馈，提高精度和安全性。</li>
+<li><strong>艺术与娱乐</strong>：为AR艺术作品和现场表演提供更具表现力的光影效果。</li>
+</ul>
+<h2 id="实时光照估计的挑战">实时光照估计的挑战</h2>
+<p>尽管实时光照估计的重要性不言而喻，但其实现却充满了挑战。这主要是因为真实世界的光照极其复杂、动态且难以捕捉。</p>
+<h3 id="真实世界光照的复杂性">真实世界光照的复杂性</h3>
+<p>现实世界的光照远比我们想象的要复杂。</p>
+<ul>
+<li><strong>无限光源</strong>：除了太阳、月亮等主导光源，天空散射、多重反射、人造灯、显示屏等都可能成为重要的光源，构成一个几乎无限的光源集合。</li>
+<li><strong>动态变化</strong>：光照环境是不断变化的。室外光照随时间（日出日落）、天气（晴朗、阴天、多云）而变化；室内光照则可能受开灯关灯、窗帘拉合、甚至人影移动的影响。</li>
+<li><strong>环境相互作用</strong>：光线在环境中会发生一系列复杂的物理现象：反射、散射、折射、吸收。例如，一个红色墙壁会把红色的光反射到周围物体上，使得它们也带上一些红色调。这些全局光照效应（Global Illumination）极难实时捕捉和模拟。</li>
+</ul>
+<h3 id="实时性要求">实时性要求</h3>
+<p>AR应用对实时性有极高的要求，通常需要达到30帧/秒甚至更高的帧率，才能保证流畅的用户体验。</p>
+<ul>
+<li><strong>移动设备性能限制</strong>：大多数AR应用运行在智能手机或平板电脑上，这些设备的计算能力和电池续航都相对有限，难以支撑复杂的实时光照计算。</li>
+<li><strong>毫秒级响应</strong>：这意味着从图像捕捉到光照估计再到最终渲染，整个过程必须在几十毫秒内完成。</li>
+</ul>
+<h3 id="数据采集与鲁棒性">数据采集与鲁棒性</h3>
+<p>如何从有限的传感器数据中提取出准确且稳定的光照信息，是一个巨大的挑战。</p>
+<ul>
+<li><strong>传感器限制</strong>：AR设备通常依赖单目或双目摄像头捕捉环境图像。摄像头本身的动态范围（Dynamic Range）有限，难以捕捉到高光和阴影中的所有细节（即HDR信息）。</li>
+<li><strong>光照估计的误差累积与稳定性</strong>：由于光照的复杂性和测量噪声，估计出的光照参数可能存在误差，且这些误差可能随时间累积，导致虚拟物体出现“闪烁”或不稳定的光影。</li>
+<li><strong>几何信息缺失</strong>：AR系统通常需要实时构建环境的三维几何模型，才能准确计算阴影和遮挡。然而，构建高精度的实时几何模型本身也是一项挑战。</li>
+</ul>
+<h3 id="光照表示的效率与准确性">光照表示的效率与准确性</h3>
+<p>为了在实时渲染中使用，复杂的光照信息必须被高效且准确地表示和编码。</p>
+<ul>
+<li><strong>如何表示HDR光照？</strong>：真实世界的光照强度范围巨大（从星光到太阳直射），传统的LDR（Low Dynamic Range）图像无法完整记录。如何高效地捕捉和表示HDR光照信息？</li>
+<li><strong>如何表示复杂的光照方向分布？</strong>：光线可以来自四面八方。如何用有限的参数来概括这种复杂的空间分布？</li>
+</ul>
+<h2 id="核心技术原理与方法">核心技术原理与方法</h2>
+<p>为了应对上述挑战，研究人员和工程师们开发了多种巧妙的技术和方法，从传统的基于图像处理到前沿的深度学习。</p>
+<h3 id="基于图像的光照估计（Image-Based-Lighting-IBL）">基于图像的光照估计（Image-Based Lighting - IBL）</h3>
+<p>IBL是计算机图形学中一种强大的技术，其核心思想是利用一张或多张图像来捕获和表示周围环境的光照信息，然后将这些信息应用于场景中的三维物体。在AR中，我们尝试实时地从摄像头捕捉的图像中提取这些信息。</p>
+<h4 id="球谐函数（Spherical-Harmonics-SH）">球谐函数（Spherical Harmonics - SH）</h4>
+<p>球谐函数是解决低频环境光照问题的一个优雅数学工具。</p>
+<ul>
+<li><strong>概念</strong>：球谐函数是一组定义在球面上的正交基函数。任何定义在球面上的函数（例如，环境光照的亮度分布）都可以被分解为这些基函数的线性组合。这类似于傅里叶级数将周期函数分解为正弦和余弦函数。</li>
+<li><strong>优势</strong>：
+<ul>
+<li><strong>低频光照的有效表示</strong>：对于像漫反射（diffuse）这样对高频细节不敏感的光照效果，低阶球谐函数就能很好地近似。</li>
+<li><strong>旋转不变性</strong>：球谐函数具有特殊的旋转性质，使得它们在处理旋转变换时光照计算变得非常高效。</li>
+</ul>
+</li>
+<li><strong>数学表示</strong>：一个定义在球面上的光照函数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo separator="true">,</mo><mi>ϕ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L(\theta, \phi)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mclose">)</span></span></span></span> 可以被近似表示为：<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo separator="true">,</mo><mi>ϕ</mi><mo stretchy="false">)</mo><mo>≈</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>0</mn></mrow><mi>N</mi></munderover><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mo>−</mo><mi>l</mi></mrow><mi>l</mi></munderover><msubsup><mi>c</mi><mi>l</mi><mi>m</mi></msubsup><msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup><mo stretchy="false">(</mo><mi>θ</mi><mo separator="true">,</mo><mi>ϕ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L(\theta, \phi) \approx \sum_{l=0}^{N} \sum_{m=-l}^{l} c_l^m Y_l^m(\theta, \phi)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.1966em;vertical-align:-1.3604em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8479em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3021em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8361em;"><span style="top:-1.8479em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mrel mtight">=</span><span class="mord mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3604em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mclose">)</span></span></span></span></span></p>
+其中：
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup><mo stretchy="false">(</mo><mi>θ</mi><mo separator="true">,</mo><mi>ϕ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Y_l^m(\theta, \phi)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0331em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-2.4169em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mclose">)</span></span></span></span> 是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi></mrow><annotation encoding="application/x-tex">l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> 阶 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 次的球谐基函数。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>c</mi><mi>l</mi><mi>m</mi></msubsup></mrow><annotation encoding="application/x-tex">c_l^m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9475em;vertical-align:-0.2831em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-2.4169em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831em;"><span></span></span></span></span></span></span></span></span></span> 是对应的球谐系数，它们代表了光照函数的“分量”。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 是分解的阶数，阶数越高，表示的光照细节越多（但计算量也越大）。对于漫反射，通常使用二阶或三阶（共9个或16个系数）就足够了。</li>
+</ul>
+</li>
+<li><strong>从图像中提取SH系数</strong>：要从一张环境图像（如全景图）中提取SH系数，我们需要对图像中的每个像素进行加权求和，本质上是进行积分：<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>c</mi><mi>l</mi><mi>m</mi></msubsup><mo>=</mo><msub><mo>∫</mo><mi mathvariant="normal">Ω</mi></msub><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo separator="true">,</mo><mi>ϕ</mi><mo stretchy="false">)</mo><msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup><mo stretchy="false">(</mo><mi>θ</mi><mo separator="true">,</mo><mi>ϕ</mi><mo stretchy="false">)</mo><mi>d</mi><mi mathvariant="normal">Ω</mi></mrow><annotation encoding="application/x-tex">c_l^m = \int_{\Omega} L(\theta, \phi) Y_l^m(\theta, \phi) d\Omega
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9614em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2719em;vertical-align:-0.9119em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.4336em;"><span style="top:-1.7881em;margin-left:-0.4445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Ω</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9119em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mclose">)</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">ϕ</span><span class="mclose">)</span><span class="mord mathnormal">d</span><span class="mord">Ω</span></span></span></span></span></p>
+在实际应用中，这通常通过采样和蒙特卡洛积分来近似。</li>
+<li><strong>渲染应用</strong>：提取出的SH系数可以直接用于计算漫反射光照。对于一个顶点或片元，其漫反射颜色 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>d</mi><mi>i</mi><mi>f</mi><mi>f</mi><mi>u</mi><mi>s</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{diffuse}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">se</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 可以通过将物体表面的法线 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 转化为对应的SH基函数值，然后与光照SH系数进行点积得到：<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>C</mi><mrow><mi>d</mi><mi>i</mi><mi>f</mi><mi>f</mi><mi>u</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>0</mn></mrow><mi>N</mi></munderover><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mo>−</mo><mi>l</mi></mrow><mi>l</mi></munderover><msubsup><mi>c</mi><mi>l</mi><mi>m</mi></msubsup><msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">C_{diffuse} = \sum_{l=0}^{N} \sum_{m=-l}^{l} c_l^m Y_l^m(N)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">se</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.1966em;vertical-align:-1.3604em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8479em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3021em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8361em;"><span style="top:-1.8479em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mrel mtight">=</span><span class="mord mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3604em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span></span></p>
+这种方法计算效率极高，适用于实时渲染。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 伪代码：从HDR环境贴图计算SH系数</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.special <span class="keyword">import</span> sph_harm <span class="comment"># 假设有球谐函数库</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_sh_coefficients_from_equirectangular</span>(<span class="params">hdr_image, order=<span class="number">2</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    从HDR等距柱状环境贴图计算球谐函数系数。</span></span><br><span class="line"><span class="string">    hdr_image: NumPy数组，代表HDR图像 (height, width, channels)</span></span><br><span class="line"><span class="string">    order: 球谐函数的阶数 (例如 2 表示使用 9 个系数)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    height, width, _ = hdr_image.shape</span><br><span class="line">    num_coeffs = (order + <span class="number">1</span>) * (order + <span class="number">1</span>)</span><br><span class="line">    sh_coeffs = np.zeros((num_coeffs, hdr_image.shape[<span class="number">2</span>])) <span class="comment"># 存储R, G, B通道的系数</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 遍历图像像素，进行积分</span></span><br><span class="line">    <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(height):</span><br><span class="line">        <span class="comment"># 纬度 (phi) 从 -pi/2 到 pi/2</span></span><br><span class="line">        phi = (y / (height - <span class="number">1</span>) - <span class="number">0.5</span>) * np.pi</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(width):</span><br><span class="line">            <span class="comment"># 经度 (theta) 从 0 到 2*pi</span></span><br><span class="line">            theta = (x / (width - <span class="number">1</span>)) * <span class="number">2</span> * np.pi</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 像素的权重（面积元）</span></span><br><span class="line">            <span class="comment"># 对于等距柱状投影，面积元是 sin(phi) * dtheta * dphi</span></span><br><span class="line">            <span class="comment"># 由于是离散采样，这里简化为常数或根据phi调整的权重</span></span><br><span class="line">            weight = np.cos(phi) * (<span class="number">2</span> * np.pi / width) * (np.pi / height)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 获取像素颜色（辐射度）</span></span><br><span class="line">            radiance = hdr_image[y, x]</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 计算每个阶和次的球谐基函数值</span></span><br><span class="line">            idx = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(order + <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(-l, l + <span class="number">1</span>):</span><br><span class="line">                    <span class="comment"># spherical_harmonics(m, l, theta, phi)</span></span><br><span class="line">                    <span class="comment"># 注意：scipy的sph_harm可能需要theta和phi的顺序不同，需查阅文档</span></span><br><span class="line">                    <span class="comment"># 这里假设它接受 (m, l, 经度, 纬度)</span></span><br><span class="line">                    sh_val = sph_harm(m, l, theta, phi).real <span class="comment"># 球谐函数是复数，我们通常取实部</span></span><br><span class="line">                    sh_coeffs[idx] += radiance * sh_val * weight</span><br><span class="line">                    idx += <span class="number">1</span></span><br><span class="line">                    </span><br><span class="line">    <span class="keyword">return</span> sh_coeffs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例用法 (假设 hdr_env_map 是一个加载的HDR图像)</span></span><br><span class="line"><span class="comment"># sh_coeffs_r, sh_coeffs_g, sh_coeffs_b = compute_sh_coefficients_from_equirectangular(hdr_env_map, order=2)</span></span><br><span class="line"><span class="comment"># print(sh_coeffs_r) # 输出9个R通道的SH系数</span></span><br></pre></td></tr></table></figure>
+<h4 id="环境贴图（Environment-Maps-Cube-Maps）">环境贴图（Environment Maps / Cube Maps）</h4>
+<p>环境贴图是另一种表示环境光照的方式，它更适合捕获高频的镜面反射信息。</p>
+<ul>
+<li><strong>概念</strong>：环境贴图将从一个点向所有方向看到的环境捕捉成纹理。最常见的是立方体贴图（Cube Map），它由六张纹理组成，分别对应立方体的六个面，从中心点向外看。</li>
+<li><strong>用途</strong>：
+<ul>
+<li><strong>高频镜面反射</strong>：对于像PBR（Physically Based Rendering，基于物理的渲染）中的镜面反射，直接采样环境贴图能够提供准确的高光和反射效果。</li>
+<li><strong>预过滤（Pre-filtered）环境贴图</strong>：为了模拟不同粗糙度的材质，PBR通常会对环境贴图进行预过滤，生成一系列不同模糊程度的Mipmap，粗糙度越高的表面，采样越模糊的Mipmap。这在实时渲染中非常高效。</li>
+</ul>
+</li>
+<li><strong>从相机获取Cube Map的挑战</strong>：AR设备通常只有单目或双目相机，视野有限。直接从单张照片或几张照片重建完整的HDR Cube Map是一个巨大的挑战，需要进行视角合成、HDR重建和曝光融合。</li>
+</ul>
+<h4 id="辐射度图（Radiance-Maps）与辐照度图（Irradiance-Maps）">辐射度图（Radiance Maps）与辐照度图（Irradiance Maps）</h4>
+<p>在PBR流程中，这两个概念至关重要。</p>
+<ul>
+<li><strong>辐射度图（Radiance Map）</strong>：通常指原始的、高动态范围的环境贴图。它存储了从环境中每个方向射来的光线的强度和颜色。直接用于镜面反射计算。</li>
+<li><strong>辐照度图（Irradiance Map）</strong>：表示每个方向上所有入射光线的积分，即该方向上的总光照量。它是一个低频的表示，通常用低阶SH系数来近似。辐照度图主要用于计算漫反射光照。</li>
+</ul>
+<h3 id="基于深度学习的光照估计">基于深度学习的光照估计</h3>
+<p>随着深度学习的兴起，研究人员开始利用神经网络来克服传统IBL方法的局限性，特别是在鲁棒性和对复杂环境的适应性方面。</p>
+<ul>
+<li><strong>动机</strong>：
+<ul>
+<li><strong>克服传统限制</strong>：传统方法对图像质量、曝光、视角等有较高要求，且难以处理复杂遮挡和多光源场景。</li>
+<li><strong>端到端学习</strong>：深度学习可以直接从原始图像中学习到复杂的光照-图像映射关系，无需显式地进行积分或启发式规则。</li>
+<li><strong>鲁棒性</strong>：训练有素的网络可以更好地处理噪声、曝光不均等问题。</li>
+</ul>
+</li>
+<li><strong>网络架构</strong>：
+<ul>
+<li><strong>Encoder-Decoder网络</strong>：编码器提取图像特征，解码器将特征映射为光照参数（如SH系数或环境贴图）。</li>
+<li><strong>卷积神经网络（CNNs）</strong>：用于图像特征提取。</li>
+<li><strong>生成对抗网络（GANs）</strong>：用于生成更真实、更高质量的光照贴图。</li>
+</ul>
+</li>
+<li><strong>输入与输出</strong>：
+<ul>
+<li><strong>输入</strong>：通常是单张RGB图像，有时也结合深度图（如果可用）或姿态信息。</li>
+<li><strong>输出</strong>：可以是多种光照表示形式，例如：
+<ul>
+<li>直接输出SH系数（通常是9个或16个系数）。</li>
+<li>输出低分辨率的立方体贴图或等距柱状图。</li>
+<li>输出多个光照探头（Light Probes），每个探头估计其位置的光照信息。</li>
+<li>甚至可以直接输出光源的位置、颜色和强度等参数。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>训练数据</strong>：训练深度学习模型需要大量的标注数据。这通常通过以下方式获取：
+<ul>
+<li><strong>合成数据集</strong>：在3D渲染软件中创建大量虚拟场景，渲染出不同光照下的图像，并记录真实的光照参数。例如，Matterport3D、SUNCG等数据集提供了室内场景的几何和材质信息，可用于合成训练数据。</li>
+<li><strong>真实世界数据</strong>：通过专业的HDR相机和测量设备在真实环境中捕捉光照数据，但这种方式成本高昂且难以大规模获取。</li>
+</ul>
+</li>
+<li><strong>端到端学习</strong>：深度学习的优势在于它能够学习从像素到光照参数的复杂非线性映射，避免了传统方法中繁琐的中间步骤和假设。</li>
+<li><strong>光照探头网络（Light Probe Networks）</strong>：一些方法不只估计全局光照，而是估计多个局部光照探头，每个探头负责其周围区域的光照。这对于处理复杂、局部光照差异大的场景非常有效。</li>
+<li><strong>基于HDR图像重建的方法</strong>：另一些深度学习方法专注于从LDR图像中直接重建出HDR环境图，然后可以像传统IBL一样使用这些HDR图。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 伪代码：基于深度学习的光照估计模型结构</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LightEstimationNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, output_sh_coeffs=<span class="number">9</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(LightEstimationNet, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="comment"># 编码器：用于从输入图像中提取特征</span></span><br><span class="line">        <span class="comment"># 典型的架构包括多个卷积层、池化层</span></span><br><span class="line">        <span class="variable language_">self</span>.encoder = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>, <span class="number">32</span>, kernel_size=<span class="number">4</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>), <span class="comment"># 输入RGB图像 (Batch, 3, H, W)</span></span><br><span class="line">            nn.LeakyReLU(<span class="number">0.2</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, kernel_size=<span class="number">4</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">64</span>),</span><br><span class="line">            nn.LeakyReLU(<span class="number">0.2</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">64</span>, <span class="number">128</span>, kernel_size=<span class="number">4</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">128</span>),</span><br><span class="line">            nn.LeakyReLU(<span class="number">0.2</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">128</span>, <span class="number">256</span>, kernel_size=<span class="number">4</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">256</span>),</span><br><span class="line">            nn.LeakyReLU(<span class="number">0.2</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">512</span>, kernel_size=<span class="number">4</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>), <span class="comment"># 最终特征图</span></span><br><span class="line">            nn.BatchNorm2d(<span class="number">512</span>),</span><br><span class="line">            nn.LeakyReLU(<span class="number">0.2</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.AdaptiveAvgPool2d((<span class="number">1</span>, <span class="number">1</span>)) <span class="comment"># 全局平均池化，将特征图降维到 1x1</span></span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 解码器：将提取的特征映射到光照参数</span></span><br><span class="line">        <span class="comment"># 这里假设输出SH系数</span></span><br><span class="line">        <span class="variable language_">self</span>.decoder = nn.Sequential(</span><br><span class="line">            nn.Flatten(), <span class="comment"># 将 512x1x1 展平为 512</span></span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">256</span>),</span><br><span class="line">            nn.LeakyReLU(<span class="number">0.2</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Linear(<span class="number">256</span>, output_sh_coeffs * <span class="number">3</span>) <span class="comment"># output_sh_coeffs (例如9个) * 3个颜色通道 (RGB)</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        features = <span class="variable language_">self</span>.encoder(x)</span><br><span class="line">        sh_coeffs_flat = <span class="variable language_">self</span>.decoder(features)</span><br><span class="line">        <span class="comment"># 将展平的系数重塑为 (Batch, num_coeffs, 3)</span></span><br><span class="line">        sh_coeffs = sh_coeffs_flat.view(-<span class="number">1</span>, <span class="variable language_">self</span>.decoder[<span class="built_in">len</span>(<span class="variable language_">self</span>.decoder)-<span class="number">1</span>].out_features // <span class="number">3</span>, <span class="number">3</span>)</span><br><span class="line">        <span class="keyword">return</span> sh_coeffs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例用法</span></span><br><span class="line"><span class="comment"># model = LightEstimationNet(output_sh_coeffs=9)</span></span><br><span class="line"><span class="comment"># dummy_input = torch.randn(1, 3, 256, 256) # 假设输入图像大小为 256x256</span></span><br><span class="line"><span class="comment"># predicted_sh_coeffs = model(dummy_input)</span></span><br><span class="line"><span class="comment"># print(predicted_sh_coeffs.shape) # 期望输出 (1, 9, 3) 代表Batch, SH系数数量, RGB通道</span></span><br></pre></td></tr></table></figure>
+<h3 id="混合方法与多传感器融合">混合方法与多传感器融合</h3>
+<p>为了结合不同技术的优势并提高鲁棒性，许多SOTA（State-of-the-Art）AR系统采用混合方法和多传感器融合。</p>
+<ul>
+<li><strong>结合IBL和深度学习</strong>：
+<ul>
+<li>深度学习模型可以快速提供一个初始的、鲁棒的光照估计（例如，低阶SH系数）。</li>
+<li>然后，传统的IBL技术或优化算法可以在这个初始估计的基础上，利用更高分辨率的图像细节进行精修，或者处理特定的高光和阴影。</li>
+</ul>
+</li>
+<li><strong>LiDAR/深度传感器</strong>：
+<ul>
+<li>提供精确的几何信息。有了深度数据，可以更好地理解场景的形状，从而更准确地计算遮挡、阴影投射和多重反射。</li>
+<li>辅助生成环境的三维重建模型。</li>
+</ul>
+</li>
+<li><strong>IMU（惯性测量单元）</strong>：
+<ul>
+<li>提供设备的姿态（位置和方向）信息，对于跟踪相机在环境中的运动至关重要。</li>
+<li>辅助稳定光照估计结果，减少因相机抖动或跟踪误差引起的光照闪烁。</li>
+</ul>
+</li>
+<li><strong>语义理解</strong>：
+<ul>
+<li>结合语义分割技术，识别场景中的物体（例如，天空、墙壁、地面、窗户）。</li>
+<li>这些语义信息可以帮助系统更好地理解光源（例如，窗户可能是主光源）、材质属性（例如，墙壁是漫反射表面），从而提高光照估计的准确性。</li>
+</ul>
+</li>
+</ul>
+<h3 id="基于物理的渲染（Physically-Based-Rendering-PBR）">基于物理的渲染（Physically Based Rendering - PBR）</h3>
+<p>实时光照估计的最终目标是为虚拟物体提供正确的渲染参数。PBR是当前实现真实感图形的主流方法，它将光照估计的结果转化为视觉输出。</p>
+<ul>
+<li><strong>PBR简介</strong>：PBR试图模拟光线与物体表面交互的物理过程，以产生更真实、更一致的渲染结果。它基于微表面理论和能量守恒原则。</li>
+<li><strong>BRDF模型</strong>：PBR的核心是双向反射分布函数（Bidirectional Reflectance Distribution Function - BRDF），它描述了光线在物体表面如何反射。常见的PBR BRDF模型包括Cook-Torrance、Disney BRDF等。
+<ul>
+<li><strong>Cook-Torrance BRDF</strong>：由漫反射（diffuse）和镜面反射（specular）两部分组成。
+<ul>
+<li>漫反射部分通常使用Lambertian模型：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>d</mi><mi>i</mi><mi>f</mi><mi>f</mi><mi>u</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>C</mi><mrow><mi>a</mi><mi>l</mi><mi>b</mi><mi>e</mi><mi>d</mi><mi>o</mi></mrow></msub><mi>π</mi></mfrac></mrow><annotation encoding="application/x-tex">f_{diffuse} = \frac{C_{albedo}}{\pi}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">se</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2392em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8942em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.4159em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3488em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">b</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">o</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1512em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+<li>镜面反射部分通常包含法线分布函数（NDF）、几何函数（G）和菲涅尔项（F）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>光照方程</strong>：PBR中的光照计算通常基于渲染方程的简化形式，考虑了直接光照和环境光照。对于一个点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span> 和出射方向 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\omega_o</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，其出射光亮度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">L_o</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 可以表示为：<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mi>o</mi></msub><mo stretchy="false">(</mo><mi>p</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mo>∫</mo><mi mathvariant="normal">Ω</mi></msub><msub><mi>f</mi><mi>r</mi></msub><mo stretchy="false">(</mo><mi>p</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo stretchy="false">)</mo><msub><mi>L</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>p</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>n</mi><mo>⋅</mo><msub><mi>ω</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mi>d</mi><msub><mi>ω</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">L_o(p, \omega_o) = \int_{\Omega} f_r(p, \omega_i, \omega_o) L_i(p, \omega_i) (n \cdot \omega_i) d\omega_i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2719em;vertical-align:-0.9119em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.4336em;"><span style="top:-1.7881em;margin-left:-0.4445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Ω</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9119em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord mathnormal">d</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+其中：
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">f_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是BRDF，描述了表面如何散射光线。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">L_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是入射光亮度（即我们通过光照估计得到的光照信息）。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 是表面法线。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\omega_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是入射光方向。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Ω</mi></mrow><annotation encoding="application/x-tex">\Omega</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Ω</span></span></span></span> 是半球积分域。</li>
+</ul>
+</li>
+<li><strong>PBR与光照估计的结合</strong>：
+<ul>
+<li>从光照估计中获取<strong>辐照度图</strong>（或SH系数）用于计算漫反射。</li>
+<li>从光照估计中获取<strong>辐射度图</strong>（经过预过滤的）用于计算镜面反射。</li>
+<li>结合物体的<strong>材质属性</strong>（如反照率、粗糙度、金属度）和<strong>法线贴图</strong>，PBR能够生成逼真的光影效果。</li>
+</ul>
+</li>
+</ul>
+<h2 id="实时光照估计的实现流程">实时光照估计的实现流程</h2>
+<p>在AR系统中，实时光照估计通常作为一个独立的模块或服务运行，与姿态跟踪、几何重建和渲染模块协同工作。</p>
+<h3 id="数据采集">数据采集</h3>
+<ul>
+<li><strong>相机图像（RGB）</strong>：AR设备的主摄像头持续捕捉环境的视频流。这些图像是光照估计最主要的输入源。为了捕捉HDR信息，一些系统会尝试在不同曝光设置下快速连续拍摄多张图像（但这对实时性有很大挑战）。</li>
+<li><strong>深度数据（可选）</strong>：如果设备配备了LiDAR、结构光或ToF（Time-of-Flight）传感器，可以获取高精度的深度图。这些深度信息可以帮助构建场景的几何模型，从而更准确地计算遮挡和阴影。</li>
+</ul>
+<h3 id="光照参数估计">光照参数估计</h3>
+<p>这是核心计算步骤。</p>
+<ul>
+<li><strong>预处理</strong>：对采集到的图像进行去畸变、降噪、色彩校正等预处理。</li>
+<li><strong>光照提取</strong>：
+<ul>
+<li><strong>传统IBL方法</strong>：从图像中采样像素，通过加权积分计算SH系数，或尝试拼接、HDR重建得到环境贴图。</li>
+<li><strong>深度学习方法</strong>：将图像输入到预训练的神经网络中，直接输出SH系数、低分辨率环境贴图或其他光照参数。</li>
+</ul>
+</li>
+<li><strong>光照参数平滑</strong>：为了避免光照估计结果的跳变和闪烁，通常会对连续帧的估计结果进行时间上的平滑处理（例如，使用指数加权移动平均）。</li>
+<li><strong>光源检测（可选）</strong>：一些高级系统还会尝试检测场景中的主要定向光源（如太阳）或点光源，以提供更精确的光源信息。</li>
+</ul>
+<h3 id="光照环境建模">光照环境建模</h3>
+<p>将估计出的光照参数转换为渲染引擎可以利用的格式。</p>
+<ul>
+<li><strong>SH系数</strong>：直接传递给渲染器用于漫反射计算。</li>
+<li><strong>辐照度图</strong>：从SH系数或直接从网络输出生成一个低分辨率的辐照度立方体贴图。</li>
+<li><strong>辐射度图/预过滤环境贴图</strong>：如果网络直接输出环境贴图，则对其进行预过滤，生成不同Mipmap级别的反射贴图。</li>
+</ul>
+<h3 id="AR内容渲染">AR内容渲染</h3>
+<p>将估计出的光照信息应用于虚拟物体，并将其与真实场景融合渲染。</p>
+<ul>
+<li><strong>虚拟物体渲染</strong>：使用PBR材质模型和估计出的光照参数（SH系数、环境贴图）对虚拟物体进行着色。</li>
+<li><strong>阴影投射</strong>：
+<ul>
+<li><strong>虚拟物体对真实环境的阴影</strong>：这是最重要的视觉线索之一。AR系统需要构建真实场景的几何模型（通常通过视觉SLAM的稀疏点云或深度传感器的稠密点云），然后计算虚拟物体在这些几何模型上的阴影。这可能涉及到使用阴影贴图（Shadow Map）或屏幕空间环境光遮蔽（SSAO）等技术。</li>
+<li><strong>真实环境对虚拟物体的遮挡</strong>：如果真实物体遮挡了虚拟物体的一部分，那么虚拟物体也应该被正确地裁剪或遮挡。这通常通过深度缓冲区或语义分割来实现。</li>
+</ul>
+</li>
+<li><strong>遮挡处理</strong>：确保虚拟物体被真实物体正确遮挡，反之亦然。</li>
+<li><strong>后处理</strong>：应用色调映射（Tone Mapping）将HDR渲染结果转换为LDR显示器可用的范围，并进行抗锯齿、色彩校正等操作，使虚拟物体与真实背景在视觉风格上保持一致。</li>
+</ul>
+<h3 id="性能优化">性能优化</h3>
+<p>为了在移动设备上实现实时性，各种优化技术必不可少。</p>
+<ul>
+<li><strong>降采样</strong>：对输入的图像进行降采样，以减少计算量。</li>
+<li><strong>LOD（Level of Detail）</strong>：根据距离或重要性使用不同精度的光照模型。</li>
+<li><strong>GPU计算</strong>：将大部分光照估计和渲染任务卸载到GPU上并行执行。</li>
+<li><strong>异步处理</strong>：光照估计可以在一个独立的线程中进行，不阻塞主渲染线程。当新的光照结果可用时，再更新渲染参数。</li>
+<li><strong>稀疏采样与插值</strong>：对于环境光照，不必对每个像素都进行精确计算，可以在关键点进行稀疏采样，然后插值得到其他点的值。</li>
+</ul>
+<h2 id="未来展望与挑战">未来展望与挑战</h2>
+<p>尽管实时光照估计已经取得了显著进展，但仍有许多挑战需要克服，也有令人兴奋的未来发展方向。</p>
+<h3 id="更高精度与鲁棒性">更高精度与鲁棒性</h3>
+<ul>
+<li><strong>复杂动态场景</strong>：如何处理快速变化的光照（例如，灯光秀、闪烁的显示屏），以及动态的遮挡物（例如，移动的人、打开的门）带来的挑战？目前的系统在这方面仍有局限。</li>
+<li><strong>室内外环境的无缝过渡</strong>：从明亮的室外进入昏暗的室内，光照环境变化巨大。如何实现平滑、自然的过渡，避免虚拟物体突然变亮或变暗？</li>
+<li><strong>反光与折射</strong>：目前大多数系统主要关注漫反射和镜面反射。如何更准确地模拟复杂材质（如玻璃、水面）的折射、多次反弹的反射（间接光照），以及体积光照效应？</li>
+</ul>
+<h3 id="更丰富的物理效应">更丰富的物理效应</h3>
+<ul>
+<li><strong>次表面散射（SSS）</strong>：模拟光线穿透半透明物体表面，在内部散射后再射出的效果（例如，皮肤、玉石）。这对于提升虚拟角色的真实感至关重要。</li>
+<li><strong>焦散（Caustics）</strong>：光线经过曲面反射或折射后形成的复杂光斑图案（例如，阳光穿过水杯在桌上形成的图案）。这需要极高的光线追踪精度。</li>
+<li><strong>全局光照（Global Illumination）</strong>：如何以实时、高效的方式模拟光线在场景中的多次反弹，产生更真实的颜色溢出和柔和阴影？</li>
+</ul>
+<h3 id="多人AR与共享光照">多人AR与共享光照</h3>
+<ul>
+<li>在多人共享AR体验中，如何确保所有用户的设备都能估计出一致的光照环境，使得所有参与者看到的虚拟物体光影都是同步且正确的？这涉及到光照信息的共享和同步机制。</li>
+</ul>
+<h3 id="硬件进步">硬件进步</h3>
+<ul>
+<li><strong>专用AI芯片</strong>：AR设备将越来越多地集成NPU（神经网络处理单元）等AI加速芯片，这将极大地提升实时深度学习模型的运行效率，使得更复杂的模型和算法成为可能。</li>
+<li><strong>更强大的摄像头/传感器</strong>：高动态范围（HDR）摄像头、全局快门（Global Shutter）摄像头、更高精度的LiDAR传感器将提供更优质、更丰富的数据输入，从而提升光照估计的准确性。</li>
+<li><strong>“计算摄影”与AR的融合</strong>：将手机相机在拍照上的多帧合成、HDR、降噪等计算摄影技术，实时应用于AR视频流，为光照估计提供更优质的图像源。</li>
+</ul>
+<h3 id="语义理解与场景重建结合">语义理解与场景重建结合</h3>
+<ul>
+<li><strong>材质感知光照估计</strong>：如果AR系统能够识别场景中不同物体的材质（例如，地板是木质的，墙壁是油漆的），就可以利用这些信息辅助光照估计（例如，推断反射率、吸收率），从而生成更准确的间接光照。</li>
+<li><strong>动态场景重建</strong>：更鲁棒、更精细的实时场景三维重建（包括几何和材质）将为光照模拟提供坚实的基础。</li>
+</ul>
+<h2 id="结语">结语</h2>
+<p>实时光照估计是AR领域中一项基础而又前沿的技术。它如同AR世界的“灵魂之光”，点亮了虚拟与现实融合的魔法。从传统的球谐函数到前沿的深度学习，再到多传感器融合，我们看到了工程师和研究人员们为了实现这一目标所付出的巨大努力和卓越智慧。</p>
+<p>虽然前路仍充满挑战，例如如何以更低的功耗实现更高的精度、如何应对极其复杂多变的光照环境，但随着硬件能力的不断提升和算法的持续创新，我们有理由相信，未来的AR体验将变得越来越真实，越来越难以分辨虚拟与现实的界限。</p>
+<p>作为技术爱好者，深入理解这些背后的原理，不仅能让你更好地欣赏AR的魅力，更能激发你投身其中，亲手创造未来的激情。希望这篇文章能为你探索AR的奇妙世界提供一盏明灯。感谢你的阅读，我们下次再见！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-211937/">https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-211937/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/">计算机科学</a><a class="post-meta__tags" href="/tags/AR%E4%B8%AD%E7%9A%84%E5%AE%9E%E6%97%B6%E5%85%89%E7%85%A7%E4%BC%B0%E8%AE%A1/">AR中的实时光照估计</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/24/2025-07-24-215026/" title="量子算法在优化问题中的应用：突破经典边界的未来之光"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">量子算法在优化问题中的应用：突破经典边界的未来之光</div></div><div class="info-2"><div class="info-item-1">在当今信息爆炸的时代，优化问题无处不在。从物流路线规划到金融投资组合优化，从药物分子结构设计到人工智能模型参数调优，我们生活和工作的方方面面都离不开寻找“最佳”解决方案。然而，随着问题规模的增大和复杂度的提升，许多优化问题在经典计算的框架下变得难以逾越，甚至束手无策。这就是“NP-hard”问题的魔咒——其求解时间可能随问题规模呈指数级增长，在可预见的宇宙寿命内都无法得到精确解。 但想象一下，如果有一种全新的计算范式，能够超越经典物理定律的束缚，利用量子力学独特的叠加、纠缠和干涉等现象，以根本不同的方式处理信息，那会是怎样一番景象？量子计算正是这样一束照亮未来的光芒。它不仅仅是更快的经典计算机，而是一种全新的计算模式，有望在特定领域，尤其是解决某些经典计算机无法有效处理的优化问题上，展现出颠覆性的潜力。 本篇博文，qmwneb946 将带领大家深入探索量子算法在优化问题中的应用。我们将从经典优化的困境出发，逐步揭示量子计算的奥秘，重点剖析量子退火 (Quantum Annealing, QA)、量子近似优化算法 (Quantum Approximate Optimization ...</div></div></div></a><a class="pagination-related" href="/2025/07/24/2025-07-24-211839/" title="虚拟现实中的手势识别技术：通往沉浸式交互的终极桥梁"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">虚拟现实中的手势识别技术：通往沉浸式交互的终极桥梁</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的老朋友 qmwneb946，一个对技术和数学充满热情的博主。今天，我想和大家深入探讨一个在虚拟现实（VR）领域至关重要，且充满无限潜力的技术——手势识别。它不仅仅是科幻电影中的酷炫概念，更是将我们从物理控制器束缚中解放出来，迈向真正沉浸式交互的钥匙。 想象一下，在虚拟世界中，你不再需要笨重的手柄，而是可以直接用自己的双手，像在现实世界中一样，抓取、操作、创造。伸出手，就能拿起虚拟的咖啡杯；挥挥手，就能施展魔法咒语；轻触指尖，就能在空中雕塑艺术品。这并非遥不可及的梦想，而是手势识别技术正在为我们构建的未来。 然而，要实现这种无缝自然的交互，背后需要极其复杂的技术栈支撑，涵盖了计算机视觉、机器学习、传感器融合以及人体工学等多个交叉领域。在这篇文章中，我们将一同剥开手势识别技术的层层奥秘，从它的发展历程、核心技术原理，到当前的挑战与前沿进展，最后还会通过一个简化的代码示例，让大家对手势识别有一个更直观的认识。 准备好了吗？让我们一同踏上这段探索虚拟现实中手势识别技术的旅程！ 虚拟现实中的交互范式演进 虚拟现实的终极目标是创造一个与现实世界无异的沉浸式体验。而交互，作为...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082418/" title="机器学习算法的公平性问题：技术挑战与伦理困境"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">机器学习算法的公平性问题：技术挑战与伦理困境</div></div><div class="info-2"><div class="info-item-1">引言 机器学习 (ML) 正在迅速改变我们的世界，从医疗保健到金融，再到刑事司法系统，它的应用几乎无处不在。然而，随着 ML 系统的广泛部署，一个越来越令人担忧的问题浮出水面：公平性。  算法的输出可能反映并放大现有的社会偏见，导致对某些群体的不公平待遇。本文将深入探讨机器学习算法中的公平性问题，分析其技术根源和伦理困境，并探讨一些可能的解决方案。 偏见是如何进入机器学习模型的？ 机器学习模型的公平性问题并非源于算法本身的恶意，而是源于其训练数据的偏见。  这些偏见可能来自多种来源： 数据收集与标注  样本选择偏差 (Sampling Bias):  如果训练数据未能充分代表所有群体，模型就会学习到一个有偏的表示。例如，如果一个用于预测贷款偿还能力的模型主要基于白人申请人的数据，它可能会对少数族裔申请人产生不公平的负面预测。 测量偏差 (Measurement Bias):  数据收集过程中的错误或不一致也会引入偏见。例如，在犯罪预测模型中，如果某些社区的执法力度更大，导致该社区的犯罪数据被过度记录，模型就会对该社区产生负面偏见。 标注偏差 (Label Bias):  人工标注...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082429/" title="区块链技术与数字版权保护：一场技术与法律的博弈"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">区块链技术与数字版权保护：一场技术与法律的博弈</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术博主X，今天我们来聊一个非常热门的话题：区块链技术如何应用于数字版权保护。在数字内容飞速发展的时代，版权侵权问题日益严峻，传统的版权保护机制显得力不从心。而区块链技术，凭借其去中心化、不可篡改、透明等特性，为解决这一难题提供了新的思路。 区块链技术概述 首先，让我们简单回顾一下区块链技术的基本原理。区块链是一个由多个区块组成的链式数据库，每个区块包含一系列经过加密验证的交易记录。这些交易记录一旦被写入区块链，就无法被篡改或删除，保证了数据的完整性和安全性。  其核心技术包括：  密码学:  确保数据的安全性和完整性，例如哈希算法和数字签名。 共识机制:  例如工作量证明（PoW）和权益证明（PoS），用于维护区块链的统一性和安全性，防止恶意攻击。 分布式账本: 数据分布在多个节点上，提高了系统的容错性和安全性。  区块链如何保护数字版权 区块链技术可以为数字版权保护提供多种方案，主要体现在以下几个方面： 版权登记与确权 传统的版权登记流程繁琐且耗时，而区块链可以提供一个快速、透明的版权登记平台。创作者可以将作品的哈希值（作品的数字指纹）记录到区块链上，以此证...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082438/" title="云计算中的数据安全与隐私：挑战与应对"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">云计算中的数据安全与隐私：挑战与应对</div></div><div class="info-2"><div class="info-item-1">云计算为企业和个人提供了强大的计算资源和数据存储能力，但也带来了新的安全与隐私挑战。本文将深入探讨云计算环境下的数据安全与隐私问题，分析其背后的技术机制，并提出一些有效的应对策略。 云计算安全风险剖析 云计算环境中，数据安全与隐私面临着多种威胁，主要包括： 数据泄露与丢失 这是最常见的风险之一。  数据可能由于云提供商的内部安全漏洞、恶意攻击（例如SQL注入、DDoS攻击）、员工失误或意外事件（例如硬件故障）而泄露或丢失。  对于敏感数据，例如医疗记录、金融信息和个人身份信息，这种风险尤为严重。 数据违规 数据违规是指未经授权访问或使用数据的情况。这可能导致数据被篡改、删除或用于非法目的。  法规遵从性（例如 GDPR, CCPA）的压力也使得数据违规的代价越来越高。 权限管理不足 缺乏细粒度的访问控制机制可能导致数据被未授权的个人或应用程序访问。  复杂的云环境中，权限的管理和审核是一个极大的挑战。 数据完整性问题 云环境中的数据完整性需要得到保障，确保数据没有被未经授权的修改或破坏。  这需要使用诸如哈希算法和数字签名等技术来验证数据的完整性。 数据合规性 不同国家和地区对数...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082500/" title="物联网设备的网络安全协议：挑战与解决方案"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">物联网设备的网络安全协议：挑战与解决方案</div></div><div class="info-2"><div class="info-item-1">物联网 (IoT) 设备正以前所未有的速度渗透到我们生活的方方面面，从智能家居到工业自动化，再到医疗保健。然而，这种广泛的连接也带来了巨大的安全风险。由于物联网设备通常资源受限，安全性设计常常被忽视，导致它们成为网络攻击的理想目标。本文将深入探讨物联网设备面临的网络安全挑战，以及用于增强其安全性的各种协议和技术。 物联网安全面临的挑战 物联网设备的安全挑战与传统IT系统大相径庭，主要体现在以下几个方面： 资源受限 许多物联网设备具有有限的处理能力、内存和存储空间。这使得部署复杂的加密算法和安全协议变得困难，同时也增加了运行时开销。  运行资源消耗较大的安全软件可能会影响设备的性能甚至导致其崩溃。 设备异构性 物联网生态系统由各种各样的设备组成，这些设备运行不同的操作系统，使用不同的编程语言，并具有不同的安全特性。这种异构性使得实施统一的安全策略变得极其复杂。  很难找到一个适用于所有设备的通用安全解决方案。 数据隐私与安全 物联网设备通常会收集大量敏感数据，例如个人健康信息、位置数据和财务信息。保护这些数据的隐私和安全至关重要，但由于设备自身的安全缺陷和数据传输过程中的漏洞，这成...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082528/" title="量子计算对现代密码学的威胁：后量子密码学的挑战与机遇"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">量子计算对现代密码学的威胁：后量子密码学的挑战与机遇</div></div><div class="info-2"><div class="info-item-1">量子计算的飞速发展为许多领域带来了革命性的变革，但也对现有的密码体系构成了前所未有的挑战。本文将深入探讨量子计算如何威胁现代密码学，以及我们如何应对这一挑战。 量子计算的优势与密码学的困境 经典计算机基于比特，其值只能是 0 或 1。而量子计算机利用量子比特，可以同时表示 0 和 1 的叠加态，这使得它们能够进行并行计算，处理能力远超经典计算机。  这种巨大的计算能力为解决某些目前被认为是“不可解”的问题提供了可能性，其中就包括许多现代密码学的基石。 例如，RSA 算法，广泛应用于电子商务和安全通信，其安全性依赖于大数分解的困难性。经典计算机分解一个很大的数需要指数级的时间，因此被认为是安全的。然而，Shor 算法，一个在量子计算机上运行的算法，能够以多项式时间分解大数。这意味着，一台足够强大的量子计算机能够轻易破解 RSA 加密，从而威胁到大量的在线交易、数据安全以及国家安全。 同样，椭圆曲线密码学 (ECC)，另一种广泛使用的密码算法，其安全性也依赖于某些数学问题的复杂性。然而，量子计算机也能够有效地解决这些问题，例如离散对数问题。 Shor 算法与 Grover 算法：量子...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082537/" title="图论算法在社交网络分析中的应用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">图论算法在社交网络分析中的应用</div></div><div class="info-2"><div class="info-item-1">社交网络已经成为我们生活中不可或缺的一部分。从Facebook和Twitter到微信和微博，这些平台连接着数十亿用户，产生着海量的数据。而理解这些数据，挖掘其背后的规律和价值，就需要借助强大的数学工具——图论。本文将深入探讨图论算法在社交网络分析中的多种应用。 社交网络的图表示 在图论中，社交网络可以被自然地表示为图 G=(V,E)G = (V, E)G=(V,E)，其中 VVV 代表用户集合（节点），EEE 代表用户之间的关系集合（边）。例如，在Facebook中，每个用户是一个节点，如果两个用户是朋友，则在他们之间存在一条无向边；在Twitter中，如果用户A关注用户B，则存在一条从A指向B的有向边。边的权重可以表示关系的强度（例如，朋友关系的亲密度，或者互动频率）。  这种图表示为我们分析社交网络提供了坚实的基础。 核心图论算法及其应用 社区发现 社区发现旨在将社交网络划分成多个紧密连接的社区（也称为集群）。这对于理解用户群体、推荐系统以及病毒式营销等都至关重要。常用的算法包括：  Louvain算法:  一种贪婪的启发式算法，通过迭代优化模块度来寻找最佳社区结构。模块度 ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">1332</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1336</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%9E%E6%97%B6%E5%85%89%E7%85%A7%E4%BC%B0%E8%AE%A1%E8%87%B3%E5%85%B3%E9%87%8D%E8%A6%81%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">为什么实时光照估计至关重要？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E5%BC%BA%E7%9C%9F%E5%AE%9E%E6%84%9F%E4%B8%8E%E6%B2%89%E6%B5%B8%E6%84%9F"><span class="toc-number">1.1.</span> <span class="toc-text">增强真实感与沉浸感</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%B8%8E%E4%BA%A4%E4%BA%92"><span class="toc-number">1.2.</span> <span class="toc-text">提升用户体验与交互</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9AR%E5%BA%94%E7%94%A8%E7%9A%84%E5%B9%BF%E6%B3%9B%E5%BD%B1%E5%93%8D"><span class="toc-number">1.3.</span> <span class="toc-text">对AR应用的广泛影响</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%97%B6%E5%85%89%E7%85%A7%E4%BC%B0%E8%AE%A1%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-number">2.</span> <span class="toc-text">实时光照估计的挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9C%9F%E5%AE%9E%E4%B8%96%E7%95%8C%E5%85%89%E7%85%A7%E7%9A%84%E5%A4%8D%E6%9D%82%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">真实世界光照的复杂性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%97%B6%E6%80%A7%E8%A6%81%E6%B1%82"><span class="toc-number">2.2.</span> <span class="toc-text">实时性要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E4%B8%8E%E9%B2%81%E6%A3%92%E6%80%A7"><span class="toc-number">2.3.</span> <span class="toc-text">数据采集与鲁棒性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E8%A1%A8%E7%A4%BA%E7%9A%84%E6%95%88%E7%8E%87%E4%B8%8E%E5%87%86%E7%A1%AE%E6%80%A7"><span class="toc-number">2.4.</span> <span class="toc-text">光照表示的效率与准确性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E6%96%B9%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">核心技术原理与方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%9B%BE%E5%83%8F%E7%9A%84%E5%85%89%E7%85%A7%E4%BC%B0%E8%AE%A1%EF%BC%88Image-Based-Lighting-IBL%EF%BC%89"><span class="toc-number">3.1.</span> <span class="toc-text">基于图像的光照估计（Image-Based Lighting - IBL）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%90%83%E8%B0%90%E5%87%BD%E6%95%B0%EF%BC%88Spherical-Harmonics-SH%EF%BC%89"><span class="toc-number">3.1.1.</span> <span class="toc-text">球谐函数（Spherical Harmonics - SH）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E8%B4%B4%E5%9B%BE%EF%BC%88Environment-Maps-Cube-Maps%EF%BC%89"><span class="toc-number">3.1.2.</span> <span class="toc-text">环境贴图（Environment Maps &#x2F; Cube Maps）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%90%E5%B0%84%E5%BA%A6%E5%9B%BE%EF%BC%88Radiance-Maps%EF%BC%89%E4%B8%8E%E8%BE%90%E7%85%A7%E5%BA%A6%E5%9B%BE%EF%BC%88Irradiance-Maps%EF%BC%89"><span class="toc-number">3.1.3.</span> <span class="toc-text">辐射度图（Radiance Maps）与辐照度图（Irradiance Maps）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%85%89%E7%85%A7%E4%BC%B0%E8%AE%A1"><span class="toc-number">3.2.</span> <span class="toc-text">基于深度学习的光照估计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E6%96%B9%E6%B3%95%E4%B8%8E%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88"><span class="toc-number">3.3.</span> <span class="toc-text">混合方法与多传感器融合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E7%89%A9%E7%90%86%E7%9A%84%E6%B8%B2%E6%9F%93%EF%BC%88Physically-Based-Rendering-PBR%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">基于物理的渲染（Physically Based Rendering - PBR）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%97%B6%E5%85%89%E7%85%A7%E4%BC%B0%E8%AE%A1%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">实时光照估计的实现流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="toc-number">4.1.</span> <span class="toc-text">数据采集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1"><span class="toc-number">4.2.</span> <span class="toc-text">光照参数估计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E7%8E%AF%E5%A2%83%E5%BB%BA%E6%A8%A1"><span class="toc-number">4.3.</span> <span class="toc-text">光照环境建模</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AR%E5%86%85%E5%AE%B9%E6%B8%B2%E6%9F%93"><span class="toc-number">4.4.</span> <span class="toc-text">AR内容渲染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">4.5.</span> <span class="toc-text">性能优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B%E4%B8%8E%E6%8C%91%E6%88%98"><span class="toc-number">5.</span> <span class="toc-text">未来展望与挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E9%AB%98%E7%B2%BE%E5%BA%A6%E4%B8%8E%E9%B2%81%E6%A3%92%E6%80%A7"><span class="toc-number">5.1.</span> <span class="toc-text">更高精度与鲁棒性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E4%B8%B0%E5%AF%8C%E7%9A%84%E7%89%A9%E7%90%86%E6%95%88%E5%BA%94"><span class="toc-number">5.2.</span> <span class="toc-text">更丰富的物理效应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%BA%BAAR%E4%B8%8E%E5%85%B1%E4%BA%AB%E5%85%89%E7%85%A7"><span class="toc-number">5.3.</span> <span class="toc-text">多人AR与共享光照</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E8%BF%9B%E6%AD%A5"><span class="toc-number">5.4.</span> <span class="toc-text">硬件进步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E4%B9%89%E7%90%86%E8%A7%A3%E4%B8%8E%E5%9C%BA%E6%99%AF%E9%87%8D%E5%BB%BA%E7%BB%93%E5%90%88"><span class="toc-number">5.5.</span> <span class="toc-text">语义理解与场景重建结合</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">6.</span> <span class="toc-text">结语</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062627/" title="蛋白质组学的翻译后修饰组学：解码生命复杂性的密码">蛋白质组学的翻译后修饰组学：解码生命复杂性的密码</a><time datetime="2025-07-25T22:26:27.000Z" title="发表于 2025-07-26 06:26:27">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062521/" title="钠离子电池的负极材料：开启储能新纪元的核心密码">钠离子电池的负极材料：开启储能新纪元的核心密码</a><time datetime="2025-07-25T22:25:21.000Z" title="发表于 2025-07-26 06:25:21">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062424/" title="基于人工智能的靶点识别：重塑药物发现的未来">基于人工智能的靶点识别：重塑药物发现的未来</a><time datetime="2025-07-25T22:24:24.000Z" title="发表于 2025-07-26 06:24:24">2025-07-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

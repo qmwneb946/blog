@@ -1,0 +1,696 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>深入剖析Raft：一个可理解的分布式一致性协议 | qmwneb946 的博客</title><meta name="author" content="qmwneb946"><meta name="copyright" content="qmwneb946"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="你好，我是 qmwneb946，一名对技术和数学充满热情的博主。 在当今瞬息万变的数字化世界里，分布式系统已成为构建高可用、可扩展服务的基石。从大型互联网公司的后台服务到云计算基础设施，分布式无处不在。然而，随着系统的规模和复杂性增加，一个新的挑战也随之浮现：如何确保在多台机器协同工作时，它们能对某个共享状态达成一致，即使部分机器出现故障？这正是“分布式一致性”所要解决的核心问题。 想象一下，你正">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入剖析Raft：一个可理解的分布式一致性协议">
+<meta property="og:url" content="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-114448/index.html">
+<meta property="og:site_name" content="qmwneb946 的博客">
+<meta property="og:description" content="你好，我是 qmwneb946，一名对技术和数学充满热情的博主。 在当今瞬息万变的数字化世界里，分布式系统已成为构建高可用、可扩展服务的基石。从大型互联网公司的后台服务到云计算基础设施，分布式无处不在。然而，随着系统的规模和复杂性增加，一个新的挑战也随之浮现：如何确保在多台机器协同工作时，它们能对某个共享状态达成一致，即使部分机器出现故障？这正是“分布式一致性”所要解决的核心问题。 想象一下，你正">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qmwneb946.dpdns.org/img/icon.png">
+<meta property="article:published_time" content="2025-07-24T03:44:48.000Z">
+<meta property="article:modified_time" content="2025-07-26T06:50:50.200Z">
+<meta property="article:author" content="qmwneb946">
+<meta property="article:tag" content="2025">
+<meta property="article:tag" content="计算机科学">
+<meta property="article:tag" content="分布式一致性协议（如Raft）">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qmwneb946.dpdns.org/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "深入剖析Raft：一个可理解的分布式一致性协议",
+  "url": "https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-114448/",
+  "image": "https://qmwneb946.dpdns.org/img/icon.png",
+  "datePublished": "2025-07-24T03:44:48.000Z",
+  "dateModified": "2025-07-26T06:50:50.200Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "qmwneb946",
+      "url": "https://github.com/qmwneb946"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-114448/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '深入剖析Raft：一个可理解的分布式一致性协议',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2845632165165414" crossorigin="anonymous"></script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="qmwneb946 的博客" type="application/atom+xml">
+</head><body><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">qmwneb946 的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">深入剖析Raft：一个可理解的分布式一致性协议</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">深入剖析Raft：一个可理解的分布式一致性协议<a class="post-edit-link" href="https://github.com/qmwneb946/blog/edit/main/source/_posts/2025-07-24-114448.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-24T03:44:48.000Z" title="发表于 2025-07-24 11:44:48">2025-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-26T06:50:50.200Z" title="更新于 2025-07-26 14:50:50">2025-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/">计算机科学</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>你好，我是 qmwneb946，一名对技术和数学充满热情的博主。</p>
+<p>在当今瞬息万变的数字化世界里，分布式系统已成为构建高可用、可扩展服务的基石。从大型互联网公司的后台服务到云计算基础设施，分布式无处不在。然而，随着系统的规模和复杂性增加，一个新的挑战也随之浮现：如何确保在多台机器协同工作时，它们能对某个共享状态达成一致，即使部分机器出现故障？这正是“分布式一致性”所要解决的核心问题。</p>
+<p>想象一下，你正在管理一个关键的数据库服务，它分布在全球的多个数据中心。如果用户在A数据中心修改了数据，而B数据中心未能及时同步，用户在B查询时就会看到旧的数据，这会导致严重的问题。更糟糕的是，如果网络出现分区，或者某些服务器突然崩溃，整个系统能否继续提供正确的服务？</p>
+<p>为了解决这些问题，计算机科学家们提出了各种分布式一致性协议，其中最著名、也最富有挑战性的便是 Paxos。Paxos 协议以其理论上的完备性而闻名，但其复杂的机制也让无数工程师望而却步，正如那句玩笑话：“世界上只有一个人真正理解 Paxos，但他已经忘了。”</p>
+<p>幸运的是，为了应对 Paxos 在工程实践中的高门槛，一种名为 <strong>Raft</strong> 的协议应运而生。Raft 的设计哲学是“可理解性优先”，它将复杂的分布式一致性问题分解为几个相对独立的子问题：领导者选举（Leader Election）、日志复制（Log Replication）和安全性（Safety）。这使得 Raft 比 Paxos 更容易理解、实现和教学，因此在业界得到了广泛的应用，成为了许多分布式系统（如 etcd、Consul）的核心。</p>
+<p>今天，我将带领大家深入剖析 Raft 协议的每一个细节。我们将从分布式系统的挑战开始，逐步揭示 Raft 如何通过精妙的设计，在复杂且充满不确定性的分布式环境中，确保系统始终保持一致性与高可用性。</p>
+<hr>
+<h2 id="分布式系统的挑战与共识的必要性">分布式系统的挑战与共识的必要性</h2>
+<p>在探讨 Raft 之前，我们首先需要理解分布式系统固有的复杂性，以及为何“一致性”是其核心痛点。</p>
+<h3 id="什么是分布式系统？">什么是分布式系统？</h3>
+<p>分布式系统是由多台独立的计算机通过网络连接，协同工作以完成某个任务的集合。这些计算机通常被称为“节点”或“服务器”。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>可扩展性（Scalability）：</strong> 通过增加更多节点来提升系统处理能力。</li>
+<li><strong>高可用性（High Availability）：</strong> 即使部分节点故障，系统也能继续运行。</li>
+<li><strong>容错性（Fault Tolerance）：</strong> 能够容忍特定类型的故障（如节点崩溃、网络延迟）。</li>
+</ul>
+<p><strong>挑战：</strong></p>
+<ul>
+<li><strong>网络通信：</strong> 网络延迟、丢包、分区是常态。</li>
+<li><strong>并发性：</strong> 多个节点可能同时访问和修改共享资源。</li>
+<li><strong>故障模式：</strong> 节点可能崩溃、重启，甚至出现“拜占庭式”的恶意行为。</li>
+<li><strong>一致性：</strong> 在分布式环境中，如何确保所有节点对数据的视图保持一致，是最大的挑战。</li>
+</ul>
+<h3 id="CAP-定理与强一致性">CAP 定理与强一致性</h3>
+<p>理解分布式系统，绕不开 CAP 定理。CAP 定理指出，一个分布式系统不可能同时满足以下三个特性：</p>
+<ul>
+<li><strong>一致性（Consistency）：</strong> 所有节点在同一时间看到的数据都是一致的。</li>
+<li><strong>可用性（Availability）：</strong> 任何非故障节点都能响应读写请求。</li>
+<li><strong>分区容错性（Partition Tolerance）：</strong> 即使网络出现分区（部分节点之间的通信中断），系统也能继续运行。</li>
+</ul>
+<p>在实际的分布式系统中，网络分区是必然会发生的事情。这意味着我们通常必须选择在 <strong>一致性</strong> 和 <strong>可用性</strong> 之间进行权衡。对于需要严格数据正确性的应用（如银行交易、库存管理），我们通常选择牺牲部分可用性来保证强一致性。Raft 协议就是致力于在满足分区容错性（P）的前提下，尽可能地保证强一致性（C），同时兼顾可用性（A）。</p>
+<p><strong>强一致性</strong> 意味着对系统的任何读操作都会返回最近一次写操作的结果。这对于用户体验和数据完整性至关重要。</p>
+<h3 id="共识问题的提出">共识问题的提出</h3>
+<p>当多个节点需要就某个值（例如，哪个节点是主节点，某个事务是否提交）达成一致时，就引出了 <strong>分布式共识问题</strong>。</p>
+<p>最经典的共识问题场景是“原子广播”：如何确保一组节点能够对一系列事件的顺序达成一致，并且所有节点都以相同的顺序处理这些事件。如果节点各自为政，状态将变得混乱。</p>
+<p>Paxos 协议是解决分布式共识问题的开创性算法，它在理论上非常优雅且强大。然而，Paxos 的复杂性在于其角色（Proposer, Acceptor, Learner）和多阶段的交互（Prepare, Accept），这使得它的实现和调试极其困难。这正是 Raft 诞生的动机：提供一个既能解决共识问题，又易于理解和实现的替代方案。</p>
+<hr>
+<h2 id="Raft-协议：一个更易理解的共识算法">Raft 协议：一个更易理解的共识算法</h2>
+<p>Raft 协议旨在实现与 Paxos 相同的容错能力和性能，但其设计目标是“可理解性”（Understandability）。它将共识问题分解为更易于管理、理解的子问题。</p>
+<h3 id="为什么选择-Raft？">为什么选择 Raft？</h3>
+<p>传统的 Paxos 协议虽然在理论上完美，但其算法描述晦涩难懂，导致许多工程师在实际实现时困难重重，容易出错。Raft 的作者认为，一个容易理解的协议，能够帮助开发者更快地实现正确的系统，并且在出现问题时更容易调试。</p>
+<p>Raft 的设计基于以下理念：</p>
+<ul>
+<li><strong>将问题分解：</strong> 将复杂的共识问题分解为独立的子问题。</li>
+<li><strong>减少状态空间：</strong> 限制节点可能处于的状态和操作。</li>
+<li><strong>直观的交互：</strong> 定义清晰的角色和 RPC（远程过程调用）。</li>
+</ul>
+<h3 id="Raft-的核心思想">Raft 的核心思想</h3>
+<p>Raft 的核心思想可以概括为以下几点：</p>
+<ol>
+<li><strong>强领导者（Strong Leader）：</strong> 在任何时刻，集群中只有一个领导者（Leader）负责处理所有客户端请求并管理日志复制。所有其他节点都是跟随者（Follower）。这大大简化了复杂性，因为所有更改都通过一个中心点进行。</li>
+<li><strong>日志复制（Log Replication）：</strong> 领导者通过日志复制机制来同步所有节点的状态。客户端请求的命令首先作为日志条目附加到领导者的日志中，然后领导者将这些条目复制给跟随者。</li>
+<li><strong>安全性（Safety）：</strong> Raft 协议提供强大的安全性保证，确保以下几点：
+<ul>
+<li><strong>选举安全性（Election Safety）：</strong> 在一个给定任期内，最多只有一个领导者。</li>
+<li><strong>领导者只增原则（Leader Append-Only）：</strong> 领导者从不覆盖或删除自己的日志，只追加。</li>
+<li><strong>日志匹配原则（Log Matching）：</strong> 如果两个日志在相同的索引和任期号上有相同的条目，那么它们在该索引之前的所有日志条目都相同。</li>
+<li><strong>已提交条目原则（Committed Entry）：</strong> 如果一个日志条目在给定任期内已被提交，那么在所有后续任期中，所有新当选的领导者都必须包含该条目。</li>
+<li><strong>状态机安全（State Machine Safety）：</strong> 如果一个服务器已经将一个日志条目应用到其本地状态机，那么其他任何服务器都不会在同一个索引处应用不同的日志条目。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="Raft-的角色与状态">Raft 的角色与状态</h2>
+<p>Raft 集群中的每个服务器在任何时候都处于以下三种状态之一：<strong>跟随者（Follower）</strong>、<strong>候选人（Candidate）</strong> 或 <strong>领导者（Leader）</strong>。</p>
+<h3 id="服务器角色">服务器角色</h3>
+<ul>
+<li>
+<p><strong>跟随者 (Follower):</strong></p>
+<ul>
+<li><strong>被动状态：</strong> 响应来自领导者或候选人的 RPC 请求。</li>
+<li><strong>超时机制：</strong> 如果在一定时间内没有收到领导者或候选人的心跳或日志复制请求，它会认为领导者已崩溃或网络断开，并转换为候选人状态，发起新的选举。</li>
+<li><strong>票权：</strong> 在选举中，可以给一个候选人投票。</li>
+<li>Raft 协议中大多数服务器都是跟随者。它们不主动发起请求，只对请求做出响应。</li>
+</ul>
+</li>
+<li>
+<p><strong>候选人 (Candidate):</strong></p>
+<ul>
+<li><strong>竞选状态：</strong> 当跟随者在选举超时后没有收到领导者心跳，它会转变为候选人。</li>
+<li><strong>发起选举：</strong> 候选人会增加自己的当前任期号，给自己投票，并向集群中的其他服务器发送 <code>RequestVote</code> RPC 请求，征集投票。</li>
+<li><strong>状态转换：</strong>
+<ul>
+<li>如果赢得选举（获得大多数服务器的投票），则转变为领导者。</li>
+<li>如果收到来自新领导者（其任期号大于等于自己）的 <code>AppendEntries</code> RPC，则转变为跟随者。</li>
+<li>如果在选举过程中再次发生选举超时，并且没有新的领导者出现，则开始新一轮选举。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>领导者 (Leader):</strong></p>
+<ul>
+<li><strong>活跃状态：</strong> 负责处理所有客户端请求。</li>
+<li><strong>日志管理：</strong> 负责日志复制（将客户端请求的日志条目发送给所有跟随者）和提交。</li>
+<li><strong>心跳机制：</strong> 定期向所有跟随者发送空的 <code>AppendEntries</code> RPC（心跳），以维持其领导地位，并防止跟随者发起新的选举。</li>
+<li>在任何给定时间，Raft 集群中最多只能有一个领导者。</li>
+</ul>
+</li>
+</ul>
+<h3 id="任期-Terms">任期 (Terms)</h3>
+<p>Raft 使用 <strong>任期（Term）</strong> 这个概念作为逻辑时钟。任期是一个单调递增的整数。</p>
+<ul>
+<li>每次领导者选举开始时，任期号都会递增。</li>
+<li>每个服务器都存储当前的任期号，并在 RPC 请求中包含它。</li>
+<li><strong>作用：</strong>
+<ul>
+<li><strong>识别过期信息：</strong> 帮助服务器识别过期的领导者或过期的 RPC 请求。如果一个服务器发现发送者的任期号小于自己的当前任期号，它会拒绝该请求。</li>
+<li><strong>协调行为：</strong> 如果一个服务器发现发送者的任期号大于自己的当前任期号，它会更新自己的任期号，并转变为跟随者（如果它不是跟随者）。</li>
+<li><strong>选举安全性：</strong> 确保在给定的任期内，最多只有一个领导者。</li>
+</ul>
+</li>
+</ul>
+<h3 id="状态转换">状态转换</h3>
+<p>Raft 服务器的状态转换可以用下图来表示（这是一个概念性的描述，你可以想象成一个简单的状态机）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+-----------+       +-----------------+       +---------+</span><br><span class="line">|  Follower | &lt;---- |   Candidate     | &lt;---- |  Leader |</span><br><span class="line">+-----------+       +-----------------+       +---------+</span><br><span class="line">      ^                     |                       |</span><br><span class="line">      |                     | 赢得选举              | 发现更高任期</span><br><span class="line">      | 选举超时            |                       | 的领导者</span><br><span class="line">      |                     |                       |</span><br><span class="line">      +---------------------+-----------------------+</span><br><span class="line">      收到更高任期或新领导者心跳/日志</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Follower -&gt; Candidate:</strong> 当跟随者在选举超时时间内没有收到来自领导者的任何心跳或有效的日志复制请求时，它会认为领导者已经失败，并将自己的状态从 <code>Follower</code> 切换到 <code>Candidate</code>。</li>
+<li><strong>Candidate -&gt; Leader:</strong> 当候选人收到集群中大多数服务器的投票后，它会赢得选举，并将自己的状态从 <code>Candidate</code> 切换到 <code>Leader</code>。</li>
+<li><strong>Candidate -&gt; Follower:</strong> 如果候选人在等待投票时收到来自其他服务器的 <code>AppendEntries</code> RPC，并且该 RPC 的任期号大于或等于自己的当前任期号，则说明已经有新的领导者产生，它会立即转变为 <code>Follower</code>。</li>
+<li><strong>Leader -&gt; Follower:</strong> 如果领导者在与其它服务器通信时，发现某个 RPC 请求的任期号大于自己的当前任期号，这意味着已经有更高任期的领导者出现（可能是网络分区恢复或旧领导者失联后新选举产生），它会立即放弃领导权，转变为 <code>Follower</code>。</li>
+</ul>
+<hr>
+<h2 id="领导者选举">领导者选举</h2>
+<p>领导者选举是 Raft 协议的第一个核心子问题，它确保在集群中只有一个服务器作为领导者。</p>
+<h3 id="选举超时-Election-Timeout">选举超时 (Election Timeout)</h3>
+<p>每个跟随者都有一个随机化的 <strong>选举超时时间</strong>。这个时间通常在 150ms 到 300ms 之间。</p>
+<ul>
+<li><strong>目的：</strong>
+<ul>
+<li>防止“分裂投票”（Split Vote）：如果所有服务器的超时时间都相同，它们可能会同时超时并成为候选人，导致没有一个候选人获得多数票。随机化有助于错开超时时间，使得一个服务器更有可能在其他服务器之前超时并赢得选举。</li>
+<li>触发选举：当跟随者在选举超时时间内没有收到领导者（或候选人）的心跳时，它就认为当前领导者已下线，并触发一次新的选举。</li>
+</ul>
+</li>
+</ul>
+<h3 id="投票请求-RequestVote-RPC">投票请求 (RequestVote RPC)</h3>
+<p>当跟随者超时并转变为候选人后，它会执行以下操作：</p>
+<ol>
+<li><strong>增加当前任期号。</strong></li>
+<li><strong>给自己投票。</strong></li>
+<li><strong>向集群中的其他所有服务器发送 <code>RequestVote</code> RPC 请求。</strong></li>
+</ol>
+<p><code>RequestVote</code> RPC 包含以下信息：</p>
+<ul>
+<li><code>term</code>: 候选人的当前任期号。</li>
+<li><code>candidateId</code>: 候选人的 ID。</li>
+<li><code>lastLogIndex</code>: 候选人最新日志条目的索引。</li>
+<li><code>lastLogTerm</code>: 候选人最新日志条目的任期号。</li>
+</ul>
+<p>接收 <code>RequestVote</code> RPC 的服务器（投票者）会根据以下规则决定是否投票：</p>
+<ol>
+<li>
+<p><strong>任期规则：</strong></p>
+<ul>
+<li>如果候选人的 <code>term</code> 小于投票者的当前任期号，投票者拒绝投票，并告知候选人自己的更高任期号。</li>
+<li>如果候选人的 <code>term</code> 大于投票者的当前任期号，投票者更新自己的任期号为候选人的任期号，并转变为跟随者。</li>
+<li>如果候选人的 <code>term</code> 等于投票者的当前任期号，投票者继续检查其他规则。</li>
+</ul>
+</li>
+<li>
+<p><strong>一任期一票原则：</strong> 在一个给定的任期内，每个投票者最多只能给一个候选人投票。如果它已经给当前任期内的某个候选人投过票，它将拒绝为其他候选人投票。</p>
+</li>
+<li>
+<p><strong>日志更新度检查（Log-Completeness Check）：</strong> 这是 Raft 安全性的关键部分。投票者只会给那些日志至少和自己一样新的候选人投票。</p>
+<ul>
+<li>“日志更“新”的定义是：
+<ul>
+<li>如果两个日志的最新日志条目任期号不同，则任期号大的日志更新。</li>
+<li>如果两个日志的最新日志条目任期号相同，则日志索引更大的日志更新。</li>
+</ul>
+</li>
+</ul>
+<p>这个规则确保了，当选的领导者一定是拥有所有已提交日志条目的节点之一。如果一个候选人的日志落后于投票者，它就不会被投票。</p>
+</li>
+</ol>
+<p><strong>伪代码示例：RequestVote RPC 处理</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">// On RequestVote RPC received by a Follower/Candidate</span><br><span class="line">handleRequestVote(term, candidateId, lastLogIndex, lastLogTerm):</span><br><span class="line">  // 1. If RPC term &lt; currentTerm, reply false</span><br><span class="line">  if term &lt; currentTerm:</span><br><span class="line">    return &#123; term: currentTerm, voteGranted: false &#125;</span><br><span class="line"></span><br><span class="line">  // 2. If RPC term &gt; currentTerm, update term and become follower</span><br><span class="line">  //    (This implicitly resets votedFor to null, allowing a vote)</span><br><span class="line">  if term &gt; currentTerm:</span><br><span class="line">    currentTerm = term</span><br><span class="line">    state = Follower</span><br><span class="line">    votedFor = null // Reset votedFor for the new term</span><br><span class="line"></span><br><span class="line">  // 3. If votedFor is null or candidateId, and candidate&#x27;s log is at least as up-to-date as receiver&#x27;s log</span><br><span class="line">  //    Log completeness check:</span><br><span class="line">  //    receiver&#x27;s last log entry (lastLogIndex_self, lastLogTerm_self)</span><br><span class="line">  //    candidate&#x27;s last log entry (lastLogIndex, lastLogTerm)</span><br><span class="line">  isLogUpToDate = (lastLogTerm &gt; lastLogTerm_self) || \</span><br><span class="line">                  (lastLogTerm == lastLogTerm_self &amp;&amp; lastLogIndex &gt;= lastLogIndex_self)</span><br><span class="line"></span><br><span class="line">  if (votedFor == null || votedFor == candidateId) &amp;&amp; isLogUpToDate:</span><br><span class="line">    votedFor = candidateId</span><br><span class="line">    return &#123; term: currentTerm, voteGranted: true &#125;</span><br><span class="line">  else:</span><br><span class="line">    return &#123; term: currentTerm, voteGranted: false &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="选举成功">选举成功</h3>
+<p>候选人发送 <code>RequestVote</code> RPC 后，会等待其他服务器的响应。</p>
+<ul>
+<li>如果候选人收到了来自集群中 <strong>大多数（Majority）</strong> 服务器的投票（包括自己投给自己的一票），它就赢得选举，成为新的领导者。
+<ul>
+<li>多数派定义：对于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 个节点的集群，多数派为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⌊</mo><mi>N</mi><mi mathvariant="normal">/</mi><mn>2</mn><mo stretchy="false">⌋</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\lfloor N/2 \rfloor + 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⌊</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord">/2</span><span class="mclose">⌋</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>。例如，5个节点的集群，多数派是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">2+1=3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span> 个节点。</li>
+</ul>
+</li>
+<li>成为领导者后，它会立即向所有跟随者发送空的 <code>AppendEntries</code> RPC（心跳），以建立自己的领导地位并阻止新的选举。</li>
+</ul>
+<h3 id="选举失败与新的任期">选举失败与新的任期</h3>
+<p>选举可能会因为多种原因而失败：</p>
+<ul>
+<li><strong>平票/分裂投票：</strong> 多个候选人同时发起选举，并且都没有获得多数票。</li>
+<li><strong>发现新领导者：</strong> 候选人在等待投票时，收到了来自更高任期领导者的心跳。</li>
+</ul>
+<p>当选举失败时，候选人会等待一个新的选举超时，然后再次增加任期号，并重新开始选举过程。随机化的选举超时时间有助于解决平票问题，因为不同的服务器会以不同的时间间隔启动下一次选举，从而打破僵局。</p>
+<hr>
+<h2 id="日志复制">日志复制</h2>
+<p>日志复制是 Raft 协议的第二个核心子问题，它负责管理客户端请求，并确保所有节点的数据最终保持一致。</p>
+<h3 id="日志条目-Log-Entries">日志条目 (Log Entries)</h3>
+<p>Raft 协议中的所有操作都是通过日志条目（Log Entry）来管理的。每个日志条目包含：</p>
+<ul>
+<li><strong>命令（Command）：</strong> 客户端请求的指令，要应用到状态机（例如，“设置 x=10”，“删除文件 y”）。</li>
+<li><strong>任期号（Term）：</strong> 创建该日志条目时的领导者的任期号。</li>
+<li><strong>索引（Index）：</strong> 日志条目在日志中的唯一顺序位置。</li>
+</ul>
+<p>日志条目在所有服务器上都有相同的顺序，这是 Raft 实现一致性的关键。</p>
+<h3 id="心跳机制与日志同步">心跳机制与日志同步</h3>
+<p>领导者通过周期性地向所有跟随者发送 <code>AppendEntries</code> RPC 来实现日志复制和维持领导地位。</p>
+<ul>
+<li><strong>心跳：</strong> 如果领导者没有新的日志条目要发送，它会发送空的 <code>AppendEntries</code> RPC 作为心跳，告知跟随者自己仍然是领导者，防止跟随者超时并重新发起选举。</li>
+<li><strong>日志复制：</strong> 当客户端请求到达领导者时：
+<ol>
+<li>领导者将请求的命令作为新的日志条目附加到自己的日志中。</li>
+<li>领导者并行地向所有跟随者发送 <code>AppendEntries</code> RPC，包含新的日志条目。</li>
+<li>跟随者收到 <code>AppendEntries</code> RPC 后，会根据其参数进行验证和处理。</li>
+</ol>
+</li>
+</ul>
+<p><code>AppendEntries</code> RPC 包含以下信息：</p>
+<ul>
+<li><code>term</code>: 领导者的当前任期号。</li>
+<li><code>leaderId</code>: 领导者的 ID。</li>
+<li><code>prevLogIndex</code>: 新日志条目之前一个条目的索引（用于一致性检查）。</li>
+<li><code>prevLogTerm</code>: 新日志条目之前一个条目的任期号（用于一致性检查）。</li>
+<li><code>entries[]</code>: 要附加的日志条目（如果为空，则为心跳）。</li>
+<li><code>leaderCommit</code>: 领导者已提交的最新日志条目的索引。</li>
+</ul>
+<p>接收 <code>AppendEntries</code> RPC 的服务器（跟随者）会根据以下规则进行处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">// On AppendEntries RPC received by a Follower</span><br><span class="line">handleAppendEntries(term, leaderId, prevLogIndex, prevLogTerm, entries[], leaderCommit):</span><br><span class="line">  // 1. If RPC term &lt; currentTerm, reply false</span><br><span class="line">  if term &lt; currentTerm:</span><br><span class="line">    return &#123; term: currentTerm, success: false &#125;</span><br><span class="line"></span><br><span class="line">  // 2. If RPC term &gt;= currentTerm, update term and become follower (if not already)</span><br><span class="line">  if term &gt;= currentTerm:</span><br><span class="line">    currentTerm = term</span><br><span class="line">    state = Follower // Always become follower if leader is valid</span><br><span class="line">    votedFor = null // Clear votedFor for the new term</span><br><span class="line"></span><br><span class="line">  // Reset election timeout as we&#x27;ve received valid RPC from leader</span><br><span class="line">  resetElectionTimeout()</span><br><span class="line"></span><br><span class="line">  // 3. If log doesn&#x27;t contain an entry at prevLogIndex whose term matches prevLogTerm, reply false</span><br><span class="line">  //    This is the Log Matching Property check.</span><br><span class="line">  if log.length &lt;= prevLogIndex or log[prevLogIndex].term != prevLogTerm:</span><br><span class="line">    return &#123; term: currentTerm, success: false &#125;</span><br><span class="line"></span><br><span class="line">  // 4. If an existing entry conflicts with a new one (same index, different terms),</span><br><span class="line">  //    delete the existing entry and all that follow it.</span><br><span class="line">  //    (This handles divergence: leader forces its log onto followers)</span><br><span class="line">  for i from 0 to entries.length - 1:</span><br><span class="line">    logIndex = prevLogIndex + 1 + i</span><br><span class="line">    if log.length &gt; logIndex and log[logIndex].term != entries[i].term:</span><br><span class="line">      log = log.truncate(logIndex) // Delete conflicting entry and all following</span><br><span class="line">      break</span><br><span class="line">    elif log.length &gt; logIndex and log[logIndex].term == entries[i].term:</span><br><span class="line">      // Entry already exists and matches, skip to next</span><br><span class="line">      continue</span><br><span class="line">    else:</span><br><span class="line">      // Append new entry</span><br><span class="line">      log.append(entries[i])</span><br><span class="line"></span><br><span class="line">  // 5. If leaderCommit &gt; commitIndex, set commitIndex = min(leaderCommit, index of last new entry)</span><br><span class="line">  if leaderCommit &gt; commitIndex:</span><br><span class="line">    commitIndex = min(leaderCommit, log.lastIndex())</span><br><span class="line"></span><br><span class="line">  return &#123; term: currentTerm, success: true &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="日志的一致性与安全性">日志的一致性与安全性</h3>
+<p>Raft 协议通过以下机制保证日志的一致性和安全性：</p>
+<ol>
+<li><strong>领导者只增原则：</strong> 领导者从不覆盖或删除自己的日志条目，只追加新的条目。</li>
+<li><strong>日志匹配原则（Log Matching Property）：</strong>
+<ul>
+<li>如果两个日志在相同的索引和任期号上有相同的条目，那么它们在该索引之前的所有日志条目都相同。</li>
+<li>Raft 通过 <code>AppendEntries</code> RPC 中的 <code>prevLogIndex</code> 和 <code>prevLogTerm</code> 参数来强制执行此原则。如果跟随者发现自己的日志与领导者不匹配，它会拒绝该 RPC，领导者收到拒绝后会尝试发送更早的日志条目，直到找到匹配点，然后从该点开始强制复制。这个过程被称为 <strong>日志回溯</strong>。</li>
+</ul>
+</li>
+<li><strong>已提交条目原则：</strong> Raft 确保一旦一个日志条目被提交（即被多数节点复制并确认），它将永远不会被回滚。这将状态机安全地应用。</li>
+</ol>
+<h3 id="提交日志-Committing-Log-Entries">提交日志 (Committing Log Entries)</h3>
+<p>当一个日志条目被认为是“已提交”时，它就可以安全地被应用到所有服务器的状态机上。Raft 的提交规则如下：</p>
+<ul>
+<li><strong>领导者提交规则：</strong> 如果一个日志条目被复制到集群中 <strong>大多数</strong> 的服务器上，并且该条目是当前领导者任期内的，那么领导者就可以提交该条目。
+<ul>
+<li><strong>关键点：</strong> 领导者不能仅仅通过复制到多数来提交“旧任期”的日志条目。为了确保安全（避免选举分区导致旧日志被错误提交），旧任期的日志条目必须通过复制一个当前任期的新日志条目到多数来间接提交。</li>
+</ul>
+</li>
+<li><strong>跟随者提交：</strong> 当跟随者发现领导者已提交的最新日志条目索引 <code>leaderCommit</code> 大于自己的 <code>commitIndex</code> 时，它会更新自己的 <code>commitIndex</code>，并将其日志中从 <code>commitIndex</code> 到 <code>leaderCommit</code> 之间的所有条目应用到状态机。</li>
+</ul>
+<p><strong>为什么领导者不能直接提交旧任期的日志？</strong><br>
+考虑一个5节点集群，初始领导者 L1，任期 T1。</p>
+<ol>
+<li>L1 在 T1 任期接收条目 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">E_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，索引 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>。L1 复制 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">E_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 到 F2，F3。L1 崩溃。</li>
+<li>新的领导者 L2（任期 T2）被选举出来。L2 可能没有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">E_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li>L2 复制一些新条目 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>B</mi></msub></mrow><annotation encoding="application/x-tex">E_B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。L2 崩溃。</li>
+<li>L1 重新上线，但此时集群已经有了新的领导者 L3（任期 T3）。</li>
+<li>如果 L1 只是因为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">E_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 存在于多数节点（L1, F2, F3），就直接提交 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">E_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，而 L3 并没有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">E_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，那就会导致数据不一致。</li>
+</ol>
+<p>Raft 强制要求领导者在提交旧任期的条目时，必须通过提交至少一个当前任期的条目来“捎带”地提交旧任期的条目。这样可以保证，一旦某个任期的领导者成功提交了日志条目，那么该条目必定存在于所有后续的领导者中。</p>
+<hr>
+<h2 id="安全性保证">安全性保证</h2>
+<p>Raft 的设计在每一步都考虑了安全性，确保即使在网络分区和节点故障的情况下，数据也不会丢失或不一致。</p>
+<h3 id="选举限制-Election-Restriction">选举限制 (Election Restriction)</h3>
+<p>正如前面提到的，Raft 在 <code>RequestVote</code> RPC 中加入了日志更新度检查：候选人只有在日志至少和投票者一样新时，才能获得投票。</p>
+<ul>
+<li><strong>目的：</strong> 确保当选的领导者拥有所有已提交的日志条目。</li>
+<li><strong>原理：</strong> 如果一个日志条目在某个任期被提交，那么它一定存在于该任期内的某个多数派节点中。当选领导者需要获得多数派的投票。通过日志更新度检查，可以保证新当选的领导者日志一定包含前一个领导者已经提交的所有日志条目。因为如果它不包含，它就无法从那些已经包含了该已提交条目的多数派节点中获得投票。</li>
+</ul>
+<h3 id="日志匹配原则的推论">日志匹配原则的推论</h3>
+<p>日志匹配原则 (<code>prevLogIndex</code> 和 <code>prevLogTerm</code> 检查) 结合领导者只增原则，引申出 Raft 强大的安全属性：</p>
+<ul>
+<li><strong>已提交的条目永远不会被回滚：</strong> 一旦一个日志条目被提交，它将存在于所有后续的领导者的日志中。这意味着，一旦一个命令被应用到状态机，它将永远不会被撤销。</li>
+<li><strong>领导者完整性（Leader Completeness）：</strong> 领导者总是拥有所有已提交的日志条目。这是选举限制和日志匹配原则的直接结果。</li>
+</ul>
+<p>这些安全性保证是 Raft 能够作为可靠的分布式一致性协议的核心。</p>
+<hr>
+<h2 id="集群成员变更">集群成员变更</h2>
+<p>在分布式系统中，集群成员的动态变更（如增加或移除节点）是一个常见但复杂的任务。如果在成员变更过程中不处理好一致性，很容易导致系统分裂或数据不一致。</p>
+<h3 id="为什么复杂？">为什么复杂？</h3>
+<p>集群成员变更的复杂性在于，在变更过程中，集群中会同时存在“旧配置”和“新配置”的节点。如果简单地直接切换到新配置，可能会导致：</p>
+<ul>
+<li><strong>分裂投票：</strong> 节点对多数派的定义不同，导致新旧领导者同时存在。</li>
+<li><strong>数据丢失：</strong> 旧配置下的已提交数据未能在新配置中得到确认。</li>
+</ul>
+<h3 id="两阶段方法-Joint-Consensus">两阶段方法 (Joint Consensus)</h3>
+<p>Raft 协议通过一个两阶段的方法来安全地进行成员变更，被称为 <strong>联合共识（Joint Consensus）</strong>。</p>
+<ol>
+<li>
+<p><strong>阶段一：进入联合共识配置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mo separator="true">,</mo><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old,new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></strong></p>
+<ul>
+<li>领导者将一个新的特殊日志条目提交到集群中，该条目包含了旧的配置（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>）和新的配置（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>）。</li>
+<li>当这个日志条目被复制到集群中大多数的节点后，所有的服务器都开始使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mo separator="true">,</mo><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old,new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 作为它们的配置。</li>
+<li>在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mo separator="true">,</mo><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old,new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 配置下，任何操作（包括选举和日志提交）都需要同时获得 <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的多数派</strong> 和 <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的多数派</strong> 的同意。</li>
+<li>这个阶段确保了在变更过程中，系统仍然能够安全地运行，因为任何决定都必须获得新旧配置的共同认可。</li>
+</ul>
+</li>
+<li>
+<p><strong>阶段二：进入新配置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></strong></p>
+<ul>
+<li>一旦 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mo separator="true">,</mo><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old,new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> 被提交（即被多数节点复制并确认），领导者再提交一个只包含 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的日志条目。</li>
+<li>当这个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 日志条目被复制到集群中大多数的节点后，所有的服务器都切换到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 配置。</li>
+<li>此后，所有的操作都只需遵循 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的多数派规则。</li>
+</ul>
+</li>
+</ol>
+<p><strong>安全性：</strong> 联合共识的关键在于，在过渡阶段 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mo separator="true">,</mo><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old,new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>，它同时考虑了新旧两种配置的多数派。这意味着无论在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{old}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 中哪个节点是多数派，还是在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{new}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 中哪个节点是多数派，它们共同的交集总是能包含至少一个节点，从而避免了分裂投票和数据不一致的问题。</p>
+<h3 id="单阶段方法-Single-stage-Change-Non-voting-members">单阶段方法 (Single-stage Change / Non-voting members)</h3>
+<p>除了联合共识，一些 Raft 的变种和实现也探索了更简单的单阶段成员变更方法，例如：</p>
+<ul>
+<li><strong>移除节点：</strong> 可以先将其从投票成员中移除，但保留其作为日志同步的节点，待其日志同步完成后再完全移除。</li>
+<li><strong>添加节点：</strong> 可以先将其作为非投票成员添加到集群中，使其同步领导者的日志，待其日志追赶上后，再将其升级为投票成员。</li>
+</ul>
+<p>这些方法在某些场景下可以简化实现，但它们通常需要在操作层面进行更严格的协调和确保正确性。标准 Raft 论文推荐的是联合共识。</p>
+<hr>
+<h2 id="Raft-的实现细节与优化">Raft 的实现细节与优化</h2>
+<p>理解了 Raft 的核心原理后，我们还需要关注一些在实际实现中非常重要的细节和优化。</p>
+<h3 id="持久化-Persistence">持久化 (Persistence)</h3>
+<p>Raft 协议的关键在于其状态的持久化。为了在服务器崩溃和重启后仍能保持正确性，以下状态必须被持久化到稳定的存储（如磁盘）中：</p>
+<ul>
+<li><strong>当前任期（currentTerm）：</strong> 服务器已知的最新任期。</li>
+<li><strong>已投票给的候选人（votedFor）：</strong> 在当前任期内投给的候选人 ID。</li>
+<li><strong>日志（log[]）：</strong> 所有的日志条目。</li>
+</ul>
+<p>在收到 <code>RequestVote</code> 或 <code>AppendEntries</code> RPC 时，如果需要更新 <code>currentTerm</code> 或 <code>votedFor</code>，或者在日志中添加新条目，这些更改必须在响应 RPC 之前持久化到磁盘，以确保在崩溃后能够恢复到正确的状态。</p>
+<h3 id="客户端交互-Client-Interaction">客户端交互 (Client Interaction)</h3>
+<p>客户端如何与 Raft 集群交互？</p>
+<ol>
+<li><strong>请求转发：</strong> 客户端的请求总是被转发到集群的领导者。如果客户端连接的不是领导者，它会收到一个错误响应，其中包含领导者的地址（如果已知）。然后客户端会重试连接领导者。</li>
+<li><strong>写操作（Log Replication）：</strong> 客户端的写请求作为日志条目被领导者追加到日志中，并通过日志复制机制同步到大多数跟随者。当日志条目被提交后，领导者将命令应用到状态机，并响应客户端。</li>
+<li><strong>读操作（Read Linearizability）：</strong> 默认的 Raft 读操作转发到领导者可能会返回过时数据（如果领导者在响应前崩溃，并且有一个拥有较旧日志的节点当选为新领导者）。为了实现线性一致性读（即读操作总能看到最新的已提交数据），Raft 提供了两种主要方法：
+<ul>
+<li><strong>ReadIndex：</strong> 领导者在处理读请求前，首先通过心跳或 <code>AppendEntries</code> RPC 确认自己仍然是领导者（即没有更高任期的领导者出现）。然后它等待所有已提交日志条目被应用到本地状态机（即 <code>commitIndex</code> 达到 <code>applyIndex</code>），再执行读操作。这确保了读操作看到的是最新的已提交状态。</li>
+<li><strong>Lease Read：</strong> 领导者通过定期向跟随者发送心跳来续订一个“租约”。在租约有效期内，领导者可以假设它仍然是合法的领导者，可以直接响应读请求。这种方法比 ReadIndex 性能更好，但需要严格的时间同步。</li>
+</ul>
+</li>
+</ol>
+<h3 id="快照-Snapshots">快照 (Snapshots)</h3>
+<p>随着时间的推移，Raft 的日志会不断增长，这会带来一些问题：</p>
+<ul>
+<li>磁盘空间消耗。</li>
+<li>新加入集群的节点需要复制整个庞大的日志。</li>
+</ul>
+<p>为了解决这个问题，Raft 引入了 <strong>快照（Snapshots）</strong> 机制。</p>
+<ul>
+<li><strong>原理：</strong> 每个服务器独立地将已提交状态机的当前状态保存为快照，然后丢弃快照之前的日志条目。快照可以被看作是日志中所有已提交命令的结果的压缩表示。</li>
+<li><strong>内容：</strong> 快照通常包含：
+<ul>
+<li><code>lastIncludedIndex</code>: 快照中包含的最后一条日志条目的索引。</li>
+<li><code>lastIncludedTerm</code>: 快照中包含的最后一条日志条目的任期号。</li>
+<li>状态机状态的字节数组。</li>
+</ul>
+</li>
+<li><strong>安装快照 RPC：</strong> 当一个新加入的跟随者或一个落后太多的跟随者需要同步日志时，领导者会发送 <code>InstallSnapshot</code> RPC，将自己的快照发送给它。跟随者收到快照后，会用快照替换自己的整个日志，然后从快照之后的索引开始正常接收日志条目。</li>
+</ul>
+<p>快照是 Raft 在生产环境中不可或缺的优化。</p>
+<h3 id="性能优化-Performance-Optimizations">性能优化 (Performance Optimizations)</h3>
+<ul>
+<li><strong>Pipeline AppendEntries：</strong> 领导者可以并行地向多个跟随者发送 <code>AppendEntries</code> RPC，而无需等待上一个 RPC 的响应。这可以显著提高日志复制的吞吐量。</li>
+<li><strong>批处理（Batching）：</strong> 将多个客户端请求合并成一个日志条目，或者将多个日志条目打包在一个 <code>AppendEntries</code> RPC 中发送，减少网络开销。</li>
+<li><strong>并发应用：</strong> 在日志条目被提交后，可以将它们并发地应用到状态机中，以提高状态机吞吐量。</li>
+</ul>
+<hr>
+<h2 id="Raft-的应用与实践">Raft 的应用与实践</h2>
+<p>Raft 协议因其易于理解和实现而获得了广泛的认可，并被应用于众多知名的分布式系统中。</p>
+<h3 id="常见应用场景">常见应用场景</h3>
+<ul>
+<li><strong>分布式键值存储（Distributed Key-Value Stores）：</strong>
+<ul>
+<li><strong>etcd：</strong> CoreOS 开发的分布式键值存储，广泛用于服务发现、配置管理和分布式协调。它是 Kubernetes 的核心组件，Raft 是其一致性协议。</li>
+<li><strong>Consul：</strong> HashiCorp 开发的服务网格解决方案，其底层也使用了 Raft 协议来保证其数据的一致性。</li>
+</ul>
+</li>
+<li><strong>分布式协调服务：</strong> 作为 ZooKeeper 的轻量级替代品，用于选举领导者、管理配置、服务发现等。</li>
+<li><strong>分布式文件系统元数据管理：</strong> 例如，一些分布式文件系统（如 HDFS 的 NameNode 高可用）可能使用 Raft 来管理元数据，确保在主节点故障时能够快速切换。</li>
+<li><strong>数据库复制：</strong> 一些新型的分布式数据库也可能采用 Raft 或其变种来实现多副本之间的数据一致性。</li>
+</ul>
+<h3 id="与-Paxos-对比">与 Paxos 对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">特性</th>
+<th style="text-align:left">Raft</th>
+<th style="text-align:left">Paxos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>可理解性</strong></td>
+<td style="text-align:left">高，设计理念就是“可理解的共识”</td>
+<td style="text-align:left">低，理论完备但实现复杂</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>实现难度</strong></td>
+<td style="text-align:left">相对低，社区有大量高质量的实现</td>
+<td style="text-align:left">极高，容易出错</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>角色</strong></td>
+<td style="text-align:left">强领导者模式：Leader, Follower, Candidate</td>
+<td style="text-align:left">多角色，非对称：Proposer, Acceptor, Learner</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>日志管理</strong></td>
+<td style="text-align:left">领导者负责日志复制，有明确的日志匹配原则</td>
+<td style="text-align:left">复杂的日志编号和协调机制</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>成员变更</strong></td>
+<td style="text-align:left">定义了联合共识的两阶段方法</td>
+<td style="text-align:left">复杂且通常需要外部协调</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>故障处理</strong></td>
+<td style="text-align:left">明确定义了选举和日志修复过程</td>
+<td style="text-align:left">需通过特定角色和轮次处理</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>工程实践</strong></td>
+<td style="text-align:left">在生产系统中广泛使用，如 etcd, Consul</td>
+<td style="text-align:left">更多停留在理论层面，难以直接实现</td>
+</tr>
+</tbody>
+</table>
+<p>可以说，Raft 在工程实践中取得了巨大的成功，很大程度上是因为它降低了分布式一致性协议的实现门槛，使得更多开发者能够构建健壮的分布式系统。</p>
+<h3 id="Raft-的局限性">Raft 的局限性</h3>
+<p>尽管 Raft 协议非常强大，但它并非没有局限性：</p>
+<ul>
+<li><strong>性能开销：</strong> 作为一种强一致性协议，Raft 需要大多数节点的确认才能提交日志。这意味着在每次写操作时，都有至少一次网络往返和磁盘写入，这会引入一定的延迟和性能开销。</li>
+<li><strong>多数派失效问题：</strong> 如果集群中大多数节点同时发生故障或网络分区导致多数派无法形成，整个集群将无法选举出领导者，从而停止对外服务（失去可用性）。对于一个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 个节点的集群，最多只能容忍 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⌊</mo><mi>N</mi><mi mathvariant="normal">/</mi><mn>2</mn><mo stretchy="false">⌋</mo></mrow><annotation encoding="application/x-tex">\lfloor N/2 \rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⌊</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord">/2</span><span class="mclose">⌋</span></span></span></span> 个节点的失效。</li>
+<li><strong>网络分区下的可用性降低：</strong> 在严重网络分区的情况下，如果某个分区不包含多数节点，该分区内的节点将无法形成多数派，从而无法提供服务。这是 CAP 定理中“选择 P 牺牲 A”的体现。</li>
+<li><strong>不支持拜占庭故障：</strong> Raft 协议是为“崩溃-停止”（Crash-Stop）模型设计的，即节点只会崩溃或暂时失联，不会发送恶意或错误的信息。它不能处理拜占庭将军问题（Byzantine Fault Tolerance），即节点可能恶意发送错误信息。</li>
+</ul>
+<hr>
+<h2 id="结论">结论</h2>
+<p>Raft 协议的诞生是分布式系统领域的一个重要里程碑。它以“可理解性优先”的设计理念，成功地将复杂的分布式一致性问题分解为易于掌握的子问题，并提供了清晰、直观的解决方案。通过领导者选举、日志复制和一系列严格的安全性保证，Raft 使得构建高可用、容错的分布式系统变得不再是少数专家的专属技能。</p>
+<p>无论是 <code>etcd</code> 支撑的 Kubernetes，还是 <code>Consul</code> 提供的服务网格，Raft 都在幕后默默地为这些现代分布式基础设施提供坚实的一致性保障。它告诉我们，一个优秀的技术协议，不仅要在理论上完备，更要在工程实践中易于落地。</p>
+<p>理解 Raft 不仅能帮助我们更好地使用这些现有的分布式系统，更能为我们自己设计和构建新的分布式服务提供宝贵的洞察和基石。在未来，随着分布式系统变得越来越普遍和复杂，对像 Raft 这样既强大又易于理解的协议的需求只会越来越大。</p>
+<p>希望通过这篇深入的分析，你对 Raft 协议有了全面而深刻的理解。分布式世界的探索永无止境，保持好奇，不断学习，我们一起在技术的海洋里乘风破浪！</p>
+<hr>
+<p>由 qmwneb946 撰写。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/qmwneb946">qmwneb946</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-114448/">https://qmwneb946.dpdns.org/2025/07/24/2025-07-24-114448/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a> 许可协议。转载请注明来源 <a href="https://qmwneb946.dpdns.org" target="_blank">qmwneb946 的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/2025/">2025</a><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/">计算机科学</a><a class="post-meta__tags" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%EF%BC%88%E5%A6%82Raft%EF%BC%89/">分布式一致性协议（如Raft）</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/24/2025-07-24-115305/" title="深入解析：操作系统中的进程间通信（IPC）机制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">深入解析：操作系统中的进程间通信（IPC）机制</div></div><div class="info-2"><div class="info-item-1"> 你好，各位技术爱好者们！我是 qmwneb946，你们的老朋友，致力于探索计算机科学的深层奥秘。今天，我们将一同踏上一段激动人心的旅程，深入剖析操作系统中一个至关重要却又常常被低估的领域——进程间通信（Inter-Process Communication，IPC）。 在现代操作系统中，我们每天都在与各种各样的应用程序打交道。这些应用程序，无论是浏览器、音乐播放器、文本编辑器，还是后台服务，它们通常都以独立的“进程”形式运行。每个进程都拥有自己的内存空间、文件描述符和执行上下文，这种隔离性确保了系统的稳定性和安全性。然而，这种隔离也带来了一个核心问题：如果进程是独立的“沙盒”，它们如何协同工作，共享数据，或者互相通知事件呢？答案正是我们今天要探讨的 IPC 机制。 想象一下一个复杂的系统，比如一个 Web 服务器：它可能有一个进程负责监听网络请求，另一个进程负责处理数据库查询，还有一个进程负责渲染网页内容。这些独立的功能单元必须能够高效、安全地交换信息，才能作为一个整体对外提供服务。IPC 就是实现这种协作的“桥梁”和“语言”。 本文将从最基本的概念入手，逐步揭示 IPC 的各...</div></div></div></a><a class="pagination-related" href="/2025/07/24/2025-07-24-114338/" title="深入理解洋葱架构与依赖倒置：构建高内聚、低耦合的软件系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">深入理解洋葱架构与依赖倒置：构建高内聚、低耦合的软件系统</div></div><div class="info-2"><div class="info-item-1">各位技术爱好者、架构探索者们，大家好！我是 qmwneb946，很高兴能与大家共同踏上这次深入探讨软件架构核心原理的旅程。在当今快速变化的软件世界中，构建易于维护、可扩展、可测试的系统是每个开发团队的终极目标。然而，这并非易事。传统的分层架构在应对复杂性和频繁需求变更时，常常暴露出其脆弱的一面。代码耦合度高、测试成本昂贵、核心业务逻辑被技术细节污染，这些问题如影随形，困扰着无数开发者。 今天，我们将聚焦于两个强大且相互关联的概念——洋葱架构（Onion Architecture）与依赖倒置原则（Dependency Inversion Principle, DIP）。它们不仅仅是设计模式或架构风格，更是一种思维方式，旨在帮助我们构建出高内聚、低耦合的软件系统，让核心业务逻辑保持纯粹，不受外界技术细节的侵扰。我们将从它们诞生的背景、核心思想，到具体实现和实践中的挑战与权衡，进行一次全面而深入的剖析。准备好了吗？让我们开始这场知识的盛宴。 软件架构的演进与挑战 在深入洋葱架构和依赖倒置之前，我们有必要回顾一下软件架构的发展历程，以及在发展过程中我们遇到的主要挑战。这有助于我们理解为什...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/18/2025-07-18-082418/" title="机器学习算法的公平性问题：技术挑战与伦理困境"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">机器学习算法的公平性问题：技术挑战与伦理困境</div></div><div class="info-2"><div class="info-item-1">引言 机器学习 (ML) 正在迅速改变我们的世界，从医疗保健到金融，再到刑事司法系统，它的应用几乎无处不在。然而，随着 ML 系统的广泛部署，一个越来越令人担忧的问题浮出水面：公平性。  算法的输出可能反映并放大现有的社会偏见，导致对某些群体的不公平待遇。本文将深入探讨机器学习算法中的公平性问题，分析其技术根源和伦理困境，并探讨一些可能的解决方案。 偏见是如何进入机器学习模型的？ 机器学习模型的公平性问题并非源于算法本身的恶意，而是源于其训练数据的偏见。  这些偏见可能来自多种来源： 数据收集与标注  样本选择偏差 (Sampling Bias):  如果训练数据未能充分代表所有群体，模型就会学习到一个有偏的表示。例如，如果一个用于预测贷款偿还能力的模型主要基于白人申请人的数据，它可能会对少数族裔申请人产生不公平的负面预测。 测量偏差 (Measurement Bias):  数据收集过程中的错误或不一致也会引入偏见。例如，在犯罪预测模型中，如果某些社区的执法力度更大，导致该社区的犯罪数据被过度记录，模型就会对该社区产生负面偏见。 标注偏差 (Label Bias):  人工标注...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082429/" title="区块链技术与数字版权保护：一场技术与法律的博弈"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">区块链技术与数字版权保护：一场技术与法律的博弈</div></div><div class="info-2"><div class="info-item-1">大家好，我是你们的技术博主X，今天我们来聊一个非常热门的话题：区块链技术如何应用于数字版权保护。在数字内容飞速发展的时代，版权侵权问题日益严峻，传统的版权保护机制显得力不从心。而区块链技术，凭借其去中心化、不可篡改、透明等特性，为解决这一难题提供了新的思路。 区块链技术概述 首先，让我们简单回顾一下区块链技术的基本原理。区块链是一个由多个区块组成的链式数据库，每个区块包含一系列经过加密验证的交易记录。这些交易记录一旦被写入区块链，就无法被篡改或删除，保证了数据的完整性和安全性。  其核心技术包括：  密码学:  确保数据的安全性和完整性，例如哈希算法和数字签名。 共识机制:  例如工作量证明（PoW）和权益证明（PoS），用于维护区块链的统一性和安全性，防止恶意攻击。 分布式账本: 数据分布在多个节点上，提高了系统的容错性和安全性。  区块链如何保护数字版权 区块链技术可以为数字版权保护提供多种方案，主要体现在以下几个方面： 版权登记与确权 传统的版权登记流程繁琐且耗时，而区块链可以提供一个快速、透明的版权登记平台。创作者可以将作品的哈希值（作品的数字指纹）记录到区块链上，以此证...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082438/" title="云计算中的数据安全与隐私：挑战与应对"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">云计算中的数据安全与隐私：挑战与应对</div></div><div class="info-2"><div class="info-item-1">云计算为企业和个人提供了强大的计算资源和数据存储能力，但也带来了新的安全与隐私挑战。本文将深入探讨云计算环境下的数据安全与隐私问题，分析其背后的技术机制，并提出一些有效的应对策略。 云计算安全风险剖析 云计算环境中，数据安全与隐私面临着多种威胁，主要包括： 数据泄露与丢失 这是最常见的风险之一。  数据可能由于云提供商的内部安全漏洞、恶意攻击（例如SQL注入、DDoS攻击）、员工失误或意外事件（例如硬件故障）而泄露或丢失。  对于敏感数据，例如医疗记录、金融信息和个人身份信息，这种风险尤为严重。 数据违规 数据违规是指未经授权访问或使用数据的情况。这可能导致数据被篡改、删除或用于非法目的。  法规遵从性（例如 GDPR, CCPA）的压力也使得数据违规的代价越来越高。 权限管理不足 缺乏细粒度的访问控制机制可能导致数据被未授权的个人或应用程序访问。  复杂的云环境中，权限的管理和审核是一个极大的挑战。 数据完整性问题 云环境中的数据完整性需要得到保障，确保数据没有被未经授权的修改或破坏。  这需要使用诸如哈希算法和数字签名等技术来验证数据的完整性。 数据合规性 不同国家和地区对数...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082500/" title="物联网设备的网络安全协议：挑战与解决方案"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">物联网设备的网络安全协议：挑战与解决方案</div></div><div class="info-2"><div class="info-item-1">物联网 (IoT) 设备正以前所未有的速度渗透到我们生活的方方面面，从智能家居到工业自动化，再到医疗保健。然而，这种广泛的连接也带来了巨大的安全风险。由于物联网设备通常资源受限，安全性设计常常被忽视，导致它们成为网络攻击的理想目标。本文将深入探讨物联网设备面临的网络安全挑战，以及用于增强其安全性的各种协议和技术。 物联网安全面临的挑战 物联网设备的安全挑战与传统IT系统大相径庭，主要体现在以下几个方面： 资源受限 许多物联网设备具有有限的处理能力、内存和存储空间。这使得部署复杂的加密算法和安全协议变得困难，同时也增加了运行时开销。  运行资源消耗较大的安全软件可能会影响设备的性能甚至导致其崩溃。 设备异构性 物联网生态系统由各种各样的设备组成，这些设备运行不同的操作系统，使用不同的编程语言，并具有不同的安全特性。这种异构性使得实施统一的安全策略变得极其复杂。  很难找到一个适用于所有设备的通用安全解决方案。 数据隐私与安全 物联网设备通常会收集大量敏感数据，例如个人健康信息、位置数据和财务信息。保护这些数据的隐私和安全至关重要，但由于设备自身的安全缺陷和数据传输过程中的漏洞，这成...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082528/" title="量子计算对现代密码学的威胁：后量子密码学的挑战与机遇"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">量子计算对现代密码学的威胁：后量子密码学的挑战与机遇</div></div><div class="info-2"><div class="info-item-1">量子计算的飞速发展为许多领域带来了革命性的变革，但也对现有的密码体系构成了前所未有的挑战。本文将深入探讨量子计算如何威胁现代密码学，以及我们如何应对这一挑战。 量子计算的优势与密码学的困境 经典计算机基于比特，其值只能是 0 或 1。而量子计算机利用量子比特，可以同时表示 0 和 1 的叠加态，这使得它们能够进行并行计算，处理能力远超经典计算机。  这种巨大的计算能力为解决某些目前被认为是“不可解”的问题提供了可能性，其中就包括许多现代密码学的基石。 例如，RSA 算法，广泛应用于电子商务和安全通信，其安全性依赖于大数分解的困难性。经典计算机分解一个很大的数需要指数级的时间，因此被认为是安全的。然而，Shor 算法，一个在量子计算机上运行的算法，能够以多项式时间分解大数。这意味着，一台足够强大的量子计算机能够轻易破解 RSA 加密，从而威胁到大量的在线交易、数据安全以及国家安全。 同样，椭圆曲线密码学 (ECC)，另一种广泛使用的密码算法，其安全性也依赖于某些数学问题的复杂性。然而，量子计算机也能够有效地解决这些问题，例如离散对数问题。 Shor 算法与 Grover 算法：量子...</div></div></div></a><a class="pagination-related" href="/2025/07/18/2025-07-18-082537/" title="图论算法在社交网络分析中的应用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-18</div><div class="info-item-2">图论算法在社交网络分析中的应用</div></div><div class="info-2"><div class="info-item-1">社交网络已经成为我们生活中不可或缺的一部分。从Facebook和Twitter到微信和微博，这些平台连接着数十亿用户，产生着海量的数据。而理解这些数据，挖掘其背后的规律和价值，就需要借助强大的数学工具——图论。本文将深入探讨图论算法在社交网络分析中的多种应用。 社交网络的图表示 在图论中，社交网络可以被自然地表示为图 G=(V,E)G = (V, E)G=(V,E)，其中 VVV 代表用户集合（节点），EEE 代表用户之间的关系集合（边）。例如，在Facebook中，每个用户是一个节点，如果两个用户是朋友，则在他们之间存在一条无向边；在Twitter中，如果用户A关注用户B，则存在一条从A指向B的有向边。边的权重可以表示关系的强度（例如，朋友关系的亲密度，或者互动频率）。  这种图表示为我们分析社交网络提供了坚实的基础。 核心图论算法及其应用 社区发现 社区发现旨在将社交网络划分成多个紧密连接的社区（也称为集群）。这对于理解用户群体、推荐系统以及病毒式营销等都至关重要。常用的算法包括：  Louvain算法:  一种贪婪的启发式算法，通过迭代优化模块度来寻找最佳社区结构。模块度 ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">qmwneb946</div><div class="author-info-description">一个专注于技术分享的个人博客，涵盖编程、算法、系统设计等内容</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">1332</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1336</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/qmwneb946"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/qmwneb946" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:qmwneb946@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">代码与远方，技术与生活交织的篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%8C%91%E6%88%98%E4%B8%8E%E5%85%B1%E8%AF%86%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">分布式系统的挑战与共识的必要性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是分布式系统？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAP-%E5%AE%9A%E7%90%86%E4%B8%8E%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">CAP 定理与强一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B1%E8%AF%86%E9%97%AE%E9%A2%98%E7%9A%84%E6%8F%90%E5%87%BA"><span class="toc-number">1.3.</span> <span class="toc-text">共识问题的提出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E5%8D%8F%E8%AE%AE%EF%BC%9A%E4%B8%80%E4%B8%AA%E6%9B%B4%E6%98%93%E7%90%86%E8%A7%A3%E7%9A%84%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">Raft 协议：一个更易理解的共识算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Raft%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">为什么选择 Raft？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Raft-%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">2.2.</span> <span class="toc-text">Raft 的核心思想</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E7%9A%84%E8%A7%92%E8%89%B2%E4%B8%8E%E7%8A%B6%E6%80%81"><span class="toc-number">3.</span> <span class="toc-text">Raft 的角色与状态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2"><span class="toc-number">3.1.</span> <span class="toc-text">服务器角色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E6%9C%9F-Terms"><span class="toc-number">3.2.</span> <span class="toc-text">任期 (Terms)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.3.</span> <span class="toc-text">状态转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="toc-number">4.</span> <span class="toc-text">领导者选举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E8%B6%85%E6%97%B6-Election-Timeout"><span class="toc-number">4.1.</span> <span class="toc-text">选举超时 (Election Timeout)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%95%E7%A5%A8%E8%AF%B7%E6%B1%82-RequestVote-RPC"><span class="toc-number">4.2.</span> <span class="toc-text">投票请求 (RequestVote RPC)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E6%88%90%E5%8A%9F"><span class="toc-number">4.3.</span> <span class="toc-text">选举成功</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E5%A4%B1%E8%B4%A5%E4%B8%8E%E6%96%B0%E7%9A%84%E4%BB%BB%E6%9C%9F"><span class="toc-number">4.4.</span> <span class="toc-text">选举失败与新的任期</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="toc-number">5.</span> <span class="toc-text">日志复制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%9D%A1%E7%9B%AE-Log-Entries"><span class="toc-number">5.1.</span> <span class="toc-text">日志条目 (Log Entries)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6%E4%B8%8E%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-number">5.2.</span> <span class="toc-text">心跳机制与日志同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%8E%E5%AE%89%E5%85%A8%E6%80%A7"><span class="toc-number">5.3.</span> <span class="toc-text">日志的一致性与安全性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E6%97%A5%E5%BF%97-Committing-Log-Entries"><span class="toc-number">5.4.</span> <span class="toc-text">提交日志 (Committing Log Entries)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="toc-number">6.</span> <span class="toc-text">安全性保证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E9%99%90%E5%88%B6-Election-Restriction"><span class="toc-number">6.1.</span> <span class="toc-text">选举限制 (Election Restriction)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99%E7%9A%84%E6%8E%A8%E8%AE%BA"><span class="toc-number">6.2.</span> <span class="toc-text">日志匹配原则的推论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E6%88%90%E5%91%98%E5%8F%98%E6%9B%B4"><span class="toc-number">7.</span> <span class="toc-text">集群成员变更</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%8D%E6%9D%82%EF%BC%9F"><span class="toc-number">7.1.</span> <span class="toc-text">为什么复杂？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%96%B9%E6%B3%95-Joint-Consensus"><span class="toc-number">7.2.</span> <span class="toc-text">两阶段方法 (Joint Consensus)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E9%98%B6%E6%AE%B5%E6%96%B9%E6%B3%95-Single-stage-Change-Non-voting-members"><span class="toc-number">7.3.</span> <span class="toc-text">单阶段方法 (Single-stage Change &#x2F; Non-voting members)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-number">8.</span> <span class="toc-text">Raft 的实现细节与优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96-Persistence"><span class="toc-number">8.1.</span> <span class="toc-text">持久化 (Persistence)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BA%A4%E4%BA%92-Client-Interaction"><span class="toc-number">8.2.</span> <span class="toc-text">客户端交互 (Client Interaction)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7-Snapshots"><span class="toc-number">8.3.</span> <span class="toc-text">快照 (Snapshots)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-Performance-Optimizations"><span class="toc-number">8.4.</span> <span class="toc-text">性能优化 (Performance Optimizations)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E7%9A%84%E5%BA%94%E7%94%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5"><span class="toc-number">9.</span> <span class="toc-text">Raft 的应用与实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">9.1.</span> <span class="toc-text">常见应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E-Paxos-%E5%AF%B9%E6%AF%94"><span class="toc-number">9.2.</span> <span class="toc-text">与 Paxos 对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Raft-%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">9.3.</span> <span class="toc-text">Raft 的局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">10.</span> <span class="toc-text">结论</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/26/%E5%8D%9A%E5%BC%88%E8%AE%BA%E5%9F%BA%E7%A1%80/" title="博弈论基础">博弈论基础</a><time datetime="2025-07-26T06:50:50.282Z" title="发表于 2025-07-26 14:50:50">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062627/" title="蛋白质组学的翻译后修饰组学：解码生命复杂性的密码">蛋白质组学的翻译后修饰组学：解码生命复杂性的密码</a><time datetime="2025-07-25T22:26:27.000Z" title="发表于 2025-07-26 06:26:27">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062521/" title="钠离子电池的负极材料：开启储能新纪元的核心密码">钠离子电池的负极材料：开启储能新纪元的核心密码</a><time datetime="2025-07-25T22:25:21.000Z" title="发表于 2025-07-26 06:25:21">2025-07-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/25/2025-07-26-062424/" title="基于人工智能的靶点识别：重塑药物发现的未来">基于人工智能的靶点识别：重塑药物发现的未来</a><time datetime="2025-07-25T22:24:24.000Z" title="发表于 2025-07-26 06:24:24">2025-07-26</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By qmwneb946</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'qmwneb946/blog',
+      'data-repo-id': 'R_kgDOPM6cWw',
+      'data-category-id': 'DIC_kwDOPM6cW84CtEzo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
